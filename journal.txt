@@ -1,0 +1,17 @@
+- AI attack pcode:
+	talk to Josh about speed/rhythm issues
+
+- AI defend pcode:
+
+quantize input and analyze..
+
+be "greedy" about chords, ie. starting from a note, consider all notes after within THRESH to be a chord
+
+for each note, roll dice for:
+	- how quickly is it following previous note? SPD check
+	- is it a different key? DEX check
+	- how different is the timing from the previous note (ignore sustains)? RHY check
+	- is it a chord? how many notes? CHO check
+	- is it sustained? how long? SUS check
+
+- Test on myself by randomly choosing an AI and see if I can figure it out.
