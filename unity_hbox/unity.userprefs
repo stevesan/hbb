@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/RC/Figure8.js">
+    <Files>
+      <File FileName="Assets/RC/Note.js" Line="1" Column="1" />
+      <File FileName="Assets/RC/Utils.js" Line="1" Column="1" />
+      <File FileName="Assets/RC/Figure8.js" Line="114" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
