@@ -1,5 +1,7 @@
 #pragma strict
 
+//Josh was here
+
 class AiStats
 {
 	var dexterity = 0.5;

@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{29AAFBFD-D74B-E405-AA5A-A2BCA0FB7951}</ProjectGuid>
+	<ProjectGuid>{CA7691CF-2D11-698D-E06B-9670426C313A}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -18,7 +18,7 @@
 	<DebugType>full</DebugType>
 	<Optimize>false</Optimize>
 	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_3_5_0;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_OSX;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
+	<DefineConstants>DEBUG;TRACE;UNITY_3_5_0;UNITY_3_5;UNITY_EDITOR;ENABLE_PROFILER;UNITY_STANDALONE_WIN;ENABLE_GENERICS;ENABLE_DUCK_TYPING;ENABLE_TERRAIN;ENABLE_MOVIES;ENABLE_WEBCAM;ENABLE_MICROPHONE;ENABLE_NETWORK;ENABLE_CLOTH;ENABLE_WWW;ENABLE_SUBSTANCE</DefineConstants>
 	<ErrorReport>prompt</ErrorReport>
 	<WarningLevel>4</WarningLevel>
 	<NoWarn>0169</NoWarn>
@@ -37,46 +37,49 @@
     <Reference Include="System.XML" />
 	<Reference Include="System.Core" />
 	<Reference Include="UnityEngine">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEngine.dll</HintPath>
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
 	</Reference>
 	<Reference Include="UnityEditor">
-	  <HintPath>/Applications/Unity/Unity.app/Contents/Frameworks/Managed/UnityEditor.dll</HintPath>
+	  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\RC\AnimScripts\ChangingTexture.js" />
-     <Compile Include="Assets\RC\AnimScripts\FadeAnim.js" />
-     <Compile Include="Assets\RC\AnimScripts\FlyAnim.js" />
-     <Compile Include="Assets\RC\AnimScripts\UVAnim.js" />
-     <Compile Include="Assets\RC\Figure8.js" />
-     <Compile Include="Assets\RC\GameCamera.js" />
-     <Compile Include="Assets\RC\GameState.js" />
-     <Compile Include="Assets\RC\GameView.js" />
-     <Compile Include="Assets\RC\LightPulseMetronome.js" />
-     <Compile Include="Assets\RC\Note.js" />
-     <Compile Include="Assets\RC\NotesView.js" />
-     <Compile Include="Assets\RC\PiecesDisplay.js" />
-     <Compile Include="Assets\RC\PulseWithBeat.js" />
-     <Compile Include="Assets\RC\SVGPathTest.js" />
-     <Compile Include="Assets\RC\ScoreDisplayText.js" />
-     <Compile Include="Assets\RC\ScrollUV.js" />
-     <Compile Include="Assets\RC\Shake.js" />
-     <Compile Include="Assets\RC\SongInfo.js" />
-     <Compile Include="Assets\RC\TestTrail.js" />
-     <Compile Include="Assets\RC\Utils\ProGeo.js" />
-     <Compile Include="Assets\RC\Utils\Simplex.js" />
-     <Compile Include="Assets\RC\Utils\Svg.js" />
-     <Compile Include="Assets\RC\Utils\Utils.js" />
-     <None Include="Assets\RC\trackpoints.txt" />
+     <Compile Include="Assets\hbox\Figure8.js" />
+     <Compile Include="Assets\hbox\GameCamera.js" />
+     <Compile Include="Assets\hbox\GameState.js" />
+     <Compile Include="Assets\hbox\GameView.js" />
+     <Compile Include="Assets\hbox\HorseAI.js" />
+     <Compile Include="Assets\hbox\LightPulseMetronome.js" />
+     <Compile Include="Assets\hbox\Note.js" />
+     <Compile Include="Assets\hbox\OldLasers.js" />
+     <Compile Include="Assets\hbox\PiecesDisplay.js" />
+     <Compile Include="Assets\hbox\PulseWithBeat.js" />
+     <Compile Include="Assets\hbox\SVGPathTest.js" />
+     <Compile Include="Assets\hbox\ScoreDisplayText.js" />
+     <Compile Include="Assets\hbox\Shake.js" />
+     <Compile Include="Assets\hbox\SongInfo.js" />
+     <Compile Include="Assets\hbox\TestTrail.js" />
+     <Compile Include="Assets\hbox\TrackLaserScript.js" />
+     <Compile Include="Assets\hbox\Utils\CameraShake.js" />
+     <Compile Include="Assets\hbox\Utils\ChangingTexture.js" />
+     <Compile Include="Assets\hbox\Utils\FadeAnim.js" />
+     <Compile Include="Assets\hbox\Utils\FlyAnim.js" />
+     <Compile Include="Assets\hbox\Utils\ProGeo.js" />
+     <Compile Include="Assets\hbox\Utils\ScrollUV.js" />
+     <Compile Include="Assets\hbox\Utils\Simplex.js" />
+     <Compile Include="Assets\hbox\Utils\Svg.js" />
+     <Compile Include="Assets\hbox\Utils\UVAnim.js" />
+     <Compile Include="Assets\hbox\Utils\Utils.js" />
+     <None Include="Assets\hbox\trackpoints.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\Standard Assets\Skyboxes\ skybox info.txt" />
- <Reference Include="Library\ScriptAssemblies\Assembly-UnityScript-firstpass">
+ <Reference Include="Assembly-UnityScript-firstpass">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
-      <Project>{518622B2-9050-A153-E465-3E4BD155181A}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
+      <Project>{5074B9A2-5AA0-4668-962E-410AA2C424AE}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
