@@ -6,6 +6,7 @@ class AiStats
 	var rhythm = 0.5;
 	var chords = 0.5;
 	var sustain = 0.5;
+
 	var numQuants = 16;
 	var minSpacingQuants = 2;
 	var maxSpacingQuants = 8;
@@ -31,6 +32,13 @@ class AiStats
 }
 
 var stats = new AiStats();
+
+class RepeatStats
+{
+	var spacings : float[];
+}
+
+var repStats = new RepeatStats();
 
 //----------------------------------------
 //  Unlike Note, which is the game object with gameplay state,
@@ -178,25 +186,73 @@ function CreateBeatPdfs(gs:GameState) : Array
 	return beat;
 }
 
+function Time2Quant( mt:float, secsPerMeas:float ) : int
+{
+	return Mathf.RoundToInt( (mt/secsPerMeas) * stats.numQuants );
+}
+
+function Note2NoteSpec( note:Note ) : NoteSpec
+{
+	var spec = new NoteSpec();
+	spec.measureTime = note.measureTime;
+	spec.key = note.key;
+	spec.duration = note.endMeasureTime-note.measureTime;
+	return spec;
+}
+
 //----------------------------------------
 //  Creates a beat that is the AI's attempt at repeating the given beat
 //	Simulates messing up basically.
 //----------------------------------------
 function RepeatBeat( gs:GameState  ) : Array
 {
+	var numKeys = gs.GetSongInfo().GetNumSamples();
+
 	var repeat = new Array();
+
+	var prevNote : Note = null;
+
+	Debug.Log('--');
 
 	for( var i = 0; i < gs.GetBeatNotes().length; i++ )
 	{
 		var note = (gs.GetBeatNotes()[i] as Note);
-		if( Random.value < 0.8 )
+
+		if( prevNote != null )
 		{
-			var mine = new NoteSpec();
-			repeat.Push( mine );
-			mine.measureTime = note.measureTime;
-			mine.key = note.key;
-			mine.duration = note.endMeasureTime-note.measureTime;
+			var p = Time2Quant( prevNote.measureTime, gs.GetSecsPerMeasure() );
+			var q = Time2Quant( note.measureTime, gs.GetSecsPerMeasure() );
+			var space = q-p;
+
+			Debug.Log('space = '+space);
+
+			if( space >= repStats.spacings.length
+					|| Random.value < repStats.spacings[space] )
+			{
+				// Slow enough for us to get
+				repeat.Push( Note2NoteSpec(note) );
+			}
+			else
+			{
+				Debug.Log('TOO FAST!');
+				// too fast for us!
+				// pretend we messed up 
+				if( Random.value < 0.5 )
+				{
+					// hit the wrong note
+					var wrong = Note2NoteSpec(note);
+					wrong.key = RandomKeyExcluding( numKeys, note.key );
+				}
+				// or we just didn't hit anything
+			}
 		}
+		else
+		{
+			// always get the first note
+			repeat.Push( Note2NoteSpec(note) );
+		}
+
+		prevNote = note;
 	}
 
 	return repeat;
