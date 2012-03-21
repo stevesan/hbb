@@ -177,3 +177,27 @@ function CreateBeatPdfs(gs:GameState) : Array
 
 	return beat;
 }
+
+//----------------------------------------
+//  Creates a beat that is the AI's attempt at repeating the given beat
+//	Simulates messing up basically.
+//----------------------------------------
+function RepeatBeat( gs:GameState  ) : Array
+{
+	var repeat = new Array();
+
+	for( var i = 0; i < gs.GetBeatNotes().length; i++ )
+	{
+		var note = (gs.GetBeatNotes()[i] as Note);
+		if( Random.value < 0.8 )
+		{
+			var mine = new NoteSpec();
+			repeat.Push( mine );
+			mine.measureTime = note.measureTime;
+			mine.key = note.key;
+			mine.duration = note.endMeasureTime-note.measureTime;
+		}
+	}
+
+	return repeat;
+}

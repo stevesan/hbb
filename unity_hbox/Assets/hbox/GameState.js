@@ -20,6 +20,7 @@ var songs : SongInfo[];
 var activeSong : int = 0;
 var optionEchoBeat = false;
 var horseAI : HorseAI = null;
+var useAI = false;
 var aiInputs : Array = null;
 var debugTestAI = false;
 var survivalMode = false;
@@ -387,7 +388,7 @@ function GetNonInputtingPlayer()
 
 function IsAiInputting()
 {
-	return( horseAI != null && GetInputtingPlayer() == aiPlayer );
+	return( useAI && horseAI != null && GetInputtingPlayer() == aiPlayer );
 }
 
 //----------------------------------------
@@ -1000,8 +1001,9 @@ function Update()
 		}
 		if( JustEnteredPreTol() )
 		{
+			// AI defending?
 			if( IsAiInputting() )
-				aiInputs = horseAI.CreateBeat(this);
+				aiInputs = horseAI.RepeatBeat(this);
 		}
 		if( IsInPreTolerance() )
 			UpdateTesting( 0.0 );
@@ -1044,8 +1046,9 @@ function Update()
 			}
 		}
 
+		// AI repeating?
 		if( JustEnteredPreTol() && IsAiInputting() )
-			aiInputs = horseAI.CreateBeat(this);
+				aiInputs = horseAI.RepeatBeat(this);
 
 		if( IsInPreTolerance() )
 		{
