@@ -34,6 +34,8 @@ var isError : boolean;
 
 private var trail : GameObject = null;
 
+function GetDuration() : float { return endMeasureTime-measureTime; }
+
 function Start () {
 
 	// create a trail child mesh

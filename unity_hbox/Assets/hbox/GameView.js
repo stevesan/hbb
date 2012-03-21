@@ -54,10 +54,17 @@ function Update () {
 
 	mainText.text = '';
 
+	var survivedText = 'EARNED $' + gs.roundsSurvived + ' / 10';
+
 	if( GameState.inst.state == RCState.START )
 		mainText.text = 'PRESS SPACE BAR TO START';
 	else if( gs.state == RCState.VICTORY )
-		mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' WON! Press SPACE BAR.';
+	{
+		if( gs.survivalMode )
+			mainText.text = survivedText;
+		else
+			mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' WON! Press SPACE BAR.';
+	}
 	else
 	{
 		if( gs.state == RCState.POST_ATTACK )
@@ -72,6 +79,9 @@ function Update () {
 		else if( gs.state == RCState.POST_REPEAT )
 			// we prompt the defender here, who will soon become the attacker
 			UpdateCountdown( gs, "Play!", gs.GetDefender() );
+
+		if( gs.state != RCState.MENU && gs.survivalMode )
+			mainText.text = survivedText;
 	}
 	
 }

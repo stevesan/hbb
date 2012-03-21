@@ -21,9 +21,11 @@ var activeSong : int = 0;
 var optionEchoBeat = false;
 var horseAI : HorseAI = null;
 var useAI = false;
+var randomizeAI = false;
 var aiInputs : Array = null;
 var debugTestAI = false;
 var survivalMode = false;
+var roundsSurvived:int;
 
 var timeTolSecs : float = 0.15; // never put this above 0.3..since 190BPM is our fastest song, and that would make it not distinguish between 16th notes
 var cameraShake : Shake = null;
@@ -536,6 +538,11 @@ function OnSuccess()
 			playerLosses[ GetNonInputtingPlayer() ] = 1;
 	}
 
+	if( survivalMode && GetInputtingPlayer()==1 )
+	{
+		roundsSurvived++;
+	}
+
 	for( var obj in eventListeners )
 	{
 		obj.SendMessage( "OnSuccess", GetInputtingPlayer(), SendMessageOptions.DontRequireReceiver );
@@ -963,6 +970,20 @@ function Update()
 			beatsPassed = 0;
 			GetSongAudio().Play();
 			musicStartTime = Time.time;
+
+			// TEMP
+			if( horseAI != null && randomizeAI )
+			{
+				horseAI.Randomize();
+			}
+
+			if( survivalMode )
+			{
+				playerLosses[0] = 0;
+				// instant death!
+				playerLosses[1] = 4;
+				roundsSurvived = 0;
+			}
 		}
 	}
 	else if( state == RCState.ATTACK )
@@ -1048,11 +1069,16 @@ function Update()
 
 		// AI repeating?
 		if( JustEnteredPreTol() && IsAiInputting() )
+		{
+			if( survivalMode )
+				aiInputs = horseAI.CreateBeat( this );
+			else
 				aiInputs = horseAI.RepeatBeat(this);
+		}
 
 		if( IsInPreTolerance() )
 		{
-			if( survivalMode )
+			if( IsAiInputting() && survivalMode )
 				UpdateRecording( 0.0 );
 			else
 				UpdateTesting( 0.0 );
