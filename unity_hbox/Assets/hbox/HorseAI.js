@@ -1,5 +1,7 @@
 #pragma strict
 
+var aiStatsXML : TextAsset;
+
 class AiStats
 {
 	var numQuants = 16;
@@ -41,6 +43,22 @@ class AiStats
 
 		// 
 		noteValuePdfSampler.Reset( noteValuePdf );
+	}
+
+	function FromXMLNode( node:XMLNode )
+	{
+		if( node != null )
+		{
+			numQuants = parseInt( node.GetValue("@numQuants") );
+			chords = parseFloat( node.GetValue("@chords") );
+			dexterity = parseFloat( node.GetValue("@dexterity") );
+			sustain = parseFloat( node.GetValue("@sustain") );
+			rhythm = parseFloat( node.GetValue("@rhythm") );
+			noteValuePdf = Utils.ParseFloatArray( node.GetValue("@nodeValuePdf"), ','[0] );
+			noteValuePdfSampler.Reset( noteValuePdf );
+		}
+		else
+			Debug.LogError('given node was null..');
 	}
 }
 
@@ -133,7 +151,18 @@ class Chord
 
 function Awake()
 {
-	stats.Awake();
+	// testing
+	var floats = Utils.ParseFloatArray( "1.23,4.56,7.89", ','[0] );
+	Debug.Log( ''+floats[1]);
+
+	// Parse the first AI and use it
+	var p = new XMLParser();
+	var node = p.Parse( aiStatsXML.text );
+	//var node = p.Parse( '<recordStats noteValuePdf = "0,0,0.51,0.52,0" />' );
+
+	Debug.Log(aiStatsXML.text);
+	Debug.Log('---'+ node.GetValue("recordStats>0>@noteValuePdf"));
+	stats.FromXMLNode( node.GetNode("recordStats>0") );
 }
 
 function RandomKeyExcluding( numKeys:int, exclude:int ) : int

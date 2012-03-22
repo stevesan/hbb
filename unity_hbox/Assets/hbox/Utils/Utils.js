@@ -25,6 +25,17 @@ static function RandomColor() : Color
 	return Color( Random.value, Random.value, Random.value, 1.0 );
 }
 
+//----------------------------------------
+//----------------------------------------
+static function ParseFloatArray( s:String, sep:char ) : float[]
+{
+	var parts = s.Split( sep );
+	var out = new float[ parts.length ];
+	for( var i = 0; i < out.length; i++ )
+		out[i] = parseFloat( parts[i] );
+	return out;
+}
+
 static function DebugDrawPlane( n:Vector3, p:Vector3, c:Color )
 {
 	// draw normal
