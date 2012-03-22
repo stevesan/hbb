@@ -54,14 +54,14 @@ function Update () {
 
 	mainText.text = '';
 
-	var survivedText = 'EARNED $' + gs.roundsSurvived + ' / 10';
+	var survivedText = 'EARNED $' + gs.survivalScore + ' / 10';
 
 	if( GameState.inst.state == RCState.START )
 		mainText.text = 'PRESS SPACE BAR TO START';
 	else if( gs.state == RCState.VICTORY )
 	{
 		if( gs.survivalMode )
-			mainText.text = survivedText;
+			mainText.text = 'FINAL: $'+gs.survivalScore;
 		else
 			mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' WON! Press SPACE BAR.';
 	}

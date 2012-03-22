@@ -94,7 +94,7 @@ function UpdateFlashing( gs : GameState, p : int )
 	var numPieces = gs.playerLosses[p];
 
 	// They got all the pieces - can't flash the "next" piece
-	if( numPieces > pieceOnTextures.length )
+	if( numPieces >= pieceOnTextures.length )
 		return;
 
 	beats = gs.GetMeasureTime() / gs.GetSecsPerBeat();

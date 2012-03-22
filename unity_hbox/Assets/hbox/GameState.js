@@ -25,7 +25,8 @@ var randomizeAI = false;
 var aiInputs : Array = null;
 var debugTestAI = false;
 var survivalMode = false;
-var roundsSurvived:int;
+var survivalScore:int;
+var perNoteScore = false;
 
 var timeTolSecs : float = 0.15; // never put this above 0.3..since 190BPM is our fastest song, and that would make it not distinguish between 16th notes
 var cameraShake : Shake = null;
@@ -451,16 +452,16 @@ function GetKeysUp(mt:float) : Array
 	{
 		if( aiInputs != null )
 		{
-		// use the AI's current beat
-		for( var i = 0; i < aiInputs.length; i++ )
-		{
-			// did we just release this note?
-			if( Utils.IsBetween( aiInputs[i].measureTime+aiInputs[i].duration,
-				mt-Time.deltaTime, mt ) )
+			// use the AI's current beat
+			for( var i = 0; i < aiInputs.length; i++ )
 			{
-				keys.Push( aiInputs[i].key );
+				// did we just release this note?
+				if( Utils.IsBetween( aiInputs[i].measureTime+aiInputs[i].duration,
+							mt-Time.deltaTime, mt ) )
+				{
+					keys.Push( aiInputs[i].key );
+				}
 			}
-		}
 		}
 	}
 	else
@@ -538,9 +539,8 @@ function OnSuccess()
 			playerLosses[ GetNonInputtingPlayer() ] = 1;
 	}
 
-	if( survivalMode && GetInputtingPlayer()==1 )
-	{
-		roundsSurvived++;
+	if( survivalMode && GetInputtingPlayer()==1 && !perNoteScore ) {
+		survivalScore++;
 	}
 
 	for( var obj in eventListeners )
@@ -621,6 +621,7 @@ function UpdateTesting( mt : float )
 			{
 				// got the note fully. yay
 				GetBeatNotes()[hitNote].upHit = true;
+				if( survivalMode && perNoteScore ) survivalScore++;
 				// use the actual note end time..
 				note.endMeasureTime = beatNotes[hitNote].endMeasureTime;
 			}
@@ -666,10 +667,10 @@ function UpdateTesting( mt : float )
 					{
 						// OK just pretend the player released it at the right time
 						note.upHit = true;
+						if( survivalMode && perNoteScore ) survivalScore++;
 
 						// also, stop playing the sample
 						GetSongInfo().OnKeyUp( note.key );
-
 
 						// find the response note for this key, and just pretend it's up
 						var testNoteId = FindLatestNote( responseNotes, note.key );
@@ -982,7 +983,7 @@ function Update()
 				playerLosses[0] = 0;
 				// instant death!
 				playerLosses[1] = 4;
-				roundsSurvived = 0;
+				survivalScore = 0;
 			}
 		}
 	}

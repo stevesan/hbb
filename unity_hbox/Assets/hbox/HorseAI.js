@@ -153,6 +153,7 @@ function CreateBeat(gs:GameState) : Array
 	var numKeys = gs.GetSongInfo().GetNumSamples();
 
 	var mt = 0.0;
+	var sustainPrev = false;
 
 	while( mt <= gs.GetSecsPerMeasure() )
 	{
@@ -190,6 +191,13 @@ function CreateBeat(gs:GameState) : Array
 		}
 
 		mt += stats.RandomMusicalLength( gs.GetSecsPerMeasure() );
+
+		// see if we should sustain the previous note to the next note
+		if( Random.value < stats.sustain )
+		{
+			prevNote = beat[ beat.length-1 ];
+			prevNote.duration = (mt-prevNote.measureTime)/2;
+		}
 	}
 
 
