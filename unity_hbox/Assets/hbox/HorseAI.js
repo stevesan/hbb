@@ -1,8 +1,10 @@
 #pragma strict
+import System.IO;
+import System.Xml;
 
 var aiStatsXML : TextAsset;
 
-class AiStats
+class AISpec
 {
 	var numQuants = 16;
 
@@ -45,16 +47,19 @@ class AiStats
 		noteValuePdfSampler.Reset( noteValuePdf );
 	}
 
-	function FromXMLNode( node:XMLNode )
+	//----------------------------------------
+	//  Assumes that the reader is currently at an "recordStats" element
+	//----------------------------------------
+	function FromXMLReader( r:XmlReader )
 	{
-		if( node != null )
+		if( r != null )
 		{
-			numQuants = parseInt( node.GetValue("@numQuants") );
-			chords = parseFloat( node.GetValue("@chords") );
-			dexterity = parseFloat( node.GetValue("@dexterity") );
-			sustain = parseFloat( node.GetValue("@sustain") );
-			rhythm = parseFloat( node.GetValue("@rhythm") );
-			noteValuePdf = Utils.ParseFloatArray( node.GetValue("@nodeValuePdf"), ','[0] );
+			numQuants = parseInt( r.GetAttribute("numQuants") );
+			chords = parseFloat( r.GetAttribute("chords") );
+			dexterity = parseFloat( r.GetAttribute("dexterity") );
+			sustain = parseFloat( r.GetAttribute("sustain") );
+			rhythm = parseFloat( r.GetAttribute("rhythm") );
+			noteValuePdf = Utils.ParseFloatArray( r.GetAttribute("noteValuePdf"), ','[0] );
 			noteValuePdfSampler.Reset( noteValuePdf );
 		}
 		else
@@ -62,7 +67,19 @@ class AiStats
 	}
 }
 
-var stats = new AiStats();
+var testAI:AISpec;
+var debugUseTestAI = false;
+
+private var AIs = new Array();
+var currAI:int = 0;
+
+function GetAI() : AISpec
+{
+	if( debugUseTestAI )
+		return testAI;
+	else
+		return (AIs[currAI] as AISpec);
+}
 
 class RepeatStats
 {
@@ -80,11 +97,6 @@ class RepeatStats
 }
 
 var repStats = new RepeatStats();
-
-function Randomize()
-{
-	stats.Randomize();
-}
 
 //----------------------------------------
 //  Unlike Note, which is the game object with gameplay state,
@@ -149,6 +161,7 @@ class Chord
 	}
 }
 
+
 function Awake()
 {
 	// testing
@@ -156,13 +169,17 @@ function Awake()
 	Debug.Log( ''+floats[1]);
 
 	// Parse the first AI and use it
-	var p = new XMLParser();
-	var node = p.Parse( aiStatsXML.text );
-	//var node = p.Parse( '<recordStats noteValuePdf = "0,0,0.51,0.52,0" />' );
+	var reader = XmlReader.Create( new StringReader( aiStatsXML.text ) );
 
-	Debug.Log(aiStatsXML.text);
-	Debug.Log('---'+ node.GetValue("recordStats>0>@noteValuePdf"));
-	stats.FromXMLNode( node.GetNode("recordStats>0") );
+	while( reader.ReadToFollowing('recordStats') )
+	{
+		Debug.Log('--'+reader.GetAttribute('noteValuePdf'));
+		var newAI = new AISpec();
+		newAI.FromXMLReader( reader );
+		AIs.Push( newAI );
+	}
+
+	Debug.Log('read '+AIs.length+' AIs from XML');
 }
 
 function RandomKeyExcluding( numKeys:int, exclude:int ) : int
@@ -193,7 +210,7 @@ function CreateBeat(gs:GameState) : Array
 
 		if( beat.length == 1 )
 			note.key = Random.Range( 0, numKeys );
-		else if( Random.value <= stats.dexterity )
+		else if( Random.value <= GetAI().dexterity )
 		{
 			// switch key
 			var prevNote : NoteSpec = beat[ beat.length-2 ];
@@ -210,7 +227,7 @@ function CreateBeat(gs:GameState) : Array
 		note.duration = gs.timeTolSecs/2;
 
 		// chord?
-		if( Random.value <= stats.chords )
+		if( Random.value <= GetAI().chords )
 		{
 			var other = new NoteSpec();
 			beat.Push( other );
@@ -219,10 +236,10 @@ function CreateBeat(gs:GameState) : Array
 			other.duration = note.duration;
 		}
 
-		mt += stats.RandomMusicalLength( gs.GetSecsPerMeasure() );
+		mt += GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
 
 		// see if we should sustain the previous note to the next note
-		if( Random.value < stats.sustain )
+		if( Random.value < GetAI().sustain )
 		{
 			prevNote = beat[ beat.length-1 ];
 			prevNote.duration = (mt-prevNote.measureTime)/2;
@@ -235,7 +252,7 @@ function CreateBeat(gs:GameState) : Array
 
 function Time2Quant( mt:float, secsPerMeas:float ) : int
 {
-	return Mathf.RoundToInt( (mt/secsPerMeas) * stats.numQuants );
+	return Mathf.RoundToInt( (mt/secsPerMeas) * GetAI().numQuants );
 }
 
 function AddChordToNoteSpecs( chord:Chord, notespecs:Array ) 
