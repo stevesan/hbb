@@ -57,9 +57,9 @@ function UpdateLasers( gs:GameState ) {
   lineRenderer.SetVertexCount(2);
   var group = gs.tracks[0].GetCurrentTrackMeasure(gs);
 	var pos0 = GetNoteWorldPos(0, 0, gs, group);
-	var pos1 = GetNoteWorldPos(0, gs.GetSongInfo().GetNumSamples()-1, gs, group);
+	var pos1 = GetNoteWorldPos(0, gs.GetSongSpec().GetNumSamples()-1, gs, group);
 	var pos2 = GetNoteWorldPos(measureLength, 0, gs, group);
-	var pos3 = GetNoteWorldPos(measureLength, gs.GetSongInfo().GetNumSamples()-1, gs, group);
+	var pos3 = GetNoteWorldPos(measureLength, gs.GetSongSpec().GetNumSamples()-1, gs, group);
   var origin = Vector3(0, 10, 0);
   
   if ( measureTime == 0){

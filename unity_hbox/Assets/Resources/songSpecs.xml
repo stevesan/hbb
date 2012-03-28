@@ -1,0 +1,78 @@
+<songs>
+	<song title = "Dubby Step (WALK)"
+		bpm = "80"
+		bpMeas = "4"
+		numMeasures = "8"
+		volume = "1"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		>
+		<sample res="songs/80 BPM/MELODIES/C_WHOLE NOTE" />
+		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE NOTE" />
+		<sample res="songs/80 BPM/MELODIES/F_WHOLE NOTE" />
+		<layer res="songs/80 BPM/DRUMS/80 DRUMS SLOW DUBSTEP" />
+		<layer res="songs/80 BPM/BASS/80 BASS SLOW DUBSTEP" />
+		<layer res="songs/80 BPM/PADS/80 STABS SLOW DUBSTEP" />
+	</song>
+	<song title = "Chill (TROT)"
+		bpm = "115"
+		bpMeas = "4"
+		numMeasures = "8"
+		volume = "1"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		>
+		<sample res="songs/115 BPM/MELODIES/Bb_WHOLE NOTE" />
+		<sample res="songs/115 BPM/MELODIES/C_WHOLE NOTE" />
+		<sample res="songs/115 BPM/MELODIES/F_WHOLE NOTE" />
+		<layer res="songs/115 BPM/DRUMS/115 DRUMS (MAIN)" />
+		<layer res="songs/115 BPM/BASS/115 BASS" />
+		<layer res="songs/115 BPM/PADS/115 PAD" />
+	</song>
+	<song title = "Bass Dub (CANTER)"
+		bpm = "120"
+		bpMeas = "4"
+		numMeasures = "16"
+		volume = "0.75"
+		samplesVolume = "1.0"
+		releaseSecs = "0.2"
+		>
+		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_G3" />
+		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_A_SHARP" />
+		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_C" />
+		<layer res="songs/120 BPM/OLD DRUMS/120 DRUMS DUBSTEP" />
+		<layer res="songs/120 BPM/BASS/120 BASS DUBSTEP" />
+		<layer res="songs/120 BPM/PADS/120 PAD DUBSTEP" />
+		<layer res="songs/120 BPM/MELODY/120 MELODY" />
+	</song>
+	<song title = "Bass Rock (GALLOP)"
+		bpm = "190"
+		bpMeas = "4"
+		numMeasures = "8"
+		volume = "1.0"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		>
+		<sample res="songs/190 BPM/MELODIES/D_WHOLE NOTE" />
+		<sample res="songs/190 BPM/MELODIES/Eb_WHOLE NOTE" />
+		<sample res="songs/190 BPM/MELODIES/Bb_WHOLE NOTE" />
+		<layer res="songs/190 BPM/DRUMS/190 DRUMS ROCK" />
+		<layer res="songs/190 BPM/BASS/190 BASS ROCK" />
+		<layer res="songs/190 BPM/PADS/190 PAD ROCK" />
+	</song>
+	<song title = "The Donkey (FASTER CANTER)"
+		bpm = "152"
+		bpMeas = "4"
+		numMeasures = "36"
+		volume = "1.0"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		>
+		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_B2_thedonkey" />
+		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_C3_thedonkey" />
+		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_E3_thedonkey" />
+		<layer res="songs/THE_DONKEY_152_BPM/drums_thedonkey" />
+		<layer res="songs/THE_DONKEY_152_BPM/bass_thedonkey" />
+		<layer res="songs/THE_DONKEY_152_BPM/EXTRA/arpeggio_pad_thedonkey" />
+	</song>
+</songs>

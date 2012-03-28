@@ -196,7 +196,6 @@ function Awake()
 
 	while( reader.ReadToFollowing('recordStats') )
 	{
-		Debug.Log('--'+reader.GetAttribute('noteValuePdf'));
 		var newAI = new AISpec();
 		newAI.FromXMLReader( reader );
 		levelAIs.Push( newAI );
@@ -214,6 +213,11 @@ function RandomKeyExcluding( numKeys:int, exclude:int ) : int
 	return k;
 }
 
+function GetLevel() : int
+{
+	return currLevel;
+}
+
 function GetNextMilestone() : int
 {
 	return GetAI().maxScore;
@@ -224,7 +228,7 @@ function CreateBeat(gs:GameState) : Array
 	Debug.Log('create beat called, using AI # '+currLevel);
 
 	var beat = new Array();
-	var numKeys = gs.GetSongInfo().GetNumSamples();
+	var numKeys = gs.GetSongSpec().GetNumSamples();
 
 	var mt = 0.0;
 	var sustainPrev = false;
@@ -300,7 +304,7 @@ function AddChordToNoteSpecs( chord:Chord, notespecs:Array )
 
 function Beat2Chords( gs:GameState, beat:Array ) : Array
 {
-	var numKeys = gs.GetSongInfo().GetNumSamples();
+	var numKeys = gs.GetSongSpec().GetNumSamples();
 	var chords = new Array();
 
 	var prevNote : Note = null;
@@ -352,7 +356,7 @@ function Beat2Chords( gs:GameState, beat:Array ) : Array
 //----------------------------------------
 function RepeatBeat( gs:GameState  ) : Array
 {
-	var numKeys = gs.GetSongInfo().GetNumSamples();
+	var numKeys = gs.GetSongSpec().GetNumSamples();
 
 	Debug.Log('--');
 

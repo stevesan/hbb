@@ -15,10 +15,10 @@ class ADSRWrapper
 {
 	enum ADSRState { PLAY, RELEASE, STOP };
 
-	var state = ADSRState.STOP;
+	private var state = ADSRState.STOP;
 	var src:AudioSource = null;
 	var releaseDuration:float = 0.2;
-	var releaseStart:float = 0.0;
+	private var releaseStart:float = 0.0;
 
 	function ADSRWrapper( _src:AudioSource )
 	{

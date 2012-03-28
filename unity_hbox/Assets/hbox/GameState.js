@@ -16,7 +16,7 @@ private var aiPlayer = 0;
 
 private var debugInputtingPlayer : int;
 
-var songs : SongInfo[];
+var songs : SongsManager = null;
 var activeSong : int = 0;
 var optionEchoBeat = false;
 var horseAI : HorseAI = null;
@@ -138,22 +138,25 @@ function GetDefender() : int { return 1-attacker; }
 
 function PlayRandomSample()
 {
-	var isong : int = Random.Range( 0, songs.length );
-	var ikey : int = Random.Range( 0, songs[isong].GetNumSamples() );
+	var isong : int = Random.Range( 0, songs.songSpecs.Count );
+	var ikey : int = Random.Range( 0, songs.songSpecs[isong].GetNumSamples() );
 
-	songs[isong].OnKeyDown( ikey );
+	songs.songSpecs[isong].OnKeyDown( ikey );
 	// but immediately let up - don't hold it
-	songs[isong].OnKeyUp( ikey );
+	songs.songSpecs[isong].OnKeyUp( ikey );
 }
 
-function GetSongInfo()
+function GetSongSpec() : SongSpec
 {
-	return songs[ activeSong ];
+	return songs.songSpecs[ activeSong ];
 }
 
-function GetSongAudio()
+function RestartSelectedSong()
 {
-	return songs[ activeSong ].gameObject.GetComponent( AudioSource );
+	if( survivalMode && horseAI != null )
+		GetSongSpec().PlayLayered( horseAI.GetLevel() );
+	else
+		GetSongSpec().PlayFull();
 }
 
 function ResetTesting()
@@ -177,8 +180,8 @@ function ResetTesting()
 	successTriggered = false;
 
 	// make sure we release all keys..
-	for( var key = 0; key < GetSongInfo().GetNumSamples(); key++ )
-		GetSongInfo().OnKeyUp(key);
+	for( var key = 0; key < GetSongSpec().GetNumSamples(); key++ )
+		GetSongSpec().OnKeyUp(key);
 }
 
 function ResetRound()
@@ -189,6 +192,7 @@ function ResetRound()
 	// done for this round, clear the notes immediately
 	Utils.DestroyObjsViaComponent(beatNotes);
 	beatNotes.Clear();
+
 }
 
 function ResetBeatPlayback()
@@ -220,17 +224,17 @@ function Awake() {
 
 function GetSecsPerBeat()
 {
-	return  (1.0/GetSongInfo().bpm) * 60.0;
+	return  (1.0/GetSongSpec().bpm) * 60.0;
 }
 
 function GetSecsPerMeasure()
 {
-	return GetSongInfo().bpMeas / (GetSongInfo().bpm / 60.0);
+	return GetSongSpec().bpMeas / (GetSongSpec().bpm / 60.0);
 }
 
 function GetBeatsPerMeasure()
 {
-	return GetSongInfo().bpMeas;
+	return GetSongSpec().bpMeas;
 }
 
 //----------------------------------------
@@ -287,7 +291,7 @@ function FindNote( beat : Array, measureTime : float, key : int, tol : float ) :
 
 function UpdateMusicState( t : float )
 {
-	var bps : float = GetSongInfo().bpm / 60.0;
+	var bps : float = GetSongSpec().bpm / 60.0;
 	var beatsPassedFloat : float = (t * bps);
 	
 	var prevBeat = beatsPassed;
@@ -296,7 +300,7 @@ function UpdateMusicState( t : float )
 		OnBeatChange( beatsPassed );
 
 	var prevMeasure = measure;
-	measure = Mathf.Floor( beatsPassedFloat / GetSongInfo().bpMeas );
+	measure = Mathf.Floor( beatsPassedFloat / GetSongSpec().bpMeas );
 
 	var justEnteredMeasure = ( measure != prevMeasure  );
 
@@ -324,7 +328,7 @@ function OnBeatChange( beatsPassed : int )
 
 function OnGameOverCommon()
 {
-	GetSongAudio().Stop();
+	GetSongSpec().Stop();
 }
 
 function UpdateBeatPlayback( mt : float )
@@ -335,7 +339,7 @@ function UpdateBeatPlayback( mt : float )
 		if( !beat[inote].wasPlayed && beat[inote].measureTime < mt )
 		{
 			var key = beat[inote].key;
-			GetSongInfo().OnKeyDown(key);
+			GetSongSpec().OnKeyDown(key);
 			beat[inote].wasPlayed = true;
 		}
 	}
@@ -563,7 +567,7 @@ function UpdateTesting( mt : float )
 	for( var key in GetKeysDown(mt) )
 	{
 		// play it no matter waht..
-		GetSongInfo().OnKeyDown(key);
+		GetSongSpec().OnKeyDown(key);
 		// SHAKE
 		cameraShake.DoShake();
 
@@ -602,7 +606,7 @@ function UpdateTesting( mt : float )
 
 	for( key in GetKeysUp(mt) )
 	{
-		GetSongInfo().OnKeyUp(key);
+		GetSongSpec().OnKeyUp(key);
 
 		var noteId = FindLatestNote( responseNotes, key );
 		if( noteId != -1 )
@@ -681,7 +685,7 @@ function UpdateTesting( mt : float )
 						}
 
 						// also, stop playing the sample
-						GetSongInfo().OnKeyUp( note.key );
+						GetSongSpec().OnKeyUp( note.key );
 
 						// find the response note for this key, and just pretend it's up
 						var testNoteId = FindLatestNote( responseNotes, note.key );
@@ -722,13 +726,13 @@ function UpdateRecording( mt : float )
 		var noteObj:GameObject = Instantiate( notePrefab.gameObject, Vector3(0,0,0), notePrefab.transform.rotation );
 		noteObj.GetComponent(Note).OnDown( mt, key, false, tracks[key] );
 		beatNotes.Push( noteObj.GetComponent(Note) );
-		GetSongInfo().OnKeyDown(key);
+		GetSongSpec().OnKeyDown(key);
 		cameraShake.DoShake();
 	}
 
 	for( key in GetKeysUp(mt) )
 	{
-		GetSongInfo().OnKeyUp(key);
+		GetSongSpec().OnKeyUp(key);
 		
 		var noteId = FindLatestNote( beatNotes, key );
 		if( noteId != -1 )
@@ -753,7 +757,7 @@ function EndPlayerImprov()
 	{
 		if( note.state == NoteState.Downed )
 		{
-			GetSongInfo().OnKeyUp( note.key );
+			GetSongSpec().OnKeyUp( note.key );
 			note.OnUp( GetSecsPerMeasure() );
 		}
 	}
@@ -837,15 +841,15 @@ function UpdateMenuMode()
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
 		var text = 'Select a Song: \n\n';
-		for( var s = 0; s < songs.length; s++ )
+		for( var s = 0; s < songs.songSpecs.Count; s++ )
 		{
-			text = text + 'PRESS ' +(s+1) + ' :: ' + songs[s].GetComponent(SongInfo).title + '\n';
+			text = text + 'PRESS ' +(s+1) + ' :: ' + songs.songSpecs[s].title + '\n';
 		}
 		text = text + '\nESCAPE :: back';
 		menuText.text = text;
 
 		// check for keys
-		for( s = 0; s < songs.length; s++ )
+		for( s = 0; s < songs.songSpecs.Count; s++ )
 		{
 			var inputCode = 'Song'+(s+1);
 			if( Input.GetButtonDown( inputCode ) )
@@ -945,11 +949,10 @@ function Update()
 		{
 			OnEnterMeasure();
 
-			var loopback = (measure%GetSongInfo().measures == 0 );
+			var loopback = (measure%GetSongSpec().numMeasures == 0 );
 			if( loopback )
 			{
-				GetSongAudio().Stop();
-				GetSongAudio().Play();
+				RestartSelectedSong();
 			}
 		}
 	}
@@ -968,6 +971,9 @@ function Update()
 			ResetRound();
 			for( var p = 0; p < playerLosses.length; p++ )
 				playerLosses[p] = 0;
+			survivalScore = 0;
+			if( horseAI != null )
+				horseAI.Reset();
 		}
 	}
 	else if( state == RCState.START )
@@ -980,9 +986,8 @@ function Update()
 			measure = 0;
 			measureStartTime = Time.time;
 			beatsPassed = 0;
-			GetSongAudio().Play();
+			RestartSelectedSong();
 			musicStartTime = Time.time;
-			horseAI.Reset();
 
 			// TEMP
 			if( horseAI != null && randomizeAI )
@@ -1075,7 +1080,7 @@ function Update()
 				{
 					// victory!
 					state = RCState.VICTORY;
-					GetSongAudio().Stop();
+					GetSongSpec().Stop();
 				}
 			}
 		}
@@ -1118,7 +1123,7 @@ function Update()
 			{
 				// victory!
 				state = RCState.VICTORY;
-				GetSongAudio().Stop();
+				GetSongSpec().Stop();
 			}
 
 		}
@@ -1150,7 +1155,7 @@ function Update()
 		{
 			// go to the post-prove state so we have one free measure before improv
 			state = RCState.MENU;
-			GetSongAudio().Stop();
+			GetSongSpec().Stop();
 			PlayRandomSample();
 			cameraShake.MoveToMenu();
 			musicStartTime = 0.0;
@@ -1170,7 +1175,7 @@ function Update()
 		if( Input.GetButtonDown('menuback') )
 		{
 			state = RCState.MENU;
-			GetSongAudio().Stop();
+			GetSongSpec().Stop();
 			PlayRandomSample();
 			cameraShake.MoveToMenu();
 			musicStartTime = 0.0;
@@ -1186,3 +1191,4 @@ function GetWinningPlayer()
 	if( playerLosses[0] == maxLosses ) return 1;
 	else return 0;
 }
+
