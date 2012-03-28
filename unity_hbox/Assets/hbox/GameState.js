@@ -389,6 +389,8 @@ function GetNonInputtingPlayer()
 	return 1-GetInputtingPlayer();
 }
 
+function GetAI() : HorseAI { return horseAI; }
+
 function IsAiInputting()
 {
 	return( useAI && horseAI != null && GetInputtingPlayer() == aiPlayer );
@@ -541,6 +543,7 @@ function OnSuccess()
 
 	if( survivalMode && GetInputtingPlayer()==1 && !perNoteScore ) {
 		survivalScore++;
+		horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 	}
 
 	for( var obj in eventListeners )
@@ -621,7 +624,11 @@ function UpdateTesting( mt : float )
 			{
 				// got the note fully. yay
 				GetBeatNotes()[hitNote].upHit = true;
-				if( survivalMode && perNoteScore ) survivalScore++;
+				if( survivalMode && perNoteScore )
+				{
+					survivalScore++;
+					horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
+				}
 				// use the actual note end time..
 				note.endMeasureTime = beatNotes[hitNote].endMeasureTime;
 			}
@@ -667,7 +674,11 @@ function UpdateTesting( mt : float )
 					{
 						// OK just pretend the player released it at the right time
 						note.upHit = true;
-						if( survivalMode && perNoteScore ) survivalScore++;
+						if( survivalMode && perNoteScore )
+						{
+							survivalScore++;
+							horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
+						}
 
 						// also, stop playing the sample
 						GetSongInfo().OnKeyUp( note.key );
@@ -971,6 +982,7 @@ function Update()
 			beatsPassed = 0;
 			GetSongAudio().Play();
 			musicStartTime = Time.time;
+			horseAI.Reset();
 
 			// TEMP
 			if( horseAI != null && randomizeAI )

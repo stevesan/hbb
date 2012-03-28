@@ -1,20 +1,16 @@
 <stats>
-<recordStats
-	numQuants = "16"
-	chords = "1.0"
-	dexterity = "0.5"
-	sustain = "0"
-	rhythm = "1"
-	noteValuePdf = "0,0,0.51,0.52,0"
-	maxScore = '20'
-	/>
-<recordStats
-	numQuants = "16"
-	chords = "0.2"
-	dexterity = "0.5"
-	sustain = "0"
-	rhythm = "1"
-	noteValuePdf = "0,0,0.25,0.75,0"
-	maxScore = '40'
-	/>
+<recordStats chords = "0.0" noteValuePdf = "0,0,1,0,0" maxScore = '20'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "0.0" noteValuePdf = "0,0,1,1,0" maxScore = '40'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "0.2" noteValuePdf = "0,0,1,1,0" maxScore = '60'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "0.5" noteValuePdf = "0,0,1,0.5,0" maxScore = '60'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "0.5" noteValuePdf = "0,0,1,1,0" maxScore = '80'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "0.5" noteValuePdf = "0,0,0,1,0" maxScore = '80'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
+<recordStats chords = "1.0" noteValuePdf = "0,0,0,1,0" maxScore = '100'
+	numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
 </stats>

@@ -54,7 +54,7 @@ function Update () {
 
 	mainText.text = '';
 
-	var survivedText = 'EARNED $' + gs.survivalScore + ' / 10';
+	var survivedText = 'EARNED $' + gs.survivalScore + ' / ' + gs.GetAI().GetNextMilestone();
 
 	if( GameState.inst.state == RCState.START )
 		mainText.text = 'PRESS SPACE BAR TO START';

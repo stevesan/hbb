@@ -13,6 +13,8 @@ class AISpec
 	var chords = 0.5;
 	var sustain = 0.5;
 
+	var maxScore:int = 0;
+
 	var noteValuePdf:float[];
 
 	private var noteValuePdfSampler : PdfSampler = new PdfSampler();
@@ -61,6 +63,7 @@ class AISpec
 			rhythm = parseFloat( r.GetAttribute("rhythm") );
 			noteValuePdf = Utils.ParseFloatArray( r.GetAttribute("noteValuePdf"), ','[0] );
 			noteValuePdfSampler.Reset( noteValuePdf );
+			maxScore = parseInt( r.GetAttribute('maxScore') );
 		}
 		else
 			Debug.LogError('given node was null..');
@@ -70,16 +73,36 @@ class AISpec
 var testAI:AISpec;
 var debugUseTestAI = false;
 
-private var AIs = new Array();
-var currAI:int = 0;
+private var levelAIs = new Array();
+var currLevel:int = 0;
 
 function GetAI() : AISpec
 {
 	if( debugUseTestAI )
 		return testAI;
 	else
-		return (AIs[currAI] as AISpec);
+		return (levelAIs[currLevel] as AISpec);
 }
+
+function OnScoreChange( score:int )
+{
+	while( GetAI().maxScore <= score )
+	{
+		if( currLevel == levelAIs.length-1 )
+		{
+			Debug.Log('Maxed out levelAIs');
+			break;
+		}
+		currLevel++;
+	}
+}
+
+function Reset()
+{
+	currLevel = 0;
+}
+
+function GetCurrentLevel() : int { return currLevel; }
 
 class RepeatStats
 {
@@ -176,10 +199,10 @@ function Awake()
 		Debug.Log('--'+reader.GetAttribute('noteValuePdf'));
 		var newAI = new AISpec();
 		newAI.FromXMLReader( reader );
-		AIs.Push( newAI );
+		levelAIs.Push( newAI );
 	}
 
-	Debug.Log('read '+AIs.length+' AIs from XML');
+	Debug.Log('read '+levelAIs.length+' AIs from XML');
 }
 
 function RandomKeyExcluding( numKeys:int, exclude:int ) : int
@@ -191,9 +214,14 @@ function RandomKeyExcluding( numKeys:int, exclude:int ) : int
 	return k;
 }
 
+function GetNextMilestone() : int
+{
+	return GetAI().maxScore;
+}
+
 function CreateBeat(gs:GameState) : Array
 {
-	Debug.Log('create beat called');
+	Debug.Log('create beat called, using AI # '+currLevel);
 
 	var beat = new Array();
 	var numKeys = gs.GetSongInfo().GetNumSamples();
