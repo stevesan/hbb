@@ -4,7 +4,7 @@ import System.Collections.Generic; // for List
 import System.IO;
 import System.Xml;
 
-class SongSpec
+class SongPlayer
 {
 	var title:String;
 	var bpm:int;
@@ -13,34 +13,63 @@ class SongSpec
 	var volume:float;
 	var samplesVolume:float;
 	var releaseSecs:float;
+	var layerFadeDuration:float = 2.0;
 
 	var samplePlayers : List.<ADSRWrapper>;
 	var layerPlayers : List.<AudioSource>;
+	var layer2volume : float[];
 
 	function FixedUpdate() : void
 	{
 		for( wrapper in samplePlayers )
 			wrapper.FixedUpdate();
+
+		// update layer volumes for fading in newly activated tracks
+		for( var i = 0; i < layerPlayers.Count; i++ )
+		{
+			// only fade in layers with non-zero volume
+			if( layer2volume[i] > 0.0 )
+			{
+				layer2volume[i] += Time.deltaTime * (1.0/layerFadeDuration);
+				layer2volume[i] = Mathf.Min( 1.0, layer2volume[i] );
+			}
+
+			// actually set the volume, modulated by the master song volume
+			layerPlayers[i].volume = layer2volume[i] * volume;
+		}
 	}
 
-	function PlayLayered( lastLayer:int )
+	function SetLastLayer( lastLayer:int )
 	{
-		Debug.Log('layered with n = '+lastLayer);
 		for( var i = 0; i < layerPlayers.Count; i++ )
 		{
 			if( i <= lastLayer )
 			{
-				layerPlayers[i].Stop();
-				layerPlayers[i].Play();
+				// layer should be on
+				if( layer2volume[i] == 0.0 )
+				{
+					// give it a non-zero value, so it'll get faded in on the updates
+					layer2volume[i] = 1e-8;
+				}
 			}
 			else
-				layerPlayers[i].Stop();
+				// layer should be off
+				layer2volume[i] = 0.0;
 		}
 	}
 
-	function PlayFull()
+	function UseAllLayers()
 	{
-		PlayLayered( layerPlayers.Count );
+		SetLastLayer( layerPlayers.Count-1 );
+	}
+
+	function Restart()
+	{
+		for( layer in layerPlayers )
+		{
+			layer.Stop();
+			layer.Play();
+		}
 	}
 
 	function Stop()
@@ -92,7 +121,6 @@ class SongSpec
 					var res = subtree.GetAttribute('res');
 					if( subtree.Name == 'sample' )
 					{
-						Debug.Log('found sample '+res);
 						var clip = Resources.Load( res ) as AudioClip;
 						var wrapper = new ADSRWrapper( clip );
 						wrapper.releaseDuration = releaseSecs;
@@ -101,19 +129,27 @@ class SongSpec
 					}
 					else if( subtree.Name == 'layer' )
 					{
-						Debug.Log('found layer '+res);
 						clip = Resources.Load( res ) as AudioClip;
-						var obj = new GameObject('Track playing obj');
-						var src = obj.AddComponent( AudioSource );
-						src.panLevel = 0.0;	// kill 3d effects
-						src.clip = clip;
-						src.loop = true;	// do loop, since some layers are twice as short
-						src.Stop();
-						layerPlayers.Add( src );
+						if( clip == null )
+							Debug.LogError('ERROR - Could not load song layer '+res);
+						else
+						{
+							var obj = new GameObject('Track playing obj');
+							var src = obj.AddComponent( AudioSource );
+							src.panLevel = 0.0;	// kill 3d effects
+							src.clip = clip;
+							src.loop = true;	// do loop, since some layers are twice as short
+							src.Stop();
+							layerPlayers.Add( src );
+						}
 					}
 				}
 			}
 			subtree.Close();
+
+			Debug.Log('Found ' +samplePlayers.Count+ ' samples and ' + layerPlayers.Count + ' layers');
+			// allocate
+			layer2volume = new float[ layerPlayers.Count ];
 		}
 		else
 			Debug.LogError('given node was null..');
@@ -121,7 +157,7 @@ class SongSpec
 }
 
 var songSpecsXML : TextAsset;
-var songSpecs : List.<SongSpec>;
+var players : List.<SongPlayer>;
 
 function Start () {
 
@@ -133,9 +169,9 @@ function Start () {
 	while( reader.ReadToFollowing( 'song' ) )
 	{
 		Debug.Log('found song title = '+reader.GetAttribute('title') );
-		var newSpec = new SongSpec();
+		var newSpec = new SongPlayer();
 		newSpec.ReadXML( reader );
-		songSpecs.Add( newSpec );
+		players.Add( newSpec );
 	}
 
 }
@@ -148,7 +184,7 @@ function Update () {
 //----------------------------------------
 function FixedUpdate () {
 	// update ADSR states
-	for( spec in songSpecs )
+	for( spec in players )
 	{
 		spec.FixedUpdate();
 	}

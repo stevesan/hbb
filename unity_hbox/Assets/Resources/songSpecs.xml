@@ -72,7 +72,7 @@
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_C3_thedonkey" />
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_E3_thedonkey" />
 		<layer res="songs/THE_DONKEY_152_BPM/drums_thedonkey" />
-		<layer res="songs/THE_DONKEY_152_BPM/bass_thedonkey" />
+		<layer res="songs/THE_DONKEY_152_BPM/EXTRA/pad_thedonkey" />
 		<layer res="songs/THE_DONKEY_152_BPM/EXTRA/arpeggio_pad_thedonkey" />
 	</song>
 </songs>

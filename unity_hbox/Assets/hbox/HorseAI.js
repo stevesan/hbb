@@ -228,7 +228,7 @@ function CreateBeat(gs:GameState) : Array
 	Debug.Log('create beat called, using AI # '+currLevel);
 
 	var beat = new Array();
-	var numKeys = gs.GetSongSpec().GetNumSamples();
+	var numKeys = gs.GetSongPlayer().GetNumSamples();
 
 	var mt = 0.0;
 	var sustainPrev = false;
@@ -304,7 +304,7 @@ function AddChordToNoteSpecs( chord:Chord, notespecs:Array )
 
 function Beat2Chords( gs:GameState, beat:Array ) : Array
 {
-	var numKeys = gs.GetSongSpec().GetNumSamples();
+	var numKeys = gs.GetSongPlayer().GetNumSamples();
 	var chords = new Array();
 
 	var prevNote : Note = null;
@@ -356,7 +356,7 @@ function Beat2Chords( gs:GameState, beat:Array ) : Array
 //----------------------------------------
 function RepeatBeat( gs:GameState  ) : Array
 {
-	var numKeys = gs.GetSongSpec().GetNumSamples();
+	var numKeys = gs.GetSongPlayer().GetNumSamples();
 
 	Debug.Log('--');
 
