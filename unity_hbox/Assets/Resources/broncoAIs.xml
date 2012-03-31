@@ -1,10 +1,15 @@
 <AIs>
 	<AI name = "hal9000" >
-		<phase chords = "0.0" noteValuePdf = "0,0,1,0,0" maxScore = '5'
+		<!-- Each value of noteValuePdf is the relative probability that a note
+		will have the duration/spacing of a specific number of quantizations.
+		Here, we have 16 quants per measure. So that means the 4th value of noteValuePdf
+		corresponds to the probability of a quarter note (16/4), the second value correspondes
+		to the probability of an eigth note (16/8), and so on. -->
+		<phase chords = "0.0" noteValuePdf = "0,1,0,1,0,0,0,0" maxScore = '5'
 		numQuants = "16" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.0" noteValuePdf = "0,0,1,0,0" maxScore = '15'
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,0" maxScore = '15'
 		numQuants = "16" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.0" noteValuePdf = "0,0,1,0,0" maxScore = '30'
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,0" maxScore = '30'
 		numQuants = "16" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
 
 		<phase chords = "0.0" noteValuePdf = "0,0,1,0,0" maxScore = '20'

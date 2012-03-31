@@ -634,7 +634,6 @@ function UpdateTesting( mt : float )
 					GetBeatNotes()[hitNote].upHit = true;
 					if( survivalMode && perNoteScore )
 					{
-						Debug.Log('hit line 633');
 						survivalScore++;
 						horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 					}
@@ -689,7 +688,6 @@ function UpdateTesting( mt : float )
 						note.upHit = true;
 						if( survivalMode && perNoteScore )
 						{
-							Debug.Log('hit line 685');
 							survivalScore++;
 							horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 						}

@@ -21,9 +21,9 @@ class AIPhaseSpec
 
 	function RandomMusicalLength( secsPerMeasure:float ) : float
 	{
-		// top out at 16th notes for now, 2^(5-1) = 4
-		var noteValue:int = noteValuePdfSampler.Sample();
-		var s = secsPerMeasure / Mathf.Pow( 2, noteValue );
+		var noteValue:int = noteValuePdfSampler.Sample()+1;
+		//var s = secsPerMeasure / Mathf.Pow( 2, noteValue );
+		var s = secsPerMeasure / numQuants * noteValue;
 		return s;
 	}
 
@@ -263,13 +263,14 @@ function GetNextMilestone() : int
 
 function CreateBeat(gs:GameState) : Array
 {
-	Debug.Log('create beat called, using AI # '+currPhase);
+	Debug.Log('create beat called, using AI phase # '+currPhase);
 
 	var beat = new Array();
 	var numKeys = gs.GetSongPlayer().GetNumSamples();
 
 	var mt = 0.0;
-	var sustainPrev = false;
+	var prevNoteSustained = false;
+	var prevSpacing:float;
 
 	while( mt <= gs.GetSecsPerMeasure() )
 	{
@@ -280,8 +281,10 @@ function CreateBeat(gs:GameState) : Array
 
 		if( beat.length == 1 )
 			note.key = Random.Range( 0, numKeys );
-		else if( Random.value <= GetAI().dexterity )
+		else if( Random.value <= GetAI().dexterity || prevNoteSustained )
 		{
+			// if previous note was sustained, do not stay on it - very awkward
+
 			// switch key
 			var prevNote : NoteSpec = beat[ beat.length-2 ];
 			note.key = RandomKeyExcluding( numKeys, prevNote.key );
@@ -293,8 +296,36 @@ function CreateBeat(gs:GameState) : Array
 			note.key = prevNote.key;
 		}
 
-		// make it last a little bit, to simulate what the player's inputs are like
-		note.duration = gs.timeTolSecs/2;
+		if( beat.length > 1 && Random.value > GetAI().rhythm )
+		{
+			// no creativity this note, use the previous note's duration and spacing
+			prevNote = beat[ beat.length-2 ];
+			note.duration = prevNote.duration;
+			mt += prevSpacing;
+		}
+		else
+		{
+			if( Random.value < GetAI().sustain )
+			{
+				// sustain it
+				note.duration = GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
+				prevNoteSustained = true;
+
+				// make the next note come right after the sustained time
+				mt += note.duration;
+			}
+			else
+			{
+				prevNoteSustained = false;
+				// non-sustained note
+				// make it last a little bit, to simulate what the player's inputs are like
+				note.duration = gs.timeTolSecs/2;
+
+				// next note comes after some random time
+				mt += GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
+			}
+			prevSpacing = mt - note.measureTime;
+		}
 
 		// chord?
 		if( Random.value <= GetAI().chords )
@@ -306,14 +337,6 @@ function CreateBeat(gs:GameState) : Array
 			other.duration = note.duration;
 		}
 
-		mt += GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
-
-		// see if we should sustain the previous note to the next note
-		if( Random.value < GetAI().sustain )
-		{
-			prevNote = beat[ beat.length-1 ];
-			prevNote.duration = (mt-prevNote.measureTime)/2;
-		}
 	}
 
 
