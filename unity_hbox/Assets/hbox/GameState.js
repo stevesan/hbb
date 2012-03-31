@@ -255,6 +255,9 @@ function FindLatestNote( beat:Array, key:int ) : int
 	return latestId;
 }
 
+//----------------------------------------
+//  For the given note info, find the note in the beat that matches it
+//----------------------------------------
 function FindUppedNote( beat : Array,
 		measureTime : float,
 		endMeasureTime:float,
@@ -623,14 +626,21 @@ function UpdateTesting( mt : float )
 			}
 			else
 			{
-				// got the note fully. yay
-				GetBeatNotes()[hitNote].upHit = true;
-				if( survivalMode && perNoteScore )
+				// was the target note already hit?
+				if( !beatNotes[hitNote].upHit )
 				{
-					survivalScore++;
-					horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
+					// the note wasn't already hit (ie. by the auto-up logic below), so we got it
+					// got the note fully. yay
+					GetBeatNotes()[hitNote].upHit = true;
+					if( survivalMode && perNoteScore )
+					{
+						Debug.Log('hit line 633');
+						survivalScore++;
+						horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
+					}
 				}
-				// use the actual note end time..
+
+				// always use the actual note end time..
 				note.endMeasureTime = beatNotes[hitNote].endMeasureTime;
 			}
 		}
@@ -665,6 +675,8 @@ function UpdateTesting( mt : float )
 		}
 		else
 		{
+			// the down was hit, but what about the up?
+
 			// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
 			if( !note.upHit )
 			{
@@ -677,6 +689,7 @@ function UpdateTesting( mt : float )
 						note.upHit = true;
 						if( survivalMode && perNoteScore )
 						{
+							Debug.Log('hit line 685');
 							survivalScore++;
 							horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 						}
@@ -979,7 +992,7 @@ function Update()
 				playerLosses[p] = 0;
 			survivalScore = 0;
 			if( horseAI != null )
-				horseAI.Reset();
+				horseAI.Reset( GetSongPlayer().broncoAI );
 		}
 	}
 	else if( state == RCState.START )

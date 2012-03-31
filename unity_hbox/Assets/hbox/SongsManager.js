@@ -13,6 +13,8 @@ class SongPlayer
 	var volume:float;
 	var samplesVolume:float;
 	var releaseSecs:float;
+	var broncoAI:String;
+
 	var layerFadeDuration:float = 2.0;
 
 	var samplePlayers : List.<ADSRWrapper>;
@@ -110,6 +112,7 @@ class SongPlayer
 			volume = parseFloat( node.GetAttribute('volume') );
 			samplesVolume = parseFloat( node.GetAttribute('samplesVolume') );
 			releaseSecs = parseFloat( node.GetAttribute('releaseSecs') );
+			broncoAI = node.GetAttribute('broncoAI');
 
 			var subtree = node.ReadSubtree();
 

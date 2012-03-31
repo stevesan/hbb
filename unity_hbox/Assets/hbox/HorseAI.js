@@ -4,7 +4,7 @@ import System.Xml;
 
 var aiStatsXML : TextAsset;
 
-class AISpec
+class AIPhaseSpec
 {
 	var numQuants = 16;
 
@@ -52,7 +52,7 @@ class AISpec
 	//----------------------------------------
 	//  Assumes that the reader is currently at an "recordStats" element
 	//----------------------------------------
-	function FromXMLReader( r:XmlReader )
+	function ReadXML( r:XmlReader )
 	{
 		if( r != null )
 		{
@@ -70,39 +70,76 @@ class AISpec
 	}
 }
 
-var testAI:AISpec;
+class AISpec
+{
+	var name:String;
+	var phases = new List.<AIPhaseSpec>();
+
+	function ReadXML( r:XmlReader )
+	{
+		if( r != null )
+		{
+			name = r.GetAttribute('name');
+
+			var subtree = r.ReadSubtree();
+
+			while( subtree.ReadToFollowing('phase') )
+			{
+				var newPhase = new AIPhaseSpec();
+				newPhase.ReadXML( subtree );
+				phases.Add( newPhase );
+			}
+			subtree.Close();
+			Debug.Log('Found ' + phases.Count + ' phases for AI ' + name );
+		}
+		else
+			Debug.LogError('null xml reader was given');
+	}
+}
+
+var testAI:AIPhaseSpec;
 var debugUseTestAI = false;
 
-private var levelAIs = new Array();
-var currLevel:int = 0;
+private var AIs = new List.<AISpec>();
+var currAI:int = 0;
+var currPhase:int = 0;
 
-function GetAI() : AISpec
+function GetAI() : AIPhaseSpec
 {
 	if( debugUseTestAI )
 		return testAI;
 	else
-		return (levelAIs[currLevel] as AISpec);
+		return (AIs[currAI].phases[currPhase] as AIPhaseSpec);
 }
 
 function OnScoreChange( score:int )
 {
 	while( GetAI().maxScore <= score )
 	{
-		if( currLevel == levelAIs.length-1 )
+		if( currPhase == AIs[currAI].phases.Count-1 )
 		{
 			Debug.Log('Maxed out levelAIs');
 			break;
 		}
-		currLevel++;
+		currPhase++;
 	}
 }
 
-function Reset()
+function Reset( aiName:String )
 {
-	currLevel = 0;
+	for( var i = 0; i < AIs.Count; i++ )
+	{
+		if( AIs[i].name == aiName )
+		{
+			Debug.Log('Using AI named '+aiName);
+			currAI = i;
+			break;
+		}
+	}
+	currPhase = 0;
 }
 
-function GetCurrentLevel() : int { return currLevel; }
+function GetCurrentLevel() : int { return currPhase; }
 
 class RepeatStats
 {
@@ -194,14 +231,15 @@ function Awake()
 	// Parse the first AI and use it
 	var reader = XmlReader.Create( new StringReader( aiStatsXML.text ) );
 
-	while( reader.ReadToFollowing('recordStats') )
+	while( reader.ReadToFollowing('AI') )
 	{
-		var newAI = new AISpec();
-		newAI.FromXMLReader( reader );
-		levelAIs.Push( newAI );
+		Debug.Log('Found AI, name = '+reader.GetAttribute('name') );
+		var newSpec = new AISpec();
+		newSpec.ReadXML( reader );
+		AIs.Add( newSpec );
 	}
 
-	Debug.Log('read '+levelAIs.length+' AIs from XML');
+	Debug.Log('read '+AIs.Count+' AIs from XML');
 }
 
 function RandomKeyExcluding( numKeys:int, exclude:int ) : int
@@ -215,7 +253,7 @@ function RandomKeyExcluding( numKeys:int, exclude:int ) : int
 
 function GetLevel() : int
 {
-	return currLevel;
+	return currPhase;
 }
 
 function GetNextMilestone() : int
@@ -225,7 +263,7 @@ function GetNextMilestone() : int
 
 function CreateBeat(gs:GameState) : Array
 {
-	Debug.Log('create beat called, using AI # '+currLevel);
+	Debug.Log('create beat called, using AI # '+currPhase);
 
 	var beat = new Array();
 	var numKeys = gs.GetSongPlayer().GetNumSamples();

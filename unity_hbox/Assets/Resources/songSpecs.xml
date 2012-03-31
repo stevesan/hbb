@@ -6,6 +6,7 @@
 		volume = "1"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
+		broncoAI = 'supereasy'
 		>
 		<sample res="songs/80 BPM/MELODIES/C_WHOLE NOTE" />
 		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE NOTE" />
@@ -21,6 +22,7 @@
 		volume = "1"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
+		broncoAI = 'hal9000'
 		>
 		<sample res="songs/115 BPM/MELODIES/Bb_WHOLE NOTE" />
 		<sample res="songs/115 BPM/MELODIES/C_WHOLE NOTE" />
@@ -36,6 +38,7 @@
 		volume = "0.75"
 		samplesVolume = "1.0"
 		releaseSecs = "0.2"
+		broncoAI = 'hal9000'
 		>
 		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_G3" />
 		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_A_SHARP" />
@@ -52,6 +55,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
+		broncoAI = 'hal9000'
 		>
 		<sample res="songs/190 BPM/MELODIES/D_WHOLE NOTE" />
 		<sample res="songs/190 BPM/MELODIES/Eb_WHOLE NOTE" />
@@ -67,6 +71,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
+		broncoAI = 'hal9000'
 		>
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_B2_thedonkey" />
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_C3_thedonkey" />
