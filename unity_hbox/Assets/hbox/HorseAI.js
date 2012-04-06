@@ -319,7 +319,7 @@ function CreateBeat(gs:GameState) : Array
 				prevNoteSustained = false;
 				// non-sustained note
 				// make it last a little bit, to simulate what the player's inputs are like
-				note.duration = gs.timeTolSecs/2;
+				note.duration = 0;
 
 				// next note comes after some random time
 				mt += GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
