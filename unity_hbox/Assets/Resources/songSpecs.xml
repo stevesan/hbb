@@ -71,7 +71,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = 'hal9000'
+		broncoAI = 'supereasy'
 		>
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_B2_thedonkey" />
 		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_C3_thedonkey" />

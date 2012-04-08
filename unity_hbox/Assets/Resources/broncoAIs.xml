@@ -5,8 +5,9 @@
 		Here, we have 16 quants per measure. So that means the 4th value of noteValuePdf
 		corresponds to the probability of a quarter note (16/4), the second value correspondes
 		to the probability of an eigth note (16/8), and so on. -->
-		<phase chords = "0.0" noteValuePdf = "0,1,0,1,0,0,0,0" maxScore = '5'
-		numQuants = "16" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
+
+		<phase chords = "0.0" noteValuePdf = "0,1,0,1,0,0,0,0" maxScore = '500'
+		numQuants = "16" dexterity = "0.5" sustain = "0.0" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,0" maxScore = '15'
 		numQuants = "16" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,0" maxScore = '30'
@@ -28,6 +29,9 @@
 		numQuants = "16" dexterity = "0.5" sustain = "0" rhythm = "1" />
 	</AI>
 	<AI name = "supereasy" >
+		<phase chords = "0.0" noteValuePdf = "0,0,0,0,0,0,0,1" maxScore = '500'
+               numQuants = "32" dexterity = "0.5" sustain = "1.0" rhythm = "1" />
+
 		<phase chords = "0.0" noteValuePdf = "0,1,0,0,0" maxScore = '5'
 		numQuants = "16" dexterity = "0.5" sustain = "1.0" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "0,1,0,0,0" maxScore = '15'

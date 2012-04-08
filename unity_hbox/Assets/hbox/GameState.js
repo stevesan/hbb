@@ -27,6 +27,7 @@ var debugTestAI = false;
 var survivalMode = false;
 var survivalScore:int;
 var perNoteScore = false;
+var debugKeysDown = false;
 
 var timeTolSecs : float = 0.15; // never put this above 0.3..since 190BPM is our fastest song, and that would make it not distinguish between 16th notes
 var cameraShake : Shake = null;
@@ -761,6 +762,7 @@ function UpdateRecording( mt : float )
 
 function EndPlayerImprov()
 {
+	// make all the notes "go up"
 	for( var note:Note in beatNotes )
 	{
 		if( note.state == NoteState.Downed )
@@ -1050,11 +1052,11 @@ function Update()
 
 		if( IsInPostTolerance() )
 			// if they add any notes, assume they're on the last beat
-			UpdateRecording( GetSecsPerMeasure() );
-		if( JustExitedPostTol() )
+			UpdateRecording( GetSecsPerMeasure()+mt );
+		else if( JustExitedPostTol() )
 		{
 			// do one more..
-			UpdateRecording( GetSecsPerMeasure() );
+			UpdateRecording( GetSecsPerMeasure()+mt );
 			EndPlayerImprov();
 			// make the notes all blue immediately
 			ResetTesting();
@@ -1110,7 +1112,18 @@ function Update()
 		if( JustEnteredPreTol() && IsAiInputting() )
 		{
 			if( survivalMode )
+			{
 				aiInputs = horseAI.CreateBeat( this );
+				if( debugKeysDown )
+				{
+					var s = '';
+					for( var j = 0; j < aiInputs.length; j++ )
+					{
+						s += '| '+aiInputs[j].key + ','+aiInputs[j].measureTime;
+					}
+					Debug.Log(s);
+				}
+			}
 			else
 				aiInputs = horseAI.RepeatBeat(this);
 		}

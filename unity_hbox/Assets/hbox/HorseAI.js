@@ -261,6 +261,37 @@ function GetNextMilestone() : int
 	return GetAI().maxScore;
 }
 
+//----------------------------------------
+//  Looks for instances of key which end at endMt, and makes them end earlier
+//----------------------------------------
+function HalvePreviousSustain( notes:Array, key:int, endMt:float )
+{
+	for( var i = 0; i < notes.length; i++ )
+	{
+		var note = (notes[i] as NoteSpec);
+		if( note.key == key &&
+				Mathf.Abs(endMt-(note.measureTime+note.duration)) < 1e-4 )
+				{
+					note.duration /= 2.0;
+				}
+	}
+}
+
+//----------------------------------------
+//  Same as above, except it does it for all keys..
+//----------------------------------------
+function HalvePreviousSustains( notes:Array, endMt:float )
+{
+	for( var i = 0; i < notes.length; i++ )
+	{
+		var note = (notes[i] as NoteSpec);
+		if( Mathf.Abs(endMt-(note.measureTime+note.duration)) < 1e-4 )
+		{
+			note.duration /= 2.0;
+		}
+	}
+}
+
 function CreateBeat(gs:GameState) : Array
 {
 	Debug.Log('create beat called, using AI phase # '+currPhase);
@@ -272,34 +303,33 @@ function CreateBeat(gs:GameState) : Array
 	var prevNoteSustained = false;
 	var prevSpacing:float;
 
-	while( mt <= gs.GetSecsPerMeasure() )
+	while( mt <= gs.GetSecsPerMeasure()+1e-4 )
 	{
+		var prevNote:NoteSpec = null;
+		if( beat.length > 0 ) prevNote = beat[ beat.length-1 ];
+
 		var note = new NoteSpec();
-		beat.Push( note );
 
 		note.measureTime = mt;
 
-		if( beat.length == 1 )
+		if( prevNote == null )
 			note.key = Random.Range( 0, numKeys );
-		else if( Random.value <= GetAI().dexterity || prevNoteSustained )
+		else if( Random.value <= GetAI().dexterity )
 		{
 			// if previous note was sustained, do not stay on it - very awkward
 
 			// switch key
-			var prevNote : NoteSpec = beat[ beat.length-2 ];
 			note.key = RandomKeyExcluding( numKeys, prevNote.key );
 		}
 		else
 		{
 			// use previous note's key
-			prevNote = beat[ beat.length-2 ];
 			note.key = prevNote.key;
 		}
 
-		if( beat.length > 1 && Random.value > GetAI().rhythm )
+		if( prevNote != null && Random.value > GetAI().rhythm )
 		{
 			// no creativity this note, use the previous note's duration and spacing
-			prevNote = beat[ beat.length-2 ];
 			note.duration = prevNote.duration;
 			mt += prevSpacing;
 		}
@@ -327,16 +357,20 @@ function CreateBeat(gs:GameState) : Array
 			prevSpacing = mt - note.measureTime;
 		}
 
+		HalvePreviousSustain( beat, note.key, note.measureTime );
+		beat.Push( note );
+
 		// chord?
 		if( Random.value <= GetAI().chords )
 		{
 			var other = new NoteSpec();
-			beat.Push( other );
-			other.measureTime = mt;
+			other.measureTime = note.measureTime;
 			other.key = RandomKeyExcluding( numKeys, note.key );
 			other.duration = note.duration;
-		}
 
+			HalvePreviousSustains( beat, other.measureTime );
+			beat.Push( other );
+		}
 	}
 
 
@@ -406,8 +440,6 @@ function Beat2Chords( gs:GameState, beat:Array ) : Array
 		prevNote = note;
 	}
 
-	Debug.Log('num chords = ' + chords.length);
-
 	return chords;
 }
 
@@ -418,8 +450,6 @@ function Beat2Chords( gs:GameState, beat:Array ) : Array
 function RepeatBeat( gs:GameState  ) : Array
 {
 	var numKeys = gs.GetSongPlayer().GetNumSamples();
-
-	Debug.Log('--');
 
 	var notespecs = new Array();
 	var chords = Beat2Chords( gs, gs.GetBeatNotes() );

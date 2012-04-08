@@ -45,7 +45,7 @@ function UpdateCountdown( gs:GameState, msg:String, player:int )
 	var b = gs.GetBeatsPassed();
 	var countNumber = (bpM - (b%bpM));
 
-	prompts[ player  ].text = countNumber + "\n" + msg;
+	prompts[ player  ].text = msg + "\n" + countNumber;
 	prompts[ 1-player ].text = '';
 }
 
@@ -68,17 +68,22 @@ function Update () {
 	else
 	{
 		if( gs.state == RCState.POST_ATTACK )
-			UpdateCountdown( gs, "REPEAT!", gs.GetDefender() );
+			UpdateCountdown( gs, "Repeat in", gs.GetDefender() );
 		else if( gs.state == RCState.POST_DEFEND )
 		{
 			if( gs.survivalMode )
-				UpdateCountdown( gs, "Play!", gs.GetAttacker() );
+				UpdateCountdown( gs, "Play in", gs.GetAttacker() );
 			else
-				UpdateCountdown( gs, "REPEAT!", gs.GetAttacker() );
+				UpdateCountdown( gs, "Repeat in", gs.GetAttacker() );
 		}
 		else if( gs.state == RCState.POST_REPEAT )
 			// we prompt the defender here, who will soon become the attacker
-			UpdateCountdown( gs, "Play!", gs.GetDefender() );
+			UpdateCountdown( gs, "Play in", gs.GetDefender() );
+		else
+		{
+			prompts[ 0 ].text = '';
+			prompts[ 1 ].text = '';
+		}
 
 		if( gs.state != RCState.MENU && gs.survivalMode )
 			mainText.text = survivedText;
