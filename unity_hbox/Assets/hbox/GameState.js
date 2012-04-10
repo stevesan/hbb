@@ -323,7 +323,8 @@ function OnBeatChange( beatsPassed : int )
 
 	for( var obj in eventListeners )
 	{
-		obj.SendMessage( "OnBeatChange", SendMessageOptions.DontRequireReceiver );
+		if( obj != null )
+			obj.SendMessage( "OnBeatChange", SendMessageOptions.DontRequireReceiver );
 	}
 }
 
@@ -528,7 +529,8 @@ function OnMessedUp()
 
 		for( var obj in eventListeners )
 		{
-			obj.SendMessage( "OnMessedUp", SendMessageOptions.DontRequireReceiver );
+			if( obj != null )
+				obj.SendMessage( "OnMessedUp", SendMessageOptions.DontRequireReceiver );
 		}
 	}
 }
@@ -553,7 +555,8 @@ function OnSuccess()
 
 	for( var obj in eventListeners )
 	{
-		obj.SendMessage( "OnSuccess", GetInputtingPlayer(), SendMessageOptions.DontRequireReceiver );
+		if( obj != null )
+			obj.SendMessage( "OnSuccess", GetInputtingPlayer(), SendMessageOptions.DontRequireReceiver );
 	}
 }
 

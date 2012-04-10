@@ -9,6 +9,8 @@ var successAnims : FadeAnim[];
 var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
 
+var avatars : Renderer[];
+
 function Start()
 {
 	// force the success anim fades to be exactly one beat
@@ -87,6 +89,14 @@ function Update () {
 
 		if( gs.state != RCState.MENU && gs.survivalMode )
 			mainText.text = survivedText;
+	}
+
+	for( var i = 0; i < avatars.length; i++ )
+	{
+		if( i == gs.GetInputtingPlayer() )
+			avatars[i].GetComponent(PulseWithBeat).PlayIdem();
+		else
+			avatars[i].GetComponent(PulseWithBeat).Stop();
 	}
 	
 }
