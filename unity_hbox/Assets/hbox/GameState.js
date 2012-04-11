@@ -157,6 +157,20 @@ function RestartSelectedSong()
 	GetSongPlayer().Restart();
 }
 
+function EndTesting()
+{
+	for( var note:Note in GetBeatNotes() )
+	{
+		if( !note.downHit )
+		{
+			// past tolerance - messed up!
+			note.type = NoteType.Miss;
+			note.OnMiss();
+			OnMessedUp();
+		}
+	}
+}
+
 function ResetTesting()
 {
 	var beat = GetBeatNotes();
@@ -763,7 +777,7 @@ function UpdateRecording( mt : float )
 	}
 }
 
-function EndPlayerImprov()
+function EndRecording()
 {
 	// make all the notes "go up"
 	for( var note:Note in beatNotes )
@@ -1060,7 +1074,7 @@ function Update()
 		{
 			// do one more..
 			UpdateRecording( GetSecsPerMeasure()+mt );
-			EndPlayerImprov();
+			EndRecording();
 			// make the notes all blue immediately
 			ResetTesting();
 		}
@@ -1089,11 +1103,11 @@ function Update()
 
 		if( IsInPostTolerance() )
 			UpdateTesting( GetSecsPerMeasure() + mt );
-
-		if( JustExitedPostTol() ) {
+		else if( JustExitedPostTol() ) {
 			// do one final update, to register success/fail
 			UpdateTesting( GetSecsPerMeasure() + mt );
 			// Reset for next phase
+			EndTesting();
 			ResetTesting();
 
 			if( survivalMode )
@@ -1152,6 +1166,7 @@ function Update()
 			// do one final update, to register success/fail
 			UpdateTesting( GetSecsPerMeasure() + mt );
 			// reset round
+			EndTesting();
 			ResetRound();
 			ResetTesting();
 

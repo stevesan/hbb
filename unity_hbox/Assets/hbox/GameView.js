@@ -57,6 +57,8 @@ function Update () {
 	mainText.text = '';
 
 	var survivedText = 'EARNED $' + gs.survivalScore + ' / ' + gs.GetAI().GetNextMilestone();
+	prompts[ 0 ].text = '';
+	prompts[ 1 ].text = '';
 
 	if( GameState.inst.state == RCState.START )
 		mainText.text = 'PRESS SPACE BAR TO START';
@@ -81,11 +83,6 @@ function Update () {
 		else if( gs.state == RCState.POST_REPEAT )
 			// we prompt the defender here, who will soon become the attacker
 			UpdateCountdown( gs, "Play in", gs.GetDefender() );
-		else
-		{
-			prompts[ 0 ].text = '';
-			prompts[ 1 ].text = '';
-		}
 
 		if( gs.state != RCState.MENU && gs.survivalMode )
 			mainText.text = survivedText;
@@ -96,7 +93,7 @@ function Update () {
 		if( i == gs.GetInputtingPlayer() )
 			avatars[i].GetComponent(PulseWithBeat).PlayIdem();
 		else
-			avatars[i].GetComponent(PulseWithBeat).Stop();
+			avatars[i].GetComponent(PulseWithBeat).StopAfterBeat();
 	}
 	
 }

@@ -1,5 +1,5 @@
 
-enum PulseState { Rest, Play };
+enum PulseState { Rest, FinishingBeat, Play };
 
 var pulseScale = Vector3(2,2,2);
 var loop = true;
@@ -7,6 +7,7 @@ var playOnAwake = true;
 
 private var state = PulseState.Rest;
 private var restScale : Vector3;
+private var lastBeatTime : float;
 
 // Important to do this on Start, because if we Play, then we refer to GameState.inst
 function Start()
@@ -40,6 +41,18 @@ function Stop() : void
 	}
 }
 
+//----------------------------------------
+//  Stops when the current beat is up
+//----------------------------------------
+function StopAfterBeat() : void
+{
+	if( state == PulseState.Play )
+	{
+		state = PulseState.FinishingBeat;
+		lastBeatTime = GameState.inst.GetMeasureTime() % GameState.inst.GetSecsPerBeat();
+	}
+}
+
 function Update ()
 {
 	if( state == PulseState.Play )
@@ -49,8 +62,20 @@ function Update ()
 		var alpha = (mt % secsPerBeat) / secsPerBeat;
 		var s = Vector3.Lerp( pulseScale, Vector3(1,1,1), alpha );
 		transform.localScale = Vector3.Scale( restScale, s );
-
-		// don't handle looping here, since we should rely on "OnBeatChange" to keep everything sync'd up
+	}
+	else if( state == PulseState.FinishingBeat )
+	{
+		if( lastBeatTime < GameState.inst.GetSecsPerBeat() )
+		{
+			alpha = lastBeatTime / GameState.inst.GetSecsPerBeat();
+			s = Vector3.Lerp( pulseScale, Vector3(1,1,1), alpha );
+			transform.localScale = Vector3.Scale( restScale, s );
+			lastBeatTime += Time.deltaTime;
+		}
+		else
+		{
+			state = PulseState.Rest;
+		}
 	}
 	else
 	{
