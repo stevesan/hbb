@@ -90,7 +90,7 @@ class AISpec
 				phases.Add( newPhase );
 			}
 			subtree.Close();
-			Debug.Log('Found ' + phases.Count + ' phases for AI ' + name );
+			Debug.Log('OK Found ' + phases.Count + ' phases for AI ' + name );
 		}
 		else
 			Debug.LogError('null xml reader was given');
@@ -98,7 +98,8 @@ class AISpec
 }
 
 var testAI:AIPhaseSpec;
-var debugUseTestAI = false;
+var debugUseTestAIPhase = false;
+var debugOverrideAIName:String = null;
 
 private var AIs = new List.<AISpec>();
 var currAI:int = 0;
@@ -106,7 +107,7 @@ var currPhase:int = 0;
 
 function GetAI() : AIPhaseSpec
 {
-	if( debugUseTestAI )
+	if( debugUseTestAIPhase )
 		return testAI;
 	else
 		return (AIs[currAI].phases[currPhase] as AIPhaseSpec);
@@ -127,15 +128,30 @@ function OnScoreChange( score:int )
 
 function Reset( aiName:String )
 {
+	if( debugOverrideAIName != null && debugOverrideAIName != "" )
+	{
+		Debug.Log('WARNING: Forcing the use of AI name = '+debugOverrideAIName);
+		aiName = debugOverrideAIName;
+	}
+
+	var found = false;
 	for( var i = 0; i < AIs.Count; i++ )
 	{
 		if( AIs[i].name == aiName )
 		{
 			Debug.Log('Using AI named '+aiName);
 			currAI = i;
+			found = true;
 			break;
 		}
 	}
+
+	if( !found )
+	{
+		Debug.LogError('Could not find AI named ' + aiName + ' defaulting to first one');
+		currAI = 0;
+	}
+
 	currPhase = 0;
 }
 
@@ -224,22 +240,25 @@ class Chord
 
 function Awake()
 {
-	// testing
-	var floats = Utils.ParseFloatArray( "1.23,4.56,7.89", ','[0] );
-	Debug.Log( ''+floats[1]);
-
 	// Parse the first AI and use it
 	var reader = XmlReader.Create( new StringReader( aiStatsXML.text ) );
 
-	while( reader.ReadToFollowing('AI') )
+	if( reader == null )
 	{
-		Debug.Log('Found AI, name = '+reader.GetAttribute('name') );
-		var newSpec = new AISpec();
-		newSpec.ReadXML( reader );
-		AIs.Add( newSpec );
+		Debug.LogError('could not create XML reader for ai specs!');
 	}
+	else
+	{
+		while( reader.ReadToFollowing('AI') )
+		{
+			Debug.Log('OK Found AI, name = '+reader.GetAttribute('name') );
+			var newSpec = new AISpec();
+			newSpec.ReadXML( reader );
+			AIs.Add( newSpec );
+		}
 
-	Debug.Log('read '+AIs.Count+' AIs from XML');
+		Debug.Log('OK read '+AIs.Count+' AIs from XML');
+	}
 }
 
 function RandomKeyExcluding( numKeys:int, exclude:int ) : int
@@ -294,7 +313,7 @@ function HalvePreviousSustains( notes:Array, endMt:float )
 
 function CreateBeat(gs:GameState) : Array
 {
-	Debug.Log('create beat called, using AI phase # '+currPhase);
+	//Debug.Log('create beat called, using AI phase # '+currPhase);
 
 	var beat = new Array();
 	var numKeys = gs.GetSongPlayer().GetNumSamples();

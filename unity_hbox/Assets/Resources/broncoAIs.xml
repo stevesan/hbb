@@ -1,4 +1,18 @@
 <AIs>
+	<AI name = "steveTester">
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '5' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '10' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '15' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '20' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '25' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '30' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '35' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '40' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '45' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '50' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '55' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '60' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+	</AI>
 	<AI name = "hal9000" >
 		<!-- Each value of noteValuePdf is the relative probability that a note
 		will have the duration/spacing of a specific number of quantizations.

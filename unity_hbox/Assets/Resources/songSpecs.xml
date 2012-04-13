@@ -1,20 +1,43 @@
 <songs>
-	<song title = "Dubby Step (WALK)"
+	<song title = "Slow and Steady (WALK)"
 		bpm = "80"
 		bpMeas = "4"
 		numMeasures = "8"
 		volume = "1"
-		samplesVolume = "1.0"
+		samplesVolume = "0.7"
 		releaseSecs = "0.5"
 		broncoAI = 'dubbystep'
 		>
+		<!-- melodies -->
 		<sample res="songs/80 BPM/MELODIES/C_WHOLE NOTE" />
 		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE NOTE" />
 		<sample res="songs/80 BPM/MELODIES/F_WHOLE NOTE" />
-		<layer res="songs/80 BPM/DRUMS/80 DRUMS SLOW DUBSTEP" />
-		<layer res="songs/80 BPM/BASS/80 BASS SLOW DUBSTEP" />
-		<layer res="songs/80 BPM/PADS/80 STABS SLOW DUBSTEP" />
+		
+		<!-- drums -->
+		<layer res="songs/80 BPM/DRUMS/Slow and Steady_80_drums_01" />
+		<layer res="songs/80 BPM/DRUMS/Slow and Steady_80_drums_02" />
+
+		<!-- bass samples -->
+		<layer res="songs/80 BPM/BASS/Slow and Steady_80_bass_01" />
+		<layer res="songs/80 BPM/BASS/Slow and Steady_80_bass_02" />
+		
+		<!-- ambient bass layer -->
+		<layer res="songs/80 BPM/BASS/Slow and Steady_80_bass_03" />
+
+		<!-- guitar layers -->
+		<layer res="songs/80 BPM/GUITAR/Slow and Steady_80_guitar_trem_01" />
+		<layer res="songs/80 BPM/GUITAR/Slow and Steady_80_guitar_palm_mutes_02" />
+		<layer res="songs/80 BPM/GUITAR/Slow and Steady_80_guitar_phasers_03" />
+		<layer res="songs/80 BPM/GUITAR/Slow and Steady_80_guitar_one_shot_04" />
+
+		<!-- synth layers -->
+		<layer res="songs/80 BPM/SYNTH/Slow and Steady_80_synth_hits" />
+
+		<!-- flutes -->
+		<layer res="songs/80 BPM/SYNTH/Slow and Steady_80_flutes" />
+
 	</song>
+
 	<song title = "Chill (TROT)"
 		bpm = "115"
 		bpMeas = "4"
@@ -24,34 +47,63 @@
 		releaseSecs = "0.5"
 		broncoAI = 'chill'
 		>
+		<!-- melodies -->
 		<sample res="songs/115 BPM/MELODIES/Bb_WHOLE NOTE" />
 		<sample res="songs/115 BPM/MELODIES/C_WHOLE NOTE" />
 		<sample res="songs/115 BPM/MELODIES/F_WHOLE NOTE" />
-		<layer res="songs/115 BPM/DRUMS/115 DRUMS (MAIN)" />
-		<layer res="songs/115 BPM/BASS/115 BASS" />
-		<layer res="songs/115 BPM/PADS/115 PAD" />
+		
+		<!-- drums -->
+		<layer res="songs/115 BPM/DRUMS/Chill_115_drums_01" />
+
+		<!-- bass -->
+		<layer res="songs/115 BPM/BASS/Chill_115_bass_01" />
+
+		<!-- guitar -->
+		<layer res="songs/115 BPM/GUITAR/Chill_115_guitar_layer_01" />
+		<layer res="songs/115 BPM/GUITAR/Chill_115_guitar_layer_02" />
+		<layer res="songs/115 BPM/GUITAR/Chill_115_guitar_layer_03" />
+		<layer res="songs/115 BPM/GUITAR/Chill_115_guitar_layer_04" />
+
+		<!-- keys -->
+		<layer res="songs/115 BPM/PADS/Chill_115_keys_01" />
 	</song>
-	<song title = "Bass Dub (CANTER)"
-		bpm = "120"
+    
+	<song title = "Hot to Trot (CANTER)"
+		bpm = "135"
 		bpMeas = "4"
 		numMeasures = "16"
-		volume = "0.75"
+		volume = "1"
 		samplesVolume = "1.0"
 		releaseSecs = "0.2"
 		broncoAI = 'hal9000'
 		>
-		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_G3" />
-		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_A_SHARP" />
-		<sample res="songs/120 BPM/120_NEW_MELODY/120 NEW_MELODY_C" />
-		<layer res="songs/120 BPM/OLD DRUMS/120 DRUMS DUBSTEP" />
-		<layer res="songs/120 BPM/BASS/120 BASS DUBSTEP" />
-		<layer res="songs/120 BPM/PADS/120 PAD DUBSTEP" />
-		<layer res="songs/120 BPM/MELODY/120 MELODY" />
+		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
+		<sample res="songs/135 BPM/MELODY/135 MELODY_C" />
+		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
+
+		<!-- drum layers -->
+		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_01" />
+		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_02" />
+
+		<!-- bass -->
+		<layer res="songs/135 BPM/BASS/Hot_to_Trot_135_prev_120_bass_01" />
+
+		<!-- guitar -->
+		<layer res="songs/135 BPM/GUITAR/Hot_to_Trot_135_prev_120_guitar_clean_03" />
+		<layer res="songs/135 BPM/GUITAR/Hot_to_Trot_135_prev_120_guitar_clean_04" />
+		<layer res="songs/135 BPM/GUITAR/Hot_to_Trot_135_prev_120_guitar_dist_01" />
+		<layer res="songs/135 BPM/GUITAR/Hot_to_Trot_135_prev_120_guitar_dist_02" />
+		
+		<!-- synth -->
+		<layer res="songs/135 BPM/SYNTH/Hot_to_Trot_135_prev_120_synth_pad_01" />
+		<layer res="songs/135 BPM/SYNTH/Hot_to_Trot_135_prev_120_synth_melody_02" />
+
+
 	</song>
-	<song title = "Bass Rock (GALLOP)"
+	<song title = "Cluster Strut (GALLOP)"
 		bpm = "190"
 		bpMeas = "4"
-		numMeasures = "8"
+		numMeasures = "16"
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
@@ -60,24 +112,53 @@
 		<sample res="songs/190 BPM/MELODIES/D_WHOLE NOTE" />
 		<sample res="songs/190 BPM/MELODIES/Eb_WHOLE NOTE" />
 		<sample res="songs/190 BPM/MELODIES/Bb_WHOLE NOTE" />
-		<layer res="songs/190 BPM/DRUMS/190 DRUMS ROCK" />
-		<layer res="songs/190 BPM/BASS/190 BASS ROCK" />
-		<layer res="songs/190 BPM/PADS/190 PAD ROCK" />
+
+		<!-- drums -->
+		<layer res="songs/190 BPM/DRUMS/Cluster_Strut_190_drums" />
+
+		<!-- bass -->
+		<layer res="songs/190 BPM/BASS/Cluster_Strut_190_bass" />
+
+		<!-- guitar -->
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_01" />
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_02" />
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_03" />
+
+		<!-- synth -->
+		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_lead" />
+		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_pad" />
+
+
 	</song>
-	<song title = "The Donkey (FASTER CANTER)"
-		bpm = "152"
+
+	<song title = "The Donkey 2 (FASTER-ER CANTER)"
+		bpm = "190"
 		bpMeas = "4"
-		numMeasures = "36"
+		numMeasures = "32"
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = 'thedonkey'
 		>
-		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_B2_thedonkey" />
-		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_C3_thedonkey" />
-		<sample res="songs/THE_DONKEY_152_BPM/MELODY/melody_E3_thedonkey" />
-		<layer res="songs/THE_DONKEY_152_BPM/drums_thedonkey" />
-		<layer res="songs/THE_DONKEY_152_BPM/EXTRA/pad_thedonkey" />
-		<layer res="songs/THE_DONKEY_152_BPM/EXTRA/arpeggio_pad_thedonkey" />
+		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_A" />
+		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_C" />
+		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_E" />
+
+		<!-- drums -->
+		<layer res="songs/THE_DONKEY2_190_BPM/DRUMS/theDonkey2_190_drums" />
+		<layer res="songs/THE_DONKEY2_190_BPM/DRUMS/theDonkey2_190_drums_02" />
+
+		<!-- bass -->
+		<layer res="songs/THE_DONKEY2_190_BPM/BASS/theDonkey2_190_bass" />
+
+		<!-- guitar -->
+		<layer res="songs/THE_DONKEY2_190_BPM/GUITAR/theDonkey2_190_guitar_01" />
+		<layer res="songs/THE_DONKEY2_190_BPM/GUITAR/theDonkey2_190_guitar_02" />
+		<layer res="songs/THE_DONKEY2_190_BPM/GUITAR/theDonkey2_190_guitar_03" />
+
+		<!-- synth -->
+		<layer res="songs/THE_DONKEY2_190_BPM/SYNTH/theDonkey2_190_synth_keys_01" />
+		<layer res="songs/THE_DONKEY2_190_BPM/SYNTH/theDonkey2_190_synth_pad_02" />
+
 	</song>
 </songs>
