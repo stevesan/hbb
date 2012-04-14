@@ -1,10 +1,12 @@
 TODOs:
 
-- script to export PSD
-
-
-- AI attack pcode:
-	talk to Josh about speed/rhythm issues
+- script to export PSD. think about best way to do this
+	dig up GEOHERO code
+	need to specify which layers to export separately, which to merge, which to ignore
+	then, z-order, position/scale
+	export to text file, with texture paths (relative to "Resources" folder)
+		Resources.Load( texPath ) as Texture2D
+- "dance" animation script for avatars. bounce back and forth?
 
 - AI defend pcode:
 
