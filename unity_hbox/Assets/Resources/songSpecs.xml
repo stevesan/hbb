@@ -138,7 +138,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = 'thedonkey'
+		broncoAI = '190bpmTheDonkey2'
 		>
 		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_A" />
 		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_C" />
