@@ -108,7 +108,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = 'hal9000'
+		broncoAI = '190bpmClusterStrut'
 		>
 		<sample res="songs/190 BPM/MELODIES/D_WHOLE NOTE" />
 		<sample res="songs/190 BPM/MELODIES/Eb_WHOLE NOTE" />

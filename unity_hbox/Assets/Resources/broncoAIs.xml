@@ -148,7 +148,36 @@
 		numQuants = "32" dexterity = "0.6" sustain = "0.0" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "1,0,0,0,0,0,0,0" maxScore = '1000'
 		numQuants = "32" dexterity = "0.8" sustain = "0.0" rhythm = "1" />
-	</AI>	<AI name = "190bpmTheDonkey2" >
+	</AI>	
+	<AI name = "190bpmClusterStrut" >
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,3" maxScore = '5'
+		numQuants = "32" dexterity = "1.0" sustain = "0.7" rhythm = "1" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '15'
+		numQuants = "32" dexterity = "0.7" sustain = "0.7" rhythm = "1" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '30'
+		numQuants = "32" dexterity = "0.5" sustain = "0.7" rhythm = "1" />
+		<phase chords = "0.4" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '50'
+		numQuants = "32" dexterity = "0.5" sustain = "0.0" rhythm = "1" />
+		<phase chords = "0.3" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '75'
+		numQuants = "32" dexterity = "0.7" sustain = "0.5" rhythm = "1" />
+		<phase chords = "0.5" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '100'
+		numQuants = "32" dexterity = "0.7" sustain = "0.7" rhythm = "1" />
+		<phase chords = "0.7" noteValuePdf = "0,0,0,3,0,0,0,2" maxScore = '125'
+		numQuants = "32" dexterity = "0.5" sustain = "0.7" rhythm = "1" />
+		<phase chords = "0.8" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '150'
+		numQuants = "32" dexterity = "0.8" sustain = "1.0" rhythm = "1" />
+		<phase chords = "0.3" noteValuePdf = "0,1,0,3,0,0,0,2" maxScore = '175'
+		numQuants = "32" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
+		<phase chords = "0.5" noteValuePdf = "0,1,0,3,0,0,0,1" maxScore = '200'
+		numQuants = "32" dexterity = "0.9" sustain = "0.5" rhythm = "1" />
+		<phase chords = "0.5" noteValuePdf = "0,1,0,2,0,0,0,0" maxScore = '300'
+		numQuants = "32" dexterity = "0.8" sustain = "0.5" rhythm = "1" />
+		<phase chords = "0.0" noteValuePdf = "0,1,0,1,0,0,0,0" maxScore = '500'
+		numQuants = "32" dexterity = "0.6" sustain = "0.5" rhythm = "1" />
+		<phase chords = "0.0" noteValuePdf = "0,1,0,0,0,0,0,0" maxScore = '1000'
+		numQuants = "32" dexterity = "0.8" sustain = "0.0" rhythm = "1" />
+	</AI>
+	<AI name = "190bpmTheDonkey2" >
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '5'
 		numQuants = "32" dexterity = "0.7" sustain = "0.0" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '15'
@@ -165,15 +194,15 @@
 		numQuants = "32" dexterity = "0.7" sustain = "0.4" rhythm = "1" />
 		<phase chords = "0.5" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '150'
 		numQuants = "32" dexterity = "0.8" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.0" noteValuePdf = "0,1,0,2,0,0,0,1" maxScore = '175'
+		<phase chords = "0.0" noteValuePdf = "0,1,0,3,0,0,0,2" maxScore = '175'
 		numQuants = "32" dexterity = "0.8" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.3" noteValuePdf = "0,1,0,1,0,0,0,1" maxScore = '200'
+		<phase chords = "0.2" noteValuePdf = "0,1,0,3,0,0,0,1" maxScore = '200'
 		numQuants = "32" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.5" noteValuePdf = "0,1,0,1,0,0,0,0" maxScore = '300'
+		<phase chords = "0.3" noteValuePdf = "0,1,0,2,0,0,0,1" maxScore = '300'
 		numQuants = "32" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.0" noteValuePdf = "0,1,0,0,0,0,0,0" maxScore = '500'
-		numQuants = "32" dexterity = "0.6" sustain = "0.0" rhythm = "1" />
-		<phase chords = "0.0" noteValuePdf = "1,0,0,0,0,0,0,0" maxScore = '1000'
+		<phase chords = "0.3" noteValuePdf = "0,1,0,2,0,0,0,0" maxScore = '500'
+		numQuants = "32" dexterity = "0.6" sustain = "0.3" rhythm = "1" />
+		<phase chords = "0.0" noteValuePdf = "0,1,0,0,0,0,0,0" maxScore = '1000'
 		numQuants = "32" dexterity = "0.8" sustain = "0.0" rhythm = "1" />
 	</AI>
 
