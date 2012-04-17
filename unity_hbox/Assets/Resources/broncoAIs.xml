@@ -102,9 +102,9 @@
 		numQuants = "32" dexterity = "0.5" sustain = "1.0" rhythm = "1" />
 		<phase chords = "0.3" noteValuePdf = "0,0,0,1,0,0,0,3" maxScore = '50'
 		numQuants = "32" dexterity = "0.2" sustain = "1.0" rhythm = "1" />
-		<phase chords = "0.5" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '75'
+		<phase chords = "0.6" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '75'
 		numQuants = "32" dexterity = "0.2" sustain = "0.5" rhythm = "1" />
-		<phase chords = "0.5" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '100'
+		<phase chords = "0.8" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '100'
 		numQuants = "32" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
 		<phase chords = "0.8" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '125'
 		numQuants = "32" dexterity = "0.5" sustain = "0.5" rhythm = "1" />
