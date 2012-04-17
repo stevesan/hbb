@@ -4,14 +4,14 @@
 		bpMeas = "4"
 		numMeasures = "8"
 		volume = "1"
-		samplesVolume = "0.7"
+		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '80bpm'
 		>
 		<!-- melodies -->
-		<sample res="songs/80 BPM/MELODIES/C_WHOLE NOTE" />
-		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE NOTE" />
-		<sample res="songs/80 BPM/MELODIES/F_WHOLE NOTE" />
+		<sample res="songs/80 BPM/MELODIES/C_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
+		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
+		<sample res="songs/80 BPM/MELODIES/G_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
 		
 		<!-- drums -->
 		<layer res="songs/80 BPM/DRUMS/Slow and Steady_80_drums_01" />
@@ -77,9 +77,13 @@
 		releaseSecs = "0.2"
 		broncoAI = 'hal9000'
 		>
+		<!-- <sample res="songs/135 BPM/MELODY/135 MELODY_G" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_C" />
-		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
+		-->
+		<sample res="songs/80 BPM/MELODIES/C_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
+		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
+		<sample res="songs/80 BPM/MELODIES/G_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
 
 		<!-- drum layers -->
 		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_01" />
