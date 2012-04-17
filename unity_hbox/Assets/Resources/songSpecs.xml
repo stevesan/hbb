@@ -4,8 +4,8 @@
 		bpMeas = "4"
 		numMeasures = "8"
 		volume = "1"
-		samplesVolume = "1.0"
-		releaseSecs = "0.5"
+		samplesVolume = "0.8"
+		releaseSecs = "0.3"
 		broncoAI = '80bpm'
 		>
 		<!-- melodies -->
@@ -80,11 +80,7 @@
 		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_C" />
-		<!--
-		<sample res="songs/80 BPM/MELODIES/C_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
-		<sample res="songs/80 BPM/MELODIES/Eb_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
-		<sample res="songs/80 BPM/MELODIES/G_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
-		-->
+
 
 		<!-- drum layers -->
 		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_01" />
