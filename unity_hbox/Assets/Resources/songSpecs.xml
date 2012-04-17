@@ -75,7 +75,7 @@
 		volume = "1"
 		samplesVolume = "1.0"
 		releaseSecs = "0.2"
-		broncoAI = 'hal9000'
+		broncoAI = '135bpm'
 		>
 		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
