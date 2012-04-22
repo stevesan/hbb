@@ -19,7 +19,22 @@ if __name__=='__main__':
     os.mkdir( outdir )
   except: pass
 
-  for pngf in glob.glob('*.png'):
+  inspecf = open( inspec, 'r' )
+  layoutf = open( os.path.join( outdir, 'layout.txt' ), 'w' )
+
+  state = 'readblank'
+  first = True
+
+  for line in [ line.rstrip() for line in inspecf.readlines()]:
+    if state == 'readblank':
+      pngf = line + '.png'
+      state = 'inset'
+    elif state == 'inset':
+      if line == '':
+        state = 'readblank'
+      continue
+
+    print 'reading', pngf
     png_reader = png.Reader( file = open( pngf ) )
     png_info = png_reader.asRGBA()
     wt = png_info[0]
@@ -32,10 +47,21 @@ if __name__=='__main__':
     cropped = pngutils.extract_bbox( rows, top, lt, bot, rt )
 
     # make it power of two
-    wt = utils.pow2_gte( rt-lt+1 )
-    ht = utils.pow2_gte( bot-top+1 )
+    crop_wt = rt-lt+1
+    crop_ht = bot-top+1
+    p2_wt = utils.pow2_gte( crop_wt )
+    p2_ht = utils.pow2_gte( crop_ht )
     
-    pow2 = pngutils.grow_canvas( cropped, wt, ht )
+    pow2 = pngutils.grow_canvas( cropped, p2_wt, p2_ht )
 
     outp = os.path.join( outdir, pngf )
     pngutils.write_png_rgba( outp, pow2 )
+
+    if first:
+      # write screen dimensions
+      layoutf.write( '%d %d\n' % (wt, ht) )
+      first = False
+    layoutf.write( '%s\n%d %d\n%d %d\n%d %d\n' % (line, lt, top, crop_wt, crop_ht, p2_wt, p2_ht ) )
+
+  inspecf.close()
+  layoutf.close()
