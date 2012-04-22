@@ -89,6 +89,12 @@ static function SetTexture( obj : GameObject, tex : Texture2D )
 	obj.renderer.material.mainTexture = tex;
 }
 
+// assumes the given obj has a particle shader
+static function SetOpacity( obj : GameObject, frac : float )
+{
+	SetParticleMatOpacity( obj.GetComponent(Renderer).material, frac );
+}
+
 static function SetParticleMatOpacity( mat : Material, frac : float )
 {
 	// works for particle shaders only..
