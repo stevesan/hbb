@@ -6,7 +6,7 @@
 		volume = "1"
 		samplesVolume = "0.8"
 		releaseSecs = "0.3"
-		broncoAI = '80bpm'
+		broncoAI = '80bpmSwing'
 		>
 		<!-- melodies -->
 		<sample res="songs/80 BPM/MELODIES/C_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />
@@ -138,7 +138,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = '190bpmTheDonkey2'
+		broncoAI = '160bpmWestSideHorsey'
 		>
 
 		<!-- melody -->
