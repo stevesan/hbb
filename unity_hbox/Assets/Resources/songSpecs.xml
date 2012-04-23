@@ -81,7 +81,6 @@
 		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_C" />
 
-
 		<!-- drum layers -->
 		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_01" />
 		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_02" />
@@ -110,9 +109,9 @@
 		releaseSecs = "0.5"
 		broncoAI = '190bpmClusterStrut'
 		>
-		<sample res="songs/190 BPM/MELODIES/D_WHOLE NOTE" />
-		<sample res="songs/190 BPM/MELODIES/Eb_WHOLE NOTE" />
-		<sample res="songs/190 BPM/MELODIES/Bb_WHOLE NOTE" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Eb" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Bb" />
 
 		<!-- drums -->
 		<layer res="songs/190 BPM/DRUMS/Cluster_Strut_190_drums" />
@@ -129,6 +128,40 @@
 		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_lead" />
 		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_pad" />
 
+
+	</song>
+
+	<song title = "West Side Horsey (FAST CANTER)"
+		bpm = "160"
+		bpMeas = "4"
+		numMeasures = "32"
+		volume = "1.0"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		broncoAI = 'thedonkey'
+		>
+
+		<!-- melody -->
+		<sample res="songs/WEST_SIDE_HORSEY_160_BPM/MELODY/West_Side_Horsey_160_melody_03_g" />
+		<sample res="songs/THE_DONKEY_152_BPM/MELODY/West_Side_Horsey_160_melody_03_Bb" />
+		<sample res="songs/THE_DONKEY_152_BPM/MELODY/West_Side_Horsey_160_melody_03_d" />
+
+		<!-- bass -->
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/BASS/West_Side_Horsey_160_bass_01" />
+
+		<!-- drums -->
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/DRUMS/West_Side_Horsey_160_drums_01" />
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/DRUMS/West_Side_Horsey_160_drums_02" />
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/DRUMS/West_Side_Horsey_160_drums_03" />
+
+		<!-- synth -->
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/SYNTH/West_Side_Horsey_160_synth_01" />
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/SYNTH/West_Side_Horsey_160_synth_02" />
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/SYNTH/West_Side_Horsey_160_synth_03" />
+
+		<!-- guitar -->
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/GUITAR/West_Side_Horsey_160_guitar_01" />
+		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/GUITAR/West_Side_Horsey_160_guitar_02" />
 
 	</song>
 
