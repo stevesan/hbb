@@ -117,36 +117,49 @@ function Update () {
 
 	var gs = GameState.inst;
 
-	// do piece flashing for active player
-	var attacker = gs.GetAttacker();
-	var defender = gs.GetDefender();
-
-	// by default, turn off the next piece so it doesn't get left on by the flashing
-	for( var p = 0; p < 2; p++ )
+	if( !gs.survivalMode )
 	{
-		var l = gs.playerLosses[p];
-		if( l < pieceOffTextures.length )
-			Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
-	}
+		// do piece flashing for active player
+		var attacker = gs.GetAttacker();
+		var defender = gs.GetDefender();
 
-	// flash immediately if defender messed up
-	if( gs.state == RCState.DEFEND && gs.defendMessedUp )
-		UpdateFlashing( gs, defender );
-	else if( gs.state == RCState.POST_DEFEND )
-	{
-		// always warn the attacker
-		UpdateFlashing( gs, attacker );
-
-		if( gs.defendMessedUp )
-			UpdateFlashing( gs, defender );
-	}
-	else if( gs.state == RCState.REPEAT )
-	{
-		if( !gs.successTriggered && !gs.repeatMessedUp )
+		// by default, turn off the next piece so it doesn't get left on by the flashing
+		for( var p = 0; p < 2; p++ )
 		{
+			var l = gs.playerLosses[p];
+			if( l < pieceOffTextures.length )
+				Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
+		}
+
+		// flash immediately if defender messed up
+		if( gs.state == RCState.DEFEND && gs.defendMessedUp )
+			UpdateFlashing( gs, defender );
+		else if( gs.state == RCState.POST_DEFEND )
+		{
+			// always warn the attacker
 			UpdateFlashing( gs, attacker );
+
 			if( gs.defendMessedUp )
 				UpdateFlashing( gs, defender );
 		}
+		else if( gs.state == RCState.REPEAT )
+		{
+			if( !gs.successTriggered && !gs.repeatMessedUp )
+			{
+				UpdateFlashing( gs, attacker );
+				if( gs.defendMessedUp )
+					UpdateFlashing( gs, defender );
+			}
+		}
+
+		for( p = 0; p < 2; p++ )
+			for( l = 0; l < gs.GetMaxLosses(); l++ )
+				playerPieces[p,l].renderer.enabled = true;
+	}
+	else
+	{
+		for( p = 0; p < 2; p++ )
+			for( l = 0; l < gs.GetMaxLosses(); l++ )
+				playerPieces[p,l].renderer.enabled = false;
 	}
 }

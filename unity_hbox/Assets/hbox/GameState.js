@@ -21,7 +21,6 @@ var activeSong : int = 0;
 var optionEchoBeat = false;
 var horseAI : HorseAI = null;
 var useAI = false;
-var randomizeAI = false;
 var aiInputs : Array = null;
 var debugTestAI = false;
 var survivalMode = false;
@@ -196,6 +195,9 @@ function ResetTesting()
 		GetSongPlayer().OnKeyUp(key);
 }
 
+//----------------------------------------
+//  One round is a back-and-forth, ie. attack, defend, repeat
+//----------------------------------------
 function ResetRound()
 {
 	defendMessedUp = false;
@@ -392,10 +394,10 @@ function GetInputtingPlayer()
 	else if( state == RCState.POST_REPEAT )
 	{
 		// Are we about to start attack phase for the other player?
-		if( IsInPreTolerance() )
+    if( IsInPostTolerance() || JustExitedPostTol() )
+      return attacker;
+    else
 			return 1-attacker;
-		else
-			return attacker;
 	}
 }
 
@@ -808,7 +810,7 @@ function UpdateKeyPopping() {
 }
 
 
-enum MenuState { MAIN, CREDITS, SONGS, TUTE }
+enum MenuState { MAIN, CREDITS, MODE, SONGS, TUTE }
 var menuState : MenuState = MenuState.MAIN;
 
 function UpdateMenuMode()
@@ -831,7 +833,7 @@ function UpdateMenuMode()
 		}
 		else if( Input.GetButtonDown('Start') )
 		{
-			menuState = MenuState.SONGS;
+			menuState = MenuState.MODE;
 			PlayRandomSample();
 			titleMusic.Stop();
 		}
@@ -847,13 +849,13 @@ function UpdateMenuMode()
 		if( !creditsMusic.isPlaying ) creditsMusic.Play();
 
 		menuText.text = ''
-			+ 'ART :: Brian Hwang \n'
-			+ 'ART :: Joffre Molina \n'
+			+ 'ART :: Zak Ayles \n'
 			+ 'DESIGN :: Joshua Raab \n'
 			+ 'AUDIO :: Mark Anderson \n'
 			+ 'CODE/DESIGN :: Steven An \n'
-			+ 'CODE/DESIGN :: Robert Dionne \n\n'
 			+ 'Originally made for the 2012 Global Game Jam (NYU)\n\n'
+      + 'Original Additional Visual Design: Joffre Molina \n'
+      + 'Original Additional Code: Robert Dionne \n\n'
 			+ 'ESCAPE :: back';
 
 		if( Input.GetButtonDown('menuback') )
@@ -863,6 +865,37 @@ function UpdateMenuMode()
 			creditsMusic.Stop();
 		}
 	}
+  else if( menuState == MenuState.MODE )
+  {
+		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
+
+    menuText.text = 'Select a Mode: \n\n';
+    menuText.text += '1 :: Beat Battle (2 player versus)\n';
+    menuText.text += '2 :: Beat Bronco (1 player survival)\n\n';
+    menuText.text += 'ESC :: back';
+
+    if( Input.GetButtonDown( 'Song1' ) )
+    {
+      PlayRandomSample();
+      useAI = false;
+      survivalMode = false;
+      menuState = MenuState.SONGS;
+    }
+    else if( Input.GetButtonDown( 'Song2' ) )
+    {
+      PlayRandomSample();
+      useAI = true;
+      survivalMode = true;
+      menuState = MenuState.SONGS;
+    }
+
+		if( Input.GetButtonDown('menuback') )
+		{
+			PlayRandomSample();
+			songSelectMusic.Stop();
+			menuState = MenuState.MAIN;
+		}
+  }
 	else if( menuState == MenuState.SONGS )
 	{
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
@@ -889,11 +922,11 @@ function UpdateMenuMode()
 			}
 		}
 
-		if(  Input.GetButtonDown('menuback') )
+		if( Input.GetButtonDown('menuback') )
 		{
 			PlayRandomSample();
 			songSelectMusic.Stop();
-			menuState = MenuState.MAIN;
+			menuState = MenuState.MODE;
 		}
 	}
 	else if( menuState == MenuState.TUTE )
@@ -957,6 +990,46 @@ function OnEnterMeasure()
 		state = RCState.ATTACK;
 }
 
+function StartGameRitual1()
+{
+  state = RCState.START;
+
+  // reset game state, so nothing shows
+  ResetRound();
+
+  // reset scores now so the displays don't show anything
+  for( var p = 0; p < playerLosses.length; p++ )
+    playerLosses[p] = 0;
+  survivalScore = 0;
+  if( horseAI != null )
+    horseAI.Reset( GetSongPlayer().broncoAI );
+}
+
+function StartGameRitual2()
+{
+
+  // go to the post-prove state so we have one free measure before improv
+  state = RCState.POST_REPEAT;
+  attacker = 1;	// this will get flipped, so we start with player 0 attacking
+  measure = 0;
+  measureStartTime = Time.time;
+  beatsPassed = 0;
+  RestartSelectedSong();
+  if( horseAI != null && survivalMode )
+    GetSongPlayer().SetLastLayer( horseAI.GetCurrentLevel() );
+  else
+    GetSongPlayer().UseAllLayers();
+  musicStartTime = Time.time;
+
+  if( survivalMode )
+  {
+    playerLosses[0] = 0;
+    // instant death!
+    playerLosses[1] = 4;
+    survivalScore = 0;
+  }
+}
+
 function Update()
 {
   UpdateKeyPopping();
@@ -1002,46 +1075,15 @@ function Update()
 			Application.Quit();
 		else if( result == 'start' )
 		{
-			state = RCState.START;
-			cameraShake.MoveToStartScreen();
-			ResetRound();
-			for( var p = 0; p < playerLosses.length; p++ )
-				playerLosses[p] = 0;
-			survivalScore = 0;
-			if( horseAI != null )
-				horseAI.Reset( GetSongPlayer().broncoAI );
+      cameraShake.MoveToStartScreen();
+      StartGameRitual1();
 		}
 	}
 	else if( state == RCState.START )
 	{
 		if( Input.GetButtonDown('Start') )
 		{
-			// go to the post-prove state so we have one free measure before improv
-			state = RCState.POST_REPEAT;
-			attacker = 1;	// this will get flipped, so we start with player 0 attacking
-			measure = 0;
-			measureStartTime = Time.time;
-			beatsPassed = 0;
-			RestartSelectedSong();
-			if( horseAI != null && survivalMode )
-				GetSongPlayer().SetLastLayer( horseAI.GetCurrentLevel() );
-			else
-				GetSongPlayer().UseAllLayers();
-			musicStartTime = Time.time;
-
-			// TEMP
-			if( horseAI != null && randomizeAI )
-			{
-				horseAI.Randomize();
-			}
-
-			if( survivalMode )
-			{
-				playerLosses[0] = 0;
-				// instant death!
-				playerLosses[1] = 4;
-				survivalScore = 0;
-			}
+      StartGameRitual2();
 		}
 	}
 	else if( state == RCState.ATTACK )
@@ -1205,14 +1247,16 @@ function Update()
 
 		if( Input.GetButtonDown('Start') )
 		{
-			// go to the post-prove state so we have one free measure before improv
-			state = RCState.MENU;
+      // Restart
 			GetSongPlayer().Stop();
 			PlayRandomSample();
-			cameraShake.MoveToMenu();
+			//cameraShake.MoveToMenu();
 			musicStartTime = 0.0;
 			victoryMusic.Stop();
-		}
+      StartGameRitual1();
+      StartGameRitual2();
+    }
+    // NOTE: the ESC key is already handled
 	}
 
 	if( state != RCState.VICTORY )

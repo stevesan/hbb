@@ -1,7 +1,9 @@
 TODOs:
 
-- PSD export pipeline:
-	python script to trim layers, export position/size map
+- SpawnLayers:
+	have array mapping layout element names to game objects
+		if spawner finds gobj, adds MeshFilter and MeshRenderer, creates mesh sets texture, overrides position, etc.
+		this way, we can hook up game logic to layout elements
 - script to modify META files automatically for textures:
 	textureFormat: -1 to -3 (disable compression)
 	filterMode: -1 to 0 (no filtering)
@@ -15,7 +17,6 @@ TODOs:
 		normal
 		multiply
 		overlay
-
 
 - "dance" animation script for avatars. bounce back and forth?
 

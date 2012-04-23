@@ -10,6 +10,7 @@ var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
 
 var avatars : Renderer[];
+var auras : Renderer[];
 
 function Start()
 {
@@ -56,7 +57,7 @@ function Update () {
 
 	mainText.text = '';
 
-	var survivedText = 'EARNED $' + gs.survivalScore + ' / ' + gs.GetAI().GetNextMilestone();
+	var survivedText = 'SCORE: ' + gs.survivalScore + ' / ' + gs.GetAI().GetNextMilestone();
 	prompts[ 0 ].text = '';
 	prompts[ 1 ].text = '';
 
@@ -65,9 +66,9 @@ function Update () {
 	else if( gs.state == RCState.VICTORY )
 	{
 		if( gs.survivalMode )
-			mainText.text = 'FINAL: $'+gs.survivalScore;
+			mainText.text = 'FINAL: '+gs.survivalScore + '. SPACE :: Retry';
 		else
-			mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' WON! Press SPACE BAR.';
+			mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' won! SPACE :: Retry.';
 	}
 	else
 	{
@@ -88,12 +89,28 @@ function Update () {
 			mainText.text = survivedText;
 	}
 
-	for( var i = 0; i < avatars.length; i++ )
+	if( gs.state == RCState.VICTORY )
 	{
-		if( i == gs.GetInputtingPlayer() )
-			avatars[i].GetComponent(PulseWithBeat).PlayIdem();
-		else
-			avatars[i].GetComponent(PulseWithBeat).StopAfterBeat();
+		if( gs.p1loseCard.enabled )
+			avatars[0].renderer.enabled = false;
+		if( gs.p2loseCard.enabled )
+			avatars[1].renderer.enabled = false;
+
+		avatars[0].GetComponent(PulseWithBeat).StopAfterBeat();
+		avatars[1].GetComponent(PulseWithBeat).StopAfterBeat();
+	}
+	else
+	{
+		avatars[0].renderer.enabled = true;
+		avatars[1].renderer.enabled = true;
+
+		for( var i = 0; i < avatars.length; i++ )
+		{
+			if( i == gs.GetInputtingPlayer() )
+				avatars[i].GetComponent(PulseWithBeat).PlayIdem();
+			else
+				avatars[i].GetComponent(PulseWithBeat).StopAfterBeat();
+		}
 	}
 	
 }
