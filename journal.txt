@@ -1,9 +1,7 @@
 TODOs:
 
-- SpawnLayers:
-	have array mapping layout element names to game objects
-		if spawner finds gobj, adds MeshFilter and MeshRenderer, creates mesh sets texture, overrides position, etc.
-		this way, we can hook up game logic to layout elements
+- the "shake" avatar effect
+- note track..think about best way to get the path
 - script to modify META files automatically for textures:
 	textureFormat: -1 to -3 (disable compression)
 	filterMode: -1 to 0 (no filtering)

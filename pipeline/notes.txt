@@ -1,0 +1,12 @@
+BJR PIPELINE NOTES:
+
+Terms:
+'PSD' - Photoshop file
+A 'layer' just refers to PSD layers
+An 'element' is a single visual thing in the game, such as an avatar, or a background, etc. A single element can be composed of many PSD layers.
+A 'layout' is a set of elements and a text file specifying where they should appear. The Unity script reads and displays layouts.
+
+- prepare 'layer sets' file. Each "element", such as a character, is composed of layers (as in the PSD). Each element will be exported as a single PNG.
+- use pipeline psd-export.js to export each element as a PNG
+- then use pipeline/layers2layout.py to convert element PNGs into a "layout". A layout is: 1) alpha-cropped and pow2 sized PNGs, 2) a text file specifying the order and position.
+- in unity, use the LayoutSpawner to spawn the layout. You can hook up elements to existing game objects to control how the element will get displayed/modified, but the texture and geometry and position will be created by the LayoutSpawner for you.

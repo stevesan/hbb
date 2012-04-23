@@ -126,10 +126,15 @@ class SongPlayer
 					if( subtree.Name == 'sample' )
 					{
 						var clip = Resources.Load( res ) as AudioClip;
-						var wrapper = new ADSRWrapper( clip );
-						wrapper.releaseDuration = releaseSecs;
-						wrapper.src.panLevel = 0.0;	// kill 3D effects
-						samplePlayers.Add( wrapper );
+						if( clip == null )
+							Debug.LogError('ERROR - Could not load song sample ' + res );
+						else
+						{
+							var wrapper = new ADSRWrapper( clip );
+							wrapper.releaseDuration = releaseSecs;
+							wrapper.src.panLevel = 0.0;	// kill 3D effects
+							samplePlayers.Add( wrapper );
+						}
 					}
 					else if( subtree.Name == 'layer' )
 					{

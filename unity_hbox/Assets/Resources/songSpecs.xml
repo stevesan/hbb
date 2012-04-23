@@ -138,13 +138,13 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = 'thedonkey'
+		broncoAI = '190bpmTheDonkey2'
 		>
 
 		<!-- melody -->
 		<sample res="songs/WEST_SIDE_HORSEY_160_BPM/MELODY/West_Side_Horsey_160_melody_03_g" />
-		<sample res="songs/THE_DONKEY_152_BPM/MELODY/West_Side_Horsey_160_melody_03_Bb" />
-		<sample res="songs/THE_DONKEY_152_BPM/MELODY/West_Side_Horsey_160_melody_03_d" />
+		<sample res="songs/WEST_SIDE_HORSEY_160_BPM/MELODY/West_Side_Horsey_160_melody_02_Bb" />
+		<sample res="songs/WEST_SIDE_HORSEY_160_BPM/MELODY/West_Side_Horsey_160_melody_01_d" />
 
 		<!-- bass -->
 		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/BASS/West_Side_Horsey_160_bass_01" />
