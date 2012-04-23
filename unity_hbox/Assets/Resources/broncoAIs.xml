@@ -176,7 +176,7 @@
 		<phase chords = "0.0" noteValuePdf = "1,0,0,0,0,0,0,0" maxScore = '1000'
 		numQuants = "32" dexterity = "0.8" sustain = "0.0" rhythm = "1" />
 	</AI>	
-	<AI name = "160bpmWestSideHorsey" >
+	<AI name = "160bpm" >
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,2" maxScore = '5'
 		numQuants = "32" dexterity = "0.7" sustain = "0.0" rhythm = "1" />
 		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0,0,0,1" maxScore = '15'

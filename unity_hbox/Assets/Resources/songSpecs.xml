@@ -138,7 +138,7 @@
 		volume = "1.0"
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
-		broncoAI = '160bpmWestSideHorsey'
+		broncoAI = '160bpm'
 		>
 
 		<!-- melody -->
