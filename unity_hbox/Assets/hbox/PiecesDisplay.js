@@ -52,6 +52,14 @@ function OnScoreChanged( gs:GameState ) : void
 	}
 }
 
+function OnBattleReset()
+{
+	var gs = GameState.inst;
+	for( p = 0; p < 2; p++ )
+		for( l = 0; l < gs.GetMaxLosses(); l++ )
+			playerPieces[p,l].renderer.enabled = false;
+}
+
 function OnSuccess( player:int )
 {
 	var gs = GameState.inst;
@@ -74,7 +82,7 @@ function OnSuccess( player:int )
 function OnMessedUp()
 {
 	var gs = GameState.inst;
-	var p = gs.GetTestedPlayer();
+	var p = gs.GetInputtingPlayer();
 	if( p == gs.GetAttacker() )
 	{
 		// pop the horse piece that's gonna be added

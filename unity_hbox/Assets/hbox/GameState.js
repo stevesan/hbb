@@ -403,11 +403,6 @@ function GetInputtingPlayer()
 	}
 }
 
-function GetTestedPlayer() : int
-{
-	return GetInputtingPlayer();
-}
-
 function GetNonInputtingPlayer()
 {
 	return 1-GetInputtingPlayer();
@@ -517,7 +512,7 @@ function OnMessedUp()
 	{
 		messedUpTriggered = true;
 
-		if( GetTestedPlayer() == GetAttacker() )
+		if( GetInputtingPlayer() == GetAttacker() )
 		{
 			//----------------------------------------
 			//  Attacker messed up on repeat phase - immediately update scores
@@ -535,7 +530,7 @@ function OnMessedUp()
 				// prevent index issues
 				playerLosses[ GetInputtingPlayer() ] = 1;
 		}
-		else if( state == RCState.DEFEND || state == RCState.POST_DEFEND )
+		else if( GetInputtingPlayer() == GetDefender() )
 		{
 			defendMessedUp = true;
 
@@ -1021,6 +1016,12 @@ function StartGameRitual1()
 
 	if( horseAI != null )
 		horseAI.Reset( GetSongPlayer().broncoAI );
+
+	for( var obj in eventListeners )
+	{
+		if( obj != null )
+			obj.SendMessage( "OnBattleReset", SendMessageOptions.DontRequireReceiver );
+	}
 }
 
 function StartGameRitual2()
