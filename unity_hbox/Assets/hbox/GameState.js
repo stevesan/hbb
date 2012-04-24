@@ -821,7 +821,7 @@ function UpdateMenuMode()
 	{
 		if( !titleMusic.isPlaying ) titleMusic.Play();
 
-		menuText.text = 'HORSE Beat Off Xtreme! \n\n'
+		menuText.text = 'B E A T    J U I C E    R A D I O\n\n'
 			+ 'SPACE BAR :: start game \n'
 			+ 'J :: credits \n'
 			+ 'ESCAPE :: quit \n';
@@ -852,8 +852,8 @@ function UpdateMenuMode()
 			+ 'ART :: Zak Ayles \n'
 			+ 'DESIGN :: Joshua Raab \n'
 			+ 'AUDIO :: Mark Anderson \n'
-			+ 'CODE/DESIGN :: Steven An \n'
-			+ 'Originally made for the 2012 Global Game Jam (NYU)\n\n'
+			+ 'CODE/DESIGN :: Steven An \n\n'
+			+ 'Originally made for the 2012 Global Game Jam (NYU)\n'
       + 'Original Additional Visual Design: Joffre Molina \n'
       + 'Original Additional Code: Robert Dionne \n\n'
 			+ 'ESCAPE :: back';
@@ -869,23 +869,24 @@ function UpdateMenuMode()
   {
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
-    menuText.text = 'Select a Mode: \n\n';
-    menuText.text += '1 :: Beat Battle (2 player versus)\n';
-    menuText.text += '2 :: Beat Bronco (1 player survival)\n\n';
+    menuText.text = 'SELECT MODE: \n\n';
+    menuText.text += 'PRESS 1 :: Beat Bronco (1 player survival)\n';
+    menuText.text += 'PRESS 2 :: Beat Battle (2 player versus)\n';
+    menuText.text += '\n';
     menuText.text += 'ESC :: back';
 
     if( Input.GetButtonDown( 'Song1' ) )
     {
       PlayRandomSample();
-      useAI = false;
-      survivalMode = false;
+      useAI = true;
+      survivalMode = true;
       menuState = MenuState.SONGS;
     }
     else if( Input.GetButtonDown( 'Song2' ) )
     {
       PlayRandomSample();
-      useAI = true;
-      survivalMode = true;
+      useAI = false;
+      survivalMode = false;
       menuState = MenuState.SONGS;
     }
 
@@ -900,7 +901,7 @@ function UpdateMenuMode()
 	{
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
-		var text = 'Select a Song: \n\n';
+		var text = 'SELECT SONG: \n\n';
 		for( var s = 0; s < songs.players.Count; s++ )
 		{
 			text = text + 'PRESS ' +(s+1) + ' :: ' + songs.players[s].title + '\n';
@@ -925,7 +926,6 @@ function UpdateMenuMode()
 		if( Input.GetButtonDown('menuback') )
 		{
 			PlayRandomSample();
-			songSelectMusic.Stop();
 			menuState = MenuState.MODE;
 		}
 	}
