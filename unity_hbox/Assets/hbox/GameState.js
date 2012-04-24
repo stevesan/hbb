@@ -220,17 +220,6 @@ function ResetBeatPlayback()
 	}
 }
 
-function GetIsProving()
-{
-	return state == RCState.DEFEND || state == RCState.REPEAT;
-}
-
-
-function IsCreating()
-{
-	return state == RCState.ATTACK;
-}
-
 function Awake() {
 	inst = GetComponent(GameState);
 
