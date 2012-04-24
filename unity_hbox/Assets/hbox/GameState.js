@@ -117,6 +117,7 @@ function GetEffectiveMeasureTime()
 // Returns true if we're just starting a measure, and we have not passed time
 // exceeding the tolerance. Ie. if the previous measure was a input-accepting measure,
 // this is its "post measure tolerance" period
+
 function IsInPostTolerance() { return GetMeasureTime() <= timeTolSecs; }
 function IsInPreTolerance() { return (GetSecsPerMeasure()-GetMeasureTime()) <= timeTolSecs; }
 function JustEnteredPreTol()
@@ -125,6 +126,7 @@ function JustEnteredPreTol()
 		&& IsInPreTolerance();
 	return rv;
 }
+
 function JustExitedPostTol()
 {
 	return (prevMeasureTime <= timeTolSecs)
@@ -376,12 +378,29 @@ function GetInputtingPlayer()
 	if( state == RCState.ATTACK || state == RCState.REPEAT )
 		return attacker;
 	else if( state == RCState.POST_ATTACK )
+	
+	//Steve code
+	/**
 	{
 		if( IsInPostTolerance() || JustExitedPostTol() )
 			return attacker;
 		else
 			return 1-attacker;
 	}
+	//End of Steve code
+	*/
+	
+	//Josh code
+		if(!survivalMode)  
+			return 1-attacker;
+		else{
+			if( IsInPostTolerance() || JustExitedPostTol() )
+				return attacker;
+			else
+				return 1-attacker;
+			}
+	//End of Josh code
+			
 	else if( state == RCState.DEFEND )
 		return 1-attacker;
 	else if( state == RCState.POST_DEFEND )
