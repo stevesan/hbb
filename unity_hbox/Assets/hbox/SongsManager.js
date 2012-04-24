@@ -43,7 +43,7 @@ class SongPlayer
 
 	function SetLastLayer( lastLayer:int )
 	{
-		Debug.Log('playing '+lastLayer+' / '+layerPlayers.Count+ ' layers');
+		//Debug.Log('playing '+lastLayer+' / '+layerPlayers.Count+ ' layers');
 		for( var i = 0; i < layerPlayers.Count; i++ )
 		{
 			if( i <= lastLayer )

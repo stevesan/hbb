@@ -130,7 +130,7 @@ function Reset( aiName:String )
 {
 	if( debugOverrideAIName != null && debugOverrideAIName != "" )
 	{
-		Debug.Log('WARNING: Forcing the use of AI name = '+debugOverrideAIName);
+		Debug.LogError('WARNING: Forcing the use of AI name = '+debugOverrideAIName);
 		aiName = debugOverrideAIName;
 	}
 

@@ -378,29 +378,12 @@ function GetInputtingPlayer()
 	if( state == RCState.ATTACK || state == RCState.REPEAT )
 		return attacker;
 	else if( state == RCState.POST_ATTACK )
-	
-	//Steve code
-	/**
 	{
 		if( IsInPostTolerance() || JustExitedPostTol() )
 			return attacker;
 		else
 			return 1-attacker;
 	}
-	//End of Steve code
-	*/
-	
-	//Josh code
-		if(!survivalMode)  
-			return 1-attacker;
-		else{
-			if( IsInPostTolerance() || JustExitedPostTol() )
-				return attacker;
-			else
-				return 1-attacker;
-			}
-	//End of Josh code
-			
 	else if( state == RCState.DEFEND )
 		return 1-attacker;
 	else if( state == RCState.POST_DEFEND )
@@ -595,7 +578,12 @@ function OnSuccess()
 	}
 }
 
-function UpdateTesting( mt : float )
+//----------------------------------------
+//  mt is the measure time that should be assigned to created notes.
+//	inputMt is used for playing back player inputs, or polling AI inputs
+//	These are usually the same, except for the case when we want to fudge the note MTs (ie. for pre/post tolerance cases)
+//----------------------------------------
+function UpdateTesting( mt : float, inputMt:float )
 {
 	// do nothing if player has already hit the notes. Don't let them screw themselves up.
 	if( successTriggered ) return;
@@ -603,7 +591,7 @@ function UpdateTesting( mt : float )
 	//----------------------------------------
 	//  Did we hit any of the notes?
 	//----------------------------------------
-	for( var key in GetKeysDown(mt) )
+	for( var key in GetKeysDown(inputMt) )
 	{
 		// play it no matter waht..
 		GetSongPlayer().OnKeyDown(key);
@@ -643,7 +631,7 @@ function UpdateTesting( mt : float )
 			noteObj.GetComponent(Note).OnMiss();
 	}
 
-	for( key in GetKeysUp(mt) )
+	for( key in GetKeysUp(inputMt) )
 	{
 		GetSongPlayer().OnKeyUp(key);
 
@@ -715,10 +703,11 @@ function UpdateTesting( mt : float )
 		{
 			// the down was hit, but what about the up?
 
-			// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
 			if( !note.upHit )
 			{
-				if( (note.endMeasureTime+timeTolSecs) < mt )
+				// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
+				// Note that we use the real time here...so during the post tolerance, we will register the hit
+				if( (note.endMeasureTime+timeTolSecs) < inputMt )
 				{
 					// end time has passed
 					if( note.type != NoteType.Miss )
@@ -766,9 +755,9 @@ function UpdateTesting( mt : float )
 }
 
 
-function UpdateRecording( mt : float )
+function UpdateRecording( mt : float, inputMt:float )
 {
-	for( var key in GetKeysDown(mt) )
+	for( var key in GetKeysDown(inputMt) )
 	{
 		var noteObj:GameObject = Instantiate( notePrefab.gameObject, Vector3(0,0,0), notePrefab.transform.rotation );
 		noteObj.GetComponent(Note).OnDown( mt, key, false, tracks[key] );
@@ -777,7 +766,7 @@ function UpdateRecording( mt : float )
 		cameraShake.DoShake();
 	}
 
-	for( key in GetKeysUp(mt) )
+	for( key in GetKeysUp(inputMt) )
 	{
 		GetSongPlayer().OnKeyUp(key);
 		
@@ -1017,16 +1006,25 @@ function StartGameRitual1()
   ResetRound();
 
   // reset scores now so the displays don't show anything
-  for( var p = 0; p < playerLosses.length; p++ )
-    playerLosses[p] = 0;
-  survivalScore = 0;
-  if( horseAI != null )
-    horseAI.Reset( GetSongPlayer().broncoAI );
+  if( survivalMode )
+  {
+    playerLosses[0] = 0;
+    // instant death!
+    playerLosses[1] = 4;
+		survivalScore = 0;
+  }
+	else
+	{
+		for( var p = 0; p < playerLosses.length; p++ )
+			playerLosses[p] = 0;
+	}
+
+	if( horseAI != null )
+		horseAI.Reset( GetSongPlayer().broncoAI );
 }
 
 function StartGameRitual2()
 {
-
   // go to the post-prove state so we have one free measure before improv
   state = RCState.POST_REPEAT;
   attacker = 1;	// this will get flipped, so we start with player 0 attacking
@@ -1040,13 +1038,6 @@ function StartGameRitual2()
     GetSongPlayer().UseAllLayers();
   musicStartTime = Time.time;
 
-  if( survivalMode )
-  {
-    playerLosses[0] = 0;
-    // instant death!
-    playerLosses[1] = 4;
-    survivalScore = 0;
-  }
 }
 
 function Update()
@@ -1116,7 +1107,7 @@ function Update()
 				attacker = 1-attacker;
 		}
 
-		UpdateRecording(mt);
+		UpdateRecording(mt, mt);
 	}
 	else if( state == RCState.POST_ATTACK )
 	{
@@ -1130,11 +1121,11 @@ function Update()
 
 		if( IsInPostTolerance() )
 			// if they add any notes, assume they're on the last beat
-			UpdateRecording( GetSecsPerMeasure()+mt );
+			UpdateRecording( GetSecsPerMeasure(), GetSecsPerMeasure()+mt );
 		else if( JustExitedPostTol() )
 		{
 			// do one more..
-			UpdateRecording( GetSecsPerMeasure()+mt );
+			UpdateRecording( GetSecsPerMeasure(), GetSecsPerMeasure()+mt );
 			EndRecording();
 			// make the notes all blue immediately
 			ResetTesting();
@@ -1146,11 +1137,12 @@ function Update()
 				aiInputs = horseAI.RepeatBeat(this);
 		}
 		if( IsInPreTolerance() )
-			UpdateTesting( 0.0 );
+			// no need to pass in the "real" mt for the input - AIs will never do that
+			UpdateTesting( 0.0, 0.0 );
 	}
 	else if( state == RCState.DEFEND )
 	{
-		UpdateTesting( mt );
+		UpdateTesting( mt, mt );
 
 	}
 	else if( state == RCState.POST_DEFEND )
@@ -1163,10 +1155,10 @@ function Update()
 		}
 
 		if( IsInPostTolerance() )
-			UpdateTesting( GetSecsPerMeasure() + mt );
+			UpdateTesting( GetSecsPerMeasure(), GetSecsPerMeasure() + mt );
 		else if( JustExitedPostTol() ) {
 			// do one final update, to register success/fail
-			UpdateTesting( GetSecsPerMeasure() + mt );
+			UpdateTesting( GetSecsPerMeasure(), GetSecsPerMeasure() + mt );
 			// Reset for next phase
 			EndTesting();
 			ResetTesting();
@@ -1209,23 +1201,23 @@ function Update()
 		if( IsInPreTolerance() )
 		{
 			if( IsAiInputting() && survivalMode )
-				UpdateRecording( 0.0 );
+				UpdateRecording( 0.0, 0.0 );
 			else
-				UpdateTesting( 0.0 );
+				UpdateTesting( 0.0, 0.0 );
 		}
 	}
 	else if( state == RCState.REPEAT )
 	{
-		UpdateTesting(mt);
+		UpdateTesting(mt, mt);
 	}
 	else if( state == RCState.POST_REPEAT )
 	{
 		if( IsInPostTolerance() )
-			UpdateTesting( GetSecsPerMeasure() + mt );
+			UpdateTesting( GetSecsPerMeasure(), GetSecsPerMeasure() + mt );
 
 		if( JustExitedPostTol() ) {
 			// do one final update, to register success/fail
-			UpdateTesting( GetSecsPerMeasure() + mt );
+			UpdateTesting( GetSecsPerMeasure(), GetSecsPerMeasure() + mt );
 			// reset round
 			EndTesting();
 			ResetRound();
@@ -1245,7 +1237,7 @@ function Update()
 			aiInputs = horseAI.CreateBeat(this);
 		if( IsInPreTolerance() )
 		{
-			UpdateRecording( 0.0 );
+			UpdateRecording( 0.0, 0.0 );
 		}
 	}
 	else if( state == RCState.VICTORY )
