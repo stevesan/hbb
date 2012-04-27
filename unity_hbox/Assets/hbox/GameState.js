@@ -335,9 +335,13 @@ function OnBeatChange( beatsPassed : int )
 	}
 }
 
-function OnGameOverCommon()
+function OnSurvivalOver()
 {
-	GetSongPlayer().Stop();
+	for( var obj in eventListeners ) {
+		if( obj != null )
+			obj.SendMessage( "OnSurvivalOver", GetComponent(GameState),
+					SendMessageOptions.DontRequireReceiver );
+	}
 }
 
 function UpdateBeatPlayback( mt : float )
@@ -1164,6 +1168,9 @@ function Update()
 					// victory!
 					state = RCState.VICTORY;
 					GetSongPlayer().Stop();
+
+					if( survivalMode )
+						OnSurvivalOver();
 				}
 			}
 		}
