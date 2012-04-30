@@ -16,6 +16,8 @@ private var aiPlayer = 0;
 
 private var debugInputtingPlayer : int;
 
+var playerName = "Morgan Freeman";
+
 var songs : SongsManager = null;
 var activeSong : int = 0;
 var optionEchoBeat = false;
@@ -95,6 +97,10 @@ private var attacker : int = 0;
 function GetMaxLosses() : int { return maxLosses; }
 
 function GetMeasureTime() { return Time.time-measureStartTime; }
+
+function GetSongTitle() : String {
+	return songs.players[ activeSong ].title;
+}
 
 //----------------------------------------
 //----------------------------------------
@@ -222,9 +228,54 @@ function ResetBeatPlayback()
 
 function Awake() {
 	inst = GetComponent(GameState);
+	playerName = PlayerPrefs.GetString('playerName');
+	Debug.Log('player name = '+playerName);
 
 	p1loseCard.enabled = false;
 	p2loseCard.enabled = false;
+
+}
+
+var playerNameWin = null;
+function OnGUI()
+{
+	if( state != RCState.MENU || menuState != MenuState.ENTER_NAME )
+		return;
+
+	var radius = Screen.height/2;
+	var centerX = Screen.width/2;
+	var centerY = Screen.height/2;
+
+	var textStyle = new GUIStyle();
+	textStyle.fontSize = 14;
+	textStyle.normal.textColor = Color.white;
+
+	GUILayout.BeginArea( Rect( 200, 200, 400, 200 ));
+	GUILayout.Label('Kindly enter your name for leaderboards. And FBI monitoring.', textStyle);
+
+	// Need to check this event before text field
+	if( Event.current.type == EventType.KeyDown
+			&& Event.current.keyCode == KeyCode.Return )
+	{
+		// Done
+		Debug.Log(playerName);
+		PlayerPrefs.SetString('playerName', playerName);
+		menuState = MenuState.MODE;
+		titleMusic.Stop();
+	}
+	else if( Event.current.type == EventType.KeyDown
+			&& Event.current.keyCode == KeyCode.Escape )
+	{
+		menuState = MenuState.MAIN;
+	}
+	else
+	{
+		GUI.SetNextControlName('nameTextBox');
+		playerName = GUILayout.TextField( playerName, 16 );
+		GUI.FocusControl('nameTextBox');
+		GUILayout.Label('Press ENTER when done', textStyle);
+	}
+	GUILayout.EndArea();
 }
 
 function GetSecsPerBeat()
@@ -806,7 +857,7 @@ function UpdateKeyPopping() {
 }
 
 
-enum MenuState { MAIN, CREDITS, MODE, SONGS, TUTE }
+enum MenuState { MAIN, ENTER_NAME, CREDITS, MODE, SONGS, TUTE }
 var menuState : MenuState = MenuState.MAIN;
 
 function UpdateMenuMode()
@@ -829,9 +880,8 @@ function UpdateMenuMode()
 		}
 		else if( Input.GetButtonDown('Start') )
 		{
-			menuState = MenuState.MODE;
+			menuState = MenuState.ENTER_NAME;
 			PlayRandomSample();
-			titleMusic.Stop();
 		}
 		else if( Input.GetButtonDown('Sample0B') )
 		{
@@ -839,6 +889,11 @@ function UpdateMenuMode()
 			menuState = MenuState.CREDITS;
 			titleMusic.Stop();
 		}
+	}
+	else if( menuState == MenuState.ENTER_NAME )
+	{
+		menuText.text = '';
+		// OnGUI handles stuff here
 	}
 	else if( menuState == MenuState.CREDITS )
 	{
@@ -890,7 +945,8 @@ function UpdateMenuMode()
 		{
 			PlayRandomSample();
 			songSelectMusic.Stop();
-			menuState = MenuState.MAIN;
+			menuState = MenuState.ENTER_NAME;
+			titleMusic.Play();
 		}
   }
 	else if( menuState == MenuState.SONGS )

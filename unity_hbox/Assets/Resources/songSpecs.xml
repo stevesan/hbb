@@ -98,37 +98,6 @@
 		<layer res="songs/135 BPM/SYNTH/Hot_to_Trot_135_prev_120_synth_pad_01" />
 		<layer res="songs/135 BPM/SYNTH/Hot_to_Trot_135_prev_120_synth_melody_02" />
 
-
-	</song>
-	<song title = "Cluster Strut (GALLOP)"
-		bpm = "190"
-		bpMeas = "4"
-		numMeasures = "16"
-		volume = "1.0"
-		samplesVolume = "1.0"
-		releaseSecs = "0.5"
-		broncoAI = '190bpmClusterStrut'
-		>
-		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
-		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Eb" />
-		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Bb" />
-
-		<!-- drums -->
-		<layer res="songs/190 BPM/DRUMS/Cluster_Strut_190_drums" />
-
-		<!-- bass -->
-		<layer res="songs/190 BPM/BASS/Cluster_Strut_190_bass" />
-
-		<!-- guitar -->
-		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_01" />
-		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_02" />
-		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_03" />
-
-		<!-- synth -->
-		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_lead" />
-		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_pad" />
-
-
 	</song>
 
 	<song title = "West Side Horsey (FAST CANTER)"
@@ -162,6 +131,37 @@
 		<!-- guitar -->
 		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/GUITAR/West_Side_Horsey_160_guitar_01" />
 		<layer res="songs/WEST_SIDE_HORSEY_160_BPM/GUITAR/West_Side_Horsey_160_guitar_02" />
+
+	</song>
+
+	<song title = "Cluster Strut (GALLOP)"
+		bpm = "190"
+		bpMeas = "4"
+		numMeasures = "16"
+		volume = "1.0"
+		samplesVolume = "1.0"
+		releaseSecs = "0.5"
+		broncoAI = '190bpmClusterStrut'
+		>
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Eb" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Bb" />
+
+		<!-- drums -->
+		<layer res="songs/190 BPM/DRUMS/Cluster_Strut_190_drums" />
+
+		<!-- bass -->
+		<layer res="songs/190 BPM/BASS/Cluster_Strut_190_bass" />
+
+		<!-- guitar -->
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_01" />
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_02" />
+		<layer res="songs/190 BPM/GUITAR/Cluster_Strut_190_guitar_03" />
+
+		<!-- synth -->
+		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_lead" />
+		<layer res="songs/190 BPM/SYNTH/Cluster_Strut_190_synth_pad" />
+
 
 	</song>
 
