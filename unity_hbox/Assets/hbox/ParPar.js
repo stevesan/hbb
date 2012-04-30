@@ -13,6 +13,8 @@ function OnSurvivalOver( gs:GameState )
 	var value = gs.survivalScore;
 	
 	Debug.Log('ParPar: submitting score: '+value+ ' to '+song );
+	highscoreNames = 'Loading..';
+	highscoreValues = '';
 
 	var url = urlBase+'/SaveScore?song='+song+'&player='+player+'&value='+value;
 	Debug.Log(url);
