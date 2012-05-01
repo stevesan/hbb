@@ -16,7 +16,10 @@ function OnSurvivalOver( gs:GameState )
 	highscoreNames = 'Loading..';
 	highscoreValues = '';
 
-	var url = urlBase+'/SaveScore?song='+song+'&player='+player+'&value='+value;
+	var url = urlBase
+		+'/SaveScore?song='+WWW.EscapeURL(song)
+		+'&player='+WWW.EscapeURL(player)
+		+'&value='+value;
 	Debug.Log(url);
 	var www = new WWW( url );
 	yield www;
@@ -57,7 +60,7 @@ function DisplayScores( song:String, currPlayer:String, currValue:int )
 	highscoreNames = 'Loading..';
 	highscoreValues = '';
 
-	var url = urlBase + '/GetScores?song=' + song + '&limit=10' + '&days=-1';
+	var url = urlBase + '/GetScores?song=' + WWW.EscapeURL(song) + '&limit=10' + '&days=-1';
 	Debug.Log(url);
 	var www = new WWW( url );
 	yield www;
