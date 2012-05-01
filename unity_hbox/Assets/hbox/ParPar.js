@@ -33,7 +33,7 @@ private var highscoreValues = '';
 
 function OnGUI()
 {
-	if( GameState.inst.state == RCState.VICTORY )
+	if( GameState.inst.state == RCState.VICTORY && GameState.inst.survivalMode )
 	{
 		var radius = Screen.height/3;
 		var centerX = Screen.width/2;

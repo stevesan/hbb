@@ -1087,7 +1087,6 @@ function StartGameRitual2()
   else
     GetSongPlayer().UseAllLayers();
   musicStartTime = Time.time;
-
 }
 
 function Update()

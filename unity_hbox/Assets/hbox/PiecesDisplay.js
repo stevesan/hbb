@@ -54,10 +54,11 @@ function OnScoreChanged( gs:GameState ) : void
 
 function OnBattleReset()
 {
+	// by default, turn all to the "off" position
 	var gs = GameState.inst;
 	for( p = 0; p < 2; p++ )
 		for( l = 0; l < gs.GetMaxLosses(); l++ )
-			playerPieces[p,l].renderer.enabled = false;
+			Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
 }
 
 function OnSuccess( player:int )
