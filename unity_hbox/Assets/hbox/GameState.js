@@ -30,7 +30,6 @@ var survivalScore:int;
 var perNoteScore = false;
 var debugKeysDown = false;
 
-var timeTolSecs : float = 0.15; // never put this above 0.3..since 190BPM is our fastest song, and that would make it not distinguish between 16th notes
 var cameraShake : Shake = null;
 var menuText : TextMesh;
 var tuteText : TextMesh;
@@ -124,18 +123,23 @@ function GetEffectiveMeasureTime()
 // exceeding the tolerance. Ie. if the previous measure was a input-accepting measure,
 // this is its "post measure tolerance" period
 
-function IsInPostTolerance() { return GetMeasureTime() <= timeTolSecs; }
-function IsInPreTolerance() { return (GetSecsPerMeasure()-GetMeasureTime()) <= timeTolSecs; }
+function GetTolSecs() : float
+{
+	return GetSongPlayer().timeTolSecs;
+}
+
+function IsInPostTolerance() { return GetMeasureTime() <= GetTolSecs(); }
+function IsInPreTolerance() { return (GetSecsPerMeasure()-GetMeasureTime()) <= GetTolSecs(); }
 function JustEnteredPreTol()
 {
-	var rv = (GetSecsPerMeasure()-GetMeasureTime()+Time.deltaTime) > timeTolSecs
+	var rv = (GetSecsPerMeasure()-GetMeasureTime()+Time.deltaTime) > GetTolSecs()
 		&& IsInPreTolerance();
 	return rv;
 }
 
 function JustExitedPostTol()
 {
-	return (prevMeasureTime <= timeTolSecs)
+	return (prevMeasureTime <= GetTolSecs())
 		&& !IsInPostTolerance();
 }
 
@@ -641,7 +645,7 @@ function UpdateTesting( mt : float, inputMt:float )
 		var noteType = NoteType.Hit;
 		var noteMt = mt;
 
-		var hitNote = FindNote( GetBeatNotes(), mt, key, timeTolSecs );
+		var hitNote = FindNote( GetBeatNotes(), mt, key, GetTolSecs() );
 		if( hitNote != -1 && GetBeatNotes()[hitNote].downHit == false )
 		{
 			// yes! register the hit
@@ -682,7 +686,7 @@ function UpdateTesting( mt : float, inputMt:float )
 
 			hitNote = FindUppedNote( beatNotes,
 					note.measureTime, note.endMeasureTime,
-					key, timeTolSecs );
+					key, GetTolSecs() );
 			
 			if( hitNote == -1 )
 			{
@@ -724,7 +728,7 @@ function UpdateTesting( mt : float, inputMt:float )
 		if( !note.downHit )
 		{
 			// wasn't hit - opportunity past?
-			if( (note.measureTime+timeTolSecs) < mt )
+			if( (note.measureTime+GetTolSecs()) < mt )
 			{
 				// yep..didn't get it
 				if( note.type != NoteType.Miss )
@@ -746,7 +750,7 @@ function UpdateTesting( mt : float, inputMt:float )
 			{
 				// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
 				// Note that we use the real time here...so during the post tolerance, we will register the hit
-				if( (note.endMeasureTime+timeTolSecs) < inputMt )
+				if( (note.endMeasureTime+GetTolSecs()) < inputMt )
 				{
 					// end time has passed
 					if( note.type != NoteType.Miss )
@@ -814,7 +818,7 @@ function UpdateRecording( mt : float, inputMt:float )
 		{
 			var note:Note = beatNotes[noteId];
 			// register the key-up. But, if the hold-time is within tolerance, pretend it was instantly let up
-			if( mt - note.measureTime <= timeTolSecs )
+			if( mt - note.measureTime <= GetTolSecs() )
 				beatNotes[noteId].OnUp( note.measureTime );
 			else
 				beatNotes[noteId].OnUp( mt );
