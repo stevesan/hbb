@@ -61,7 +61,6 @@
      <Compile Include="Assets\hbox\Shake.js" />
      <Compile Include="Assets\hbox\SongInfo.js" />
      <Compile Include="Assets\hbox\SongsManager.js" />
-     <Compile Include="Assets\hbox\TestTrail.js" />
      <Compile Include="Assets\hbox\TrackLaserScript.js" />
      <Compile Include="Assets\hbox\Utils\CameraShake.js" />
      <Compile Include="Assets\hbox\Utils\ChangingTexture.js" />

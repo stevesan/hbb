@@ -8,28 +8,55 @@
 //  Works in the XY plane, and basically uses XY position as UVs
 //	TODO - have two radii - left and right radius
 //----------------------------------------
-static function Stroke2D( pts:Vector2[], width:float, mesh:Mesh )
+static function Stroke2D(
+		ctrlPts:Vector2[], firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
+		width:float, mesh:Mesh,
+		firstVert:int, firstTri:int	// use firstVert/Tri to tell Stroke2D where to output in the mesh. firstTri should be the index/3
+		)
 {
-	var npts = pts.length;
+	if( lastCtrl <= firstCtrl )
+	{
+		Debug.LogError('need at least 2 points to build stroke geometry!');
+		return;
+	}
+
+	var nctrls = lastCtrl-firstCtrl+1;
 	var radius : float = width/2.0;
+	var ntris = 2*(nctrls-1);
 
-	var vertices = new Vector3[ 2 * npts ];
-	var uvs = new Vector2[ 2 * npts ];
+	// According to the Unity docs, you actually need to get, modify, then assign them back. Can't just modify directly!! 
+	var vertices = mesh.vertices;
+	var uv = mesh.uv;
+	var triangles = mesh.triangles;
+	var normals = mesh.normals;
 
-	var a = pts[0];
-	var b = pts[1];
+	// make sure buffers are large enough
+	if( (firstVert + 2*nctrls) > vertices.length )
+	{
+		Debug.LogError('not enough vertices allocated in mesh for '+nctrls+' control points!');
+		return;
+	}
+
+	if( (firstTri + 3*ntris) > triangles.length )
+	{
+		Debug.LogError('not enough triangle space allocated in mesh for '+nctrls+' control points!');
+		return;
+	}
+
+	var a = ctrlPts[firstCtrl];
+	var b = ctrlPts[firstCtrl+1];
 	var e0 = b-a;
 	var n = Utils.PerpCCW( e0 ).normalized;
 	vertices[0] = a + n*radius;
 	vertices[1] = a - n*radius;
-	uvs[ 0 ] = Vector2( 0,0 );
-	uvs[ 1 ] = Vector2( 1,0 );
+	uv[ 0 ] = Vector2( 0,0 );
+	uv[ 1 ] = Vector2( 1,0 );
 
-	for( var i = 1; i < npts-1; i++ )
+	for( var i = firstCtrl+1; i < lastCtrl; i++ )
 	{
-		var p0 = pts[i-1];
-		var p1 = pts[i];
-		var p2 = pts[i+1];
+		var p0 = ctrlPts[i-1];
+		var p1 = ctrlPts[i];
+		var p2 = ctrlPts[i+1];
 		e0 = p1-p0;
 		var e1 = p2-p1;
 
@@ -49,27 +76,25 @@ static function Stroke2D( pts:Vector2[], width:float, mesh:Mesh )
 		vertices[ 2*i ] = p1+radius*n - alpha*e0n;
 		vertices[ 2*i+1 ] = p1-radius*n + alpha*e0n;
 
-		var v = (1.0*i) / (npts-1.0);
-		uvs[ 2*i ] = Vector2( 0, v );
-		uvs[ 2*i+1 ] = Vector2( 1, v );
+		var v = (1.0*i) / (nctrls-1.0);
+		uv[ 2*i ] = Vector2( 0, v );
+		uv[ 2*i+1 ] = Vector2( 1, v );
 	}
 
 	// last one
-	a = pts[ npts-2 ];
-	b = pts[ npts-1 ];
+	a = ctrlPts[ lastCtrl-1 ];
+	b = ctrlPts[ lastCtrl ];
 	e0 = b-a;
 	n = Utils.PerpCCW( e0 ).normalized;
-	vertices[ 2*npts-2 ] = b + n*radius;
-	vertices[ 2*npts-1 ] = b - n*radius;
-	uvs[ 2*npts-2 ] = Vector2( 0, 1 );
-	uvs[ 2*npts-1 ] = Vector2( 1, 1 );
+	vertices[ 2*nctrls-2 ] = b + n*radius;
+	vertices[ 2*nctrls-1 ] = b - n*radius;
+	uv[ 2*nctrls-2 ] = Vector2( 0, 1 );
+	uv[ 2*nctrls-1 ] = Vector2( 1, 1 );
 
 	//----------------------------------------
 	//  Triangles
 	//----------------------------------------
-	var ntris = 2*(npts-1);
-	var triangles = new int[ ntris * 3 ];
-	for( i = 0; i < (npts-1); i++ )
+	for( i = 0; i < (nctrls-1); i++ )
 	{
 		triangles[ 6*i + 0 ] = 2 * i + 0;
 		triangles[ 6*i + 1 ] = 2 * i + 2;
@@ -80,19 +105,17 @@ static function Stroke2D( pts:Vector2[], width:float, mesh:Mesh )
 		triangles[ 6*i + 5 ] = 2 * i + 3;
 	}
 
+	// set all normals to -Z
+	for( i = 0; i < mesh.normals.length; i++ )
+		mesh.normals[i] = Vector3( 0, 0, 1 );
+
 	//----------------------------------------
-	//  Assign
+	//  Assign back
 	//----------------------------------------
 	mesh.vertices = vertices;
-	mesh.uv = uvs;
-	mesh.triangles = triangles;
-
-	// set all normals to -Z
-	var normals = new Vector3[ 2 * npts ];
-	for( i = 0; i < normals.length; i++ )
-		normals[i] = Vector3( 0, 0, -1 );
-
+	mesh.uv = uv;
 	mesh.normals = normals;
+	mesh.triangles = triangles;
 }
 
 //----------------------------------------

@@ -33,6 +33,8 @@ var wasMissed : boolean;
 var isError : boolean;
 
 private var trail : GameObject = null;
+private var trailPtsPerMeasure:int = 16;
+private var trailPts = new Vector2[trailPtsPerMeasure];
 
 function GetDuration() : float { return endMeasureTime-measureTime; }
 
@@ -40,9 +42,15 @@ function Start () {
 
 	// create a trail child mesh
 	trail = new GameObject();
-	trail.AddComponent( MeshFilter );
+	var mesh = trail.AddComponent( MeshFilter ).mesh;
 	trail.AddComponent( MeshRenderer );
 	trail.renderer.material = normalTrailMat;
+
+	// allocate for maximum number of possible 
+	mesh.vertices = new Vector3[ 2*trailPtsPerMeasure ];
+	mesh.uv = new Vector2[ 2*trailPtsPerMeasure ];
+	mesh.normals = new Vector3[ 2*trailPtsPerMeasure ];
+	mesh.triangles = new int[ 3*2*(trailPtsPerMeasure-1) ];
 }
 
 function OnDestroy()
@@ -134,7 +142,6 @@ function UpdateRenderedCard()
 		normalRender.enabled = true;
 }
 
-private var trailPts = new Vector2[10];
 function UpdateTrail()
 {
 	if( trail != null && track != null)
@@ -152,19 +159,31 @@ function UpdateTrail()
 
 		if( deltaMt > 0.0 )
 		{
-			var mtStep = deltaMt / (trailPts.length-1);
+			var measureFrac:float = deltaMt / gs.GetSecsPerMeasure();
+			var numPts:int = Mathf.Ceil( trailPtsPerMeasure * measureFrac );
+			numPts = Mathf.Clamp( numPts, 2, trailPts.length );
+
+			var mtStep = deltaMt / (numPts-1);
 
 			// update the tesselation positions for the trail
 			var region = track.GetCurrentTrackMeasure(gs);
 
-			for( var i = 0; i < trailPts.length; i++ )
+			for( var i = 0; i < numPts; i++ )
 			{
 				var mt = measureTime + mtStep*i;
 				var worldPos = GetNoteWorldPos( mt, gs, region );
 				trailPts[i] = Utils.ToVector2( worldPos );
 			}
 
-			ProGeo.Stroke2D( trailPts, 2, trail.GetComponent(MeshFilter).mesh );
+			// degenerate all triangles by default
+			var mesh = trail.GetComponent(MeshFilter).mesh;
+			var tris = mesh.triangles;
+			for( i = 0; i < tris.length; i++ )
+				tris[i] = 0;
+			mesh.triangles = tris;
+
+			ProGeo.Stroke2D( trailPts, 0, numPts-1, 2.0,
+					mesh, 0, 0 );
 
 			// select correct material
 			if( type == NoteType.Normal )
