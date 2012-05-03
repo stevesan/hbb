@@ -16,12 +16,6 @@ var trailOffsetZ:float = 0.01;	// put trail slightly behind note
 var track : Figure8 = null;
 var trailWidth : float = 2.0;
 
-var normalRender : Renderer = null;
-var missRender : Renderer = null;
-var hitRender : Renderer = null;
-var hitAnim : UVAnim = null;
-var missAnim : UVAnim = null;
-
 var normalTrailMat : Material = null;
 var hitTrailMat : Material = null;
 var missTrailMat : Material = null;
@@ -121,35 +115,17 @@ function UpdatePosition()
 function OnMiss()
 {
 	type = NoteType.Miss;
-	missAnim.Play();
+	//missAnim.Play();
 }
 
 function OnHit()
 {
 	type = NoteType.Hit;
-	hitAnim.Play();
+	//hitAnim.Play();
 }
 
 function UpdateRenderedCard()
 {
-	normalRender.enabled = false;
-	missRender.enabled = false;
-	hitRender.enabled = false;
-	missAnim.renderer.enabled = false;
-	hitAnim.renderer.enabled = false;
-
-	if( type == NoteType.Miss )
-	{
-		missRender.enabled = !missAnim.IsPlaying();
-		missAnim.renderer.enabled = missAnim.IsPlaying();
-	}
-	else if( type == NoteType.Hit )
-	{
-		hitRender.enabled = !hitAnim.IsPlaying();
-		hitAnim.renderer.enabled = hitAnim.IsPlaying();
-	}
-	else
-		normalRender.enabled = true;
 }
 
 function UpdateTrail()
@@ -165,18 +141,19 @@ function UpdateTrail()
 			endMt = gs.GetEffectiveMeasureTime();
 		}
 
+		var region = track.GetCurrentTrackMeasure(gs);
 		var deltaMt = endMt - measureTime;
+		var numMids = 0;
 
 		if( deltaMt > 0.0 )
 		{
 			// figure out the number of segments to tesselate into
 			var measureFrac:float = deltaMt / gs.GetSecsPerMeasure();
-			var numMids:int = Mathf.Ceil( trailMidsPerMeas * measureFrac );
+			numMids = Mathf.Ceil( trailMidsPerMeas * measureFrac );
 			numMids = Mathf.Clamp( numMids, 2, trailMidsPerMeas );
 
 			// generate tesselation points
 			// but leave beginning and end for the caps
-			var region = track.GetCurrentTrackMeasure(gs);
 			var secsPerSection = deltaMt / (numMids-1);
 			var currCtrlMt = measureTime;
 
@@ -195,33 +172,42 @@ function UpdateTrail()
 			var tailDelta = trailWidth/2.0 * (trailCtrls[numMids]-trailCtrls[numMids-1]).normalized;
 			trailCtrls[numMids+1] = trailCtrls[numMids]+tailDelta;
 			trailCtrlTexVs[numMids+1] = 1;
-
-
-			// degenerate all triangles by default
-			var mesh = trail.GetComponent(MeshFilter).mesh;
-			var tris = mesh.triangles;
-			for( i = 0; i < tris.length; i++ )
-				tris[i] = 0;
-			mesh.triangles = tris;
-
-			ProGeo.Stroke2D( trailCtrls, trailCtrlTexVs, 0, numMids+1,
-					trailWidth,
-					mesh, 0, 0 );
-
-			// select correct material
-			if( type == NoteType.Normal )
-				trail.renderer.material = normalTrailMat;
-			else if( type == NoteType.Hit )
-				trail.renderer.material = hitTrailMat;
-			else if( type == NoteType.Miss )
-				trail.renderer.material = missTrailMat;
-
-			// draw at correct Z position
-			trail.renderer.enabled = true;
-			trail.transform.position.z = transform.position.z + trailOffsetZ;
 		}
 		else
-			trail.renderer.enabled = false;
+		{
+			// just create a w-by-w square centered on the MT
+			var c = Utils.ToVector2( GetNoteWorldPos( measureTime, gs, region ) );
+			trailCtrls[0] = Vector2( c.x, c.y+trailWidth/2.0 );
+			trailCtrls[1] = Vector2( c.x, c.y-trailWidth/2.0 );
+			trailCtrlTexVs[0] = 0;
+			trailCtrlTexVs[1] = 1;
+			numMids = 0;
+		}
+
+
+		// degenerate all triangles by default
+		var mesh = trail.GetComponent(MeshFilter).mesh;
+		var tris = mesh.triangles;
+		for( i = 0; i < tris.length; i++ )
+			tris[i] = 0;
+		mesh.triangles = tris;
+
+		// generate new geom
+		ProGeo.Stroke2D( trailCtrls, trailCtrlTexVs, 0, numMids+1,
+				trailWidth,
+				mesh, 0, 0 );
+
+		// select correct material
+		if( type == NoteType.Normal )
+			trail.renderer.material = normalTrailMat;
+		else if( type == NoteType.Hit )
+			trail.renderer.material = hitTrailMat;
+		else if( type == NoteType.Miss )
+			trail.renderer.material = missTrailMat;
+
+		// draw at correct Z position
+		trail.renderer.enabled = true;
+		trail.transform.position.z = transform.position.z + trailOffsetZ;
 	}
 }
 
