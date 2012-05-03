@@ -14,6 +14,7 @@ var key : int;
 var zPos:float = -12;
 var trailOffsetZ:float = 0.01;	// put trail slightly behind note
 var track : Figure8 = null;
+var trailWidth : float = 2.0;
 
 var normalRender : Renderer = null;
 var missRender : Renderer = null;
@@ -32,9 +33,17 @@ var wasPlayed : boolean;	// for playback
 var wasMissed : boolean;
 var isError : boolean;
 
+//----------------------------------------
+//  The trail is made up of two end caps and then a stretch-able mid section
+//	"trailMidsPerMeasure" is the number of control points for the midsection
+//	The mid-section needs to have at least 2 control points.
+//	Also, 2 more for the beginning and end
+//----------------------------------------
 private var trail : GameObject = null;
-private var trailPtsPerMeasure:int = 16;
-private var trailPts = new Vector2[trailPtsPerMeasure];
+private var trailMidsPerMeas:int = 16;
+private var trailCtrls = new Vector2[trailMidsPerMeas+2];
+// tell the stroke-geo tool what V tex coords to use
+private var trailCtrlTexVs = new float[ trailMidsPerMeas+2 ];
 
 function GetDuration() : float { return endMeasureTime-measureTime; }
 
@@ -47,10 +56,11 @@ function Start () {
 	trail.renderer.material = normalTrailMat;
 
 	// allocate for maximum number of possible 
-	mesh.vertices = new Vector3[ 2*trailPtsPerMeasure ];
-	mesh.uv = new Vector2[ 2*trailPtsPerMeasure ];
-	mesh.normals = new Vector3[ 2*trailPtsPerMeasure ];
-	mesh.triangles = new int[ 3*2*(trailPtsPerMeasure-1) ];
+	var numCtrls = trailCtrls.length;
+	mesh.vertices = new Vector3[ 2*numCtrls ];
+	mesh.uv = new Vector2[ 2*numCtrls ];
+	mesh.normals = new Vector3[ 2*numCtrls ];
+	mesh.triangles = new int[ 3*2*(numCtrls-1) ];
 }
 
 function OnDestroy()
@@ -159,21 +169,33 @@ function UpdateTrail()
 
 		if( deltaMt > 0.0 )
 		{
+			// figure out the number of segments to tesselate into
 			var measureFrac:float = deltaMt / gs.GetSecsPerMeasure();
-			var numPts:int = Mathf.Ceil( trailPtsPerMeasure * measureFrac );
-			numPts = Mathf.Clamp( numPts, 2, trailPts.length );
+			var numMids:int = Mathf.Ceil( trailMidsPerMeas * measureFrac );
+			numMids = Mathf.Clamp( numMids, 2, trailMidsPerMeas );
 
-			var mtStep = deltaMt / (numPts-1);
-
-			// update the tesselation positions for the trail
+			// generate tesselation points
+			// but leave beginning and end for the caps
 			var region = track.GetCurrentTrackMeasure(gs);
+			var secsPerSection = deltaMt / (numMids-1);
+			var currCtrlMt = measureTime;
 
-			for( var i = 0; i < numPts; i++ )
+			for( var i = 1; i <= numMids; i++ )
 			{
-				var mt = measureTime + mtStep*i;
-				var worldPos = GetNoteWorldPos( mt, gs, region );
-				trailPts[i] = Utils.ToVector2( worldPos );
+				var worldPos = GetNoteWorldPos( currCtrlMt, gs, region );
+				trailCtrls[i] = Utils.ToVector2( worldPos );
+				trailCtrlTexVs[i] = 0.5;
+				currCtrlMt += secsPerSection;
 			}
+
+			// add the caps
+			var headDelta = trailWidth/2.0 * (trailCtrls[1]-trailCtrls[2]).normalized;
+			trailCtrls[0] = trailCtrls[1] + headDelta;
+			trailCtrlTexVs[0] = 0;
+			var tailDelta = trailWidth/2.0 * (trailCtrls[numMids]-trailCtrls[numMids-1]).normalized;
+			trailCtrls[numMids+1] = trailCtrls[numMids]+tailDelta;
+			trailCtrlTexVs[numMids+1] = 1;
+
 
 			// degenerate all triangles by default
 			var mesh = trail.GetComponent(MeshFilter).mesh;
@@ -182,7 +204,8 @@ function UpdateTrail()
 				tris[i] = 0;
 			mesh.triangles = tris;
 
-			ProGeo.Stroke2D( trailPts, 0, numPts-1, 2.0,
+			ProGeo.Stroke2D( trailCtrls, trailCtrlTexVs, 0, numMids+1,
+					trailWidth,
 					mesh, 0, 0 );
 
 			// select correct material

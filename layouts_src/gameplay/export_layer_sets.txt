@@ -1,0 +1,65 @@
+p2
+/p2
+
+p1
+/p1
+
+names
+/name cards/MASK DE SOMETHING
+/name cards/SENATOR SINCLAIRE
+/name cards/names
+
+cat
+/cat/cat
+
+catDead
+/cat/cat dead
+
+luc
+/luchador/luchador color
+/luchador/luchador
+
+lucDead
+/luchador/luchador dead
+
+speechCat
+/speech/bitchin
+
+speechLuc
+/speech/hell yeah
+
+track
+/track/player bar
+/track/letters
+/track/cyan
+/track/magenta
+/track/yellow
+
+auraCat
+/bg2/spikes
+
+auraLuc
+/bg2/cloud
+
+stars
+/bg2/stars
+
+bgPink
+/bg/paper effect/paper2
+/bg/paper effect/paper1
+/bg/pink
+
+bgGreen
+/bg/paper effect/paper2
+/bg/paper effect/paper1
+/bg/green
+
+bgWhite
+/bg/paper effect/paper2
+/bg/paper effect/paper1
+/bg/white (eggshell)
+
+bgOrange
+/bg/paper effect/paper2
+/bg/paper effect/paper1
+/bg/orange

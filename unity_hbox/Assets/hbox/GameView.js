@@ -23,7 +23,7 @@ function Start()
 
 		for( var i = 0; i < successAnims.length; i++ )
 		{
-			successAnims[i].holdDuration = dt/4.0;
+			successAnims[i].holdDuration = dt/1.0;
 			successAnims[i].fadeDuration = dt/4.0;
 		}
 	}

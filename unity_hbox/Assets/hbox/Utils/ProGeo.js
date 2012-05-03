@@ -9,7 +9,7 @@
 //	TODO - have two radii - left and right radius
 //----------------------------------------
 static function Stroke2D(
-		ctrlPts:Vector2[], firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
+		ctrlPts:Vector2[], ctrlPtTexVs:float[], firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
 		width:float, mesh:Mesh,
 		firstVert:int, firstTri:int	// use firstVert/Tri to tell Stroke2D where to output in the mesh. firstTri should be the index/3
 		)
@@ -37,7 +37,7 @@ static function Stroke2D(
 		return;
 	}
 
-	if( (firstTri + 3*ntris) > triangles.length )
+	if( 3*(firstTri + ntris) > triangles.length )
 	{
 		Debug.LogError('not enough triangle space allocated in mesh for '+nctrls+' control points!');
 		return;
@@ -47,10 +47,11 @@ static function Stroke2D(
 	var b = ctrlPts[firstCtrl+1];
 	var e0 = b-a;
 	var n = Utils.PerpCCW( e0 ).normalized;
-	vertices[0] = a + n*radius;
-	vertices[1] = a - n*radius;
-	uv[ 0 ] = Vector2( 0,0 );
-	uv[ 1 ] = Vector2( 1,0 );
+	vertices[firstVert+0] = a + n*radius;
+	vertices[firstVert+1] = a - n*radius;
+	var v = ctrlPtTexVs[ firstCtrl ];
+	uv[ firstVert+0 ] = Vector2( 0, v );
+	uv[ firstVert+1 ] = Vector2( 1, v );
 
 	for( var i = firstCtrl+1; i < lastCtrl; i++ )
 	{
@@ -73,12 +74,12 @@ static function Stroke2D(
 		var alpha = radius * Mathf.Tan( dtheta/2.0 );
 
 		n = Utils.PerpCCW( e0 ).normalized;
-		vertices[ 2*i ] = p1+radius*n - alpha*e0n;
-		vertices[ 2*i+1 ] = p1-radius*n + alpha*e0n;
+		vertices[ firstVert+2*i+0 ] = p1+radius*n - alpha*e0n;
+		vertices[ firstVert+2*i+1 ] = p1-radius*n + alpha*e0n;
 
-		var v = (1.0*i) / (nctrls-1.0);
-		uv[ 2*i ] = Vector2( 0, v );
-		uv[ 2*i+1 ] = Vector2( 1, v );
+		v = ctrlPtTexVs[ i ];
+		uv[ firstVert+2*i+0 ] = Vector2( 0, v );
+		uv[ firstVert+2*i+1 ] = Vector2( 1, v );
 	}
 
 	// last one
@@ -86,23 +87,24 @@ static function Stroke2D(
 	b = ctrlPts[ lastCtrl ];
 	e0 = b-a;
 	n = Utils.PerpCCW( e0 ).normalized;
-	vertices[ 2*nctrls-2 ] = b + n*radius;
-	vertices[ 2*nctrls-1 ] = b - n*radius;
-	uv[ 2*nctrls-2 ] = Vector2( 0, 1 );
-	uv[ 2*nctrls-1 ] = Vector2( 1, 1 );
+	vertices[ firstVert+2*nctrls-2 ] = b + n*radius;
+	vertices[ firstVert+2*nctrls-1 ] = b - n*radius;
+	v = ctrlPtTexVs[ lastCtrl ];
+	uv[ firstVert+2*nctrls-2 ] = Vector2( 0, v );
+	uv[ firstVert+2*nctrls-1 ] = Vector2( 1, v );
 
 	//----------------------------------------
 	//  Triangles
 	//----------------------------------------
 	for( i = 0; i < (nctrls-1); i++ )
 	{
-		triangles[ 6*i + 0 ] = 2 * i + 0;
-		triangles[ 6*i + 1 ] = 2 * i + 2;
-		triangles[ 6*i + 2 ] = 2 * i + 1;
+		triangles[ 3*firstTri + 6*i + 0 ] = 2 * i + 0;
+		triangles[ 3*firstTri + 6*i + 1 ] = 2 * i + 2;
+		triangles[ 3*firstTri + 6*i + 2 ] = 2 * i + 1;
 
-		triangles[ 6*i + 3 ] = 2 * i + 1;
-		triangles[ 6*i + 4 ] = 2 * i + 2;
-		triangles[ 6*i + 5 ] = 2 * i + 3;
+		triangles[ 3*firstTri + 6*i + 3 ] = 2 * i + 1;
+		triangles[ 3*firstTri + 6*i + 4 ] = 2 * i + 2;
+		triangles[ 3*firstTri + 6*i + 5 ] = 2 * i + 3;
 	}
 
 	// set all normals to -Z
