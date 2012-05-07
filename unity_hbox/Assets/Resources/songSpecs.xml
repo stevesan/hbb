@@ -7,7 +7,7 @@
 		samplesVolume = "0.8"
 		releaseSecs = "0.3"
 		broncoAI = '80bpmSwing'
-		timeTolSecs = '1.0'
+		timeTolSecs = '0.2'
 		>
 		<!-- melodies -->
 		<sample res="songs/80 BPM/MELODIES/C_WHOLE_NOTE_80_BPM_SLOW_AND_STEADY" />

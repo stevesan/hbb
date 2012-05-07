@@ -749,8 +749,9 @@ function UpdateTesting( mt : float, inputMt:float )
 			if( !note.upHit )
 			{
 				// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
+				// Don't use the tolerance, otherwise you get the weird effect of the trail getting long then getting cut short again
 				// Note that we use the real time here...so during the post tolerance, we will register the hit
-				if( (note.endMeasureTime+GetTolSecs()) < inputMt )
+				if( (note.endMeasureTime) < inputMt )
 				{
 					// end time has passed
 					if( note.type != NoteType.Miss )
