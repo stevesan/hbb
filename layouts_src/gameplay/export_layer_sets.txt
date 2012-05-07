@@ -44,22 +44,3 @@ auraLuc
 stars
 /bg2/stars
 
-bgPink
-/bg/paper effect/paper2
-/bg/paper effect/paper1
-/bg/pink
-
-bgGreen
-/bg/paper effect/paper2
-/bg/paper effect/paper1
-/bg/green
-
-bgWhite
-/bg/paper effect/paper2
-/bg/paper effect/paper1
-/bg/white (eggshell)
-
-bgOrange
-/bg/paper effect/paper2
-/bg/paper effect/paper1
-/bg/orange

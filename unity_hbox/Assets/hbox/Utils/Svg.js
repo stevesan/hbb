@@ -91,7 +91,7 @@ class SvgPathBuilder
 		pts.Clear();
 	}
 
-	function BuildExample()
+	function BuildFigure8Example()
 	{
 		Move( Vector2(402.063000,225.000000), false );
 		CubicBezier( Vector2(49.517000,87.256000), Vector2(99.718000,175.135000), Vector2(198.748000,175.135000), true );

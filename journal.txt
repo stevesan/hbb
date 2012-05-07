@@ -1,7 +1,10 @@
 TODOs:
 
+- ack parseSvgPath doesn't separate out repeated commands..ugh
+- have svgPath2UnityCode spit out a "svg command" file instead of unity code, like in Reflection
 - the "shake" avatar effect
-- note track..think about best way to get the path
+- "dance" animation script for avatars. bounce back and forth?
+- consider avoiding the "copy" step in Stroke2D.. ie. just always maintain my own arrays, and assign the mesh members to them when I update. could be faseter?
 - script to modify META files automatically for textures:
 	textureFormat: -1 to -3 (disable compression)
 	filterMode: -1 to 0 (no filtering)
@@ -15,8 +18,6 @@ TODOs:
 		normal
 		multiply
 		overlay
-
-- "dance" animation script for avatars. bounce back and forth?
 
 CANCELED:
 

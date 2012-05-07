@@ -34,7 +34,7 @@ var isError : boolean;
 //	Also, 2 more for the beginning and end
 //----------------------------------------
 private var trail : GameObject = null;
-private var trailMidsPerMeas:int = 16;
+private var trailMidsPerMeas:int = 30;
 private var trailCtrls = new Vector2[trailMidsPerMeas+2];
 // tell the stroke-geo tool what V tex coords to use
 private var trailCtrlTexVs = new float[ trailMidsPerMeas+2 ];

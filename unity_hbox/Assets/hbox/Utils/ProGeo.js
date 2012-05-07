@@ -9,7 +9,9 @@
 //	TODO - have two radii - left and right radius
 //----------------------------------------
 static function Stroke2D(
-		ctrlPts:Vector2[], ctrlPtTexVs:float[], firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
+		ctrlPts:Vector2[],
+		ctrlPtTexVs:float[],
+		firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
 		width:float, mesh:Mesh,
 		firstVert:int, firstTri:int	// use firstVert/Tri to tell Stroke2D where to output in the mesh. firstTri should be the index/3
 		)
@@ -25,6 +27,7 @@ static function Stroke2D(
 	var ntris = 2*(nctrls-1);
 
 	// According to the Unity docs, you actually need to get, modify, then assign them back. Can't just modify directly!! 
+	// TODO - I should just keep my own arrays around all the time, so instead of copying AND assigning, I just assign at the end
 	var vertices = mesh.vertices;
 	var uv = mesh.uv;
 	var triangles = mesh.triangles;

@@ -10,20 +10,28 @@ if __name__=='__main__':
 		code = cmd[0]
 		#print cmd
 		if code == 'c':
-			print '%s.CubicBezier( %s, %s, %s, true );' % (instName, vec2str(cmd[1][0]), vec2str(cmd[1][1]), vec2str(cmd[1][2]) )
+			for i in range( len(cmd[1])/3 ):
+				print '%s.CubicBezier( %s, %s, %s, true );' % (instName, vec2str(cmd[1][3*i+0]), vec2str(cmd[1][3*i+1]), vec2str(cmd[1][3*i+2]) )
 		elif code == 'C':
-			print '%s.CubicBezier( %s, %s, %s, false );' % (instName, vec2str(cmd[1][0]), vec2str(cmd[1][1]), vec2str(cmd[1][2]) )
+			for i in range( len(cmd[1])/3 ):
+				print '%s.CubicBezier( %s, %s, %s, false );' % (instName, vec2str(cmd[1][3*i+0]), vec2str(cmd[1][3*i+1]), vec2str(cmd[1][3*i+2]) )
 		elif code == 's':
-			print '%s.CubicBezierShort( %s, %s, true );' % (instName, vec2str(cmd[1][0][0]), vec2str(cmd[1][0][1]) )
+			for i in range( len(cmd[1][0])/2 ):
+				print '%s.CubicBezierShort( %s, %s, true );' % (instName, vec2str(cmd[1][0][2*i+0]), vec2str(cmd[1][0][2*i+1]) )
 		elif code == 'S':
-			print '%s.CubicBezierShort( %s, %s, false );' % (instName, vec2str(cmd[1][0][0]), vec2str(cmd[1][0][1]) )
+			for i in range( len(cmd[1][0])/2 ):
+				print '%s.CubicBezierShort( %s, %s, false );' % (instName, vec2str(cmd[1][0][2*i+0]), vec2str(cmd[1][0][2*i+1]) )
 		elif code == 'm':
-			print '%s.Move( %s, true );' % ( instName, vec2str(cmd[1][0]) )
+			for i in range( len(cmd[1])/1 ):
+				print '%s.Move( %s, true );' % ( instName, vec2str(cmd[1][i+0]) )
 		elif code == 'M':
-			print '%s.Move( %s, false );' % ( instName, vec2str(cmd[1][0]) )
+			for i in range( len(cmd[1])/1 ):
+				print '%s.Move( %s, false );' % ( instName, vec2str(cmd[1][i+0]) )
 		elif code == 'l':
-			print '%s.Line( %s, true );' % ( instName, vec2str(cmd[1][0]) )
+			for i in range( len(cmd[1])/1 ):
+				print '%s.Line( %s, true );' % ( instName, vec2str(cmd[1][i+0]) )
 		elif code == 'L':
-			print '%s.Line( %s, false );' % ( instName, vec2str(cmd[1][0]) )
+			for i in range( len(cmd[1])/1 ):
+				print '%s.Line( %s, false );' % ( instName, vec2str(cmd[1][i+0]) )
 		elif code == 'z' or code == 'Z':
 			print '%s.Close();' % instName
