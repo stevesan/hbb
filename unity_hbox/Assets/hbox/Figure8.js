@@ -13,28 +13,29 @@ private var lineWidth = 0.30;
 private var segLengths : float[];
 private var regionLengths : float[];	// there are only 2 regions: left, down and up to right, and the other way
 
-private var leftPoint = Vector2( 198.370, 220.50+602.36-45 );
-private var rightPoint = Vector2( 600.71, 220.50+602.36-45 );
+// HACK: hard coding Y-offsets for the left/right points..
+private var leftPoint = Vector2( 198.370, (450-220.50)+602.36 );
+private var rightPoint = Vector2( 600.71, (450-220.50)+602.36 );
 private var rightPointId:int;
 private var leftPointId:int;
 
-private var fig8 = new SvgPathBuilder();
+private var builder = new SvgPathBuilder();
 
 function InitSegDists()
 {
-	var npts = fig8.GetPoints().length;
+	var npts = builder.GetPoints().length;
 	segLengths = new float[ npts ];
 	var i;
 	for( i = 0; i < npts; i++ )
 	{
-		var a = fig8.GetPoints()[i];
-		var b = fig8.GetPoints()[ (i+1) % npts ];
+		var a = builder.GetPoints()[i];
+		var b = builder.GetPoints()[ (i+1) % npts ];
 		segLengths[i] = Vector2.Distance( a, b );
 	}
 
 	// init segment IDs
-	leftPointId = Utils.Nearest( fig8.GetPoints(), leftPoint );
-	rightPointId = Utils.Nearest( fig8.GetPoints(), rightPoint );
+	leftPointId = Utils.Nearest( builder.GetPoints(), leftPoint );
+	rightPointId = Utils.Nearest( builder.GetPoints(), rightPoint );
 
 	regionLengths = new float[2];
 	for( i = leftPointId; i != rightPointId; i = (i+1)%npts )
@@ -86,12 +87,12 @@ function GetPositionForMTime( measureFraction : float, measure : int ) : Vector3
 	}
 
 	if( i1 < i0 )
-		i1 += fig8.GetPoints().length;
+		i1 += builder.GetPoints().length;
 	
 	var j;
 	for( var i = i0; i <= i1; i++ )
 	{
-		j = (i % fig8.GetPoints().length);
+		j = (i % builder.GetPoints().length);
 		dist -= segLengths[j];
 
 		if( dist < 0.0 )
@@ -100,41 +101,30 @@ function GetPositionForMTime( measureFraction : float, measure : int ) : Vector3
 	// figure out the interpolation coef
 	// draw it out..
 	var alpha = (segLengths[j] + dist)/segLengths[j];
-	var pt0 = fig8.GetPoints()[j];
-	var pt1 = fig8.GetPoints()[(j+1)%fig8.GetPoints().length];
+	var pt0 = builder.GetPoints()[j];
+	var pt1 = builder.GetPoints()[(j+1)%builder.GetPoints().length];
 	var v3 = Utils.ToVector3( Vector2.Lerp( pt0, pt1, alpha ), transform.position.z );
 	return transform.TransformPoint(v3);
 }
 
 function InitFigure8()
 {
-	fig8.SetCubicDivs( cubicDivs );
-	fig8.BeginBuilding();
-	/*
-		fig8.Move( Vector2(400,225), false );
-		fig8.CubicBezier( Vector2(49.517000,87.256000), Vector2(99.718000,175.135000), Vector2(198.748000,175.135000), true );
-		fig8.CubicBezier( Vector2(0.000000,0.000000), Vector2(106.559000,12.224000), Vector2(106.559000,-175.134000), true );
-		fig8.CubicBezierShort( Vector2(600.816000,49.865000), Vector2(600.816000,49.865000), false );
-		fig8.CubicBezier( Vector2(-198.767000,0.000000), Vector2(-198.767000,350.271000), Vector2(-397.533000,350.271000), true );
-		fig8.CubicBezier( Vector2(0.000000,0.000000), Vector2(-100.653000,12.223000), Vector2(-100.653000,-175.135000), true );
-		fig8.CubicBezierShort( Vector2(100.650000,-175.135000), Vector2(100.650000,-175.135000), true );
-		fig8.CubicBezier( Vector2(97.910000,0.000000), Vector2(147.591000,84.994000), Vector2(196.558000,171.247000), true );
-		//fig8.Line( Vector2(402.063000,225.000000), false );;
-		fig8.Close();
-		*/
+	builder.SetCubicDivs( cubicDivs );
+	builder.BeginBuilding();
 
-fig8.Move( Vector2(198.571430,802.362180), true );
-fig8.CubicBezier( Vector2(1.651940,-51.963630), Vector2(9.153840,-134.045770), Vector2(74.285710,-137.142860), true );
-fig8.CubicBezier( Vector2(63.599810,-3.024240), Vector2(119.171420,106.512080), Vector2(130.714290,139.285720), true );
-fig8.CubicBezier( Vector2(14.102340,40.040750), Vector2(68.333880,140.782650), Vector2(127.857140,140.000000), true );
-fig8.CubicBezier( Vector2(52.470560,-0.689920), Vector2(72.929550,-55.721140), Vector2(69.285720,-147.857140), true );
-fig8.CubicBezier( Vector2(-2.030450,-51.340880), Vector2(-6.241710,-126.889320), Vector2(-67.142860,-131.428580), true );
-fig8.CubicBezier( Vector2(-50.682960,-3.777650), Vector2(-103.641440,73.871370), Vector2(-130.714290,140.000000), true );
-fig8.CubicBezier( Vector2(-25.295880,61.788170), Vector2(-69.171570,138.572100), Vector2(-134.285710,138.571430), true );
-fig8.CubicBezier( Vector2(-54.634080,-0.000560), Vector2(-71.892210,-81.907180), Vector2(-70.000000,-141.428570), true );
-fig8.Close();
+builder.Move( Vector2(198.571430,802.362180), true );
+builder.CubicBezier( Vector2(-1.892210,59.521390), Vector2(15.365920,141.428010), Vector2(70.000000,141.428570), true );
+builder.CubicBezier( Vector2(65.114140,0.000670), Vector2(108.989830,-76.783260), Vector2(134.285710,-138.571430), true );
+builder.CubicBezier( Vector2(27.072850,-66.128630), Vector2(80.031330,-143.777650), Vector2(130.714290,-140.000000), true );
+builder.CubicBezier( Vector2(60.901150,4.539260), Vector2(65.112410,80.087700), Vector2(67.142860,131.428580), true );
+builder.CubicBezier( Vector2(3.643830,92.136000), Vector2(-16.815160,147.167220), Vector2(-69.285720,147.857140), true );
+builder.CubicBezier( Vector2(-59.523260,0.782650), Vector2(-113.754800,-99.959250), Vector2(-127.857140,-140.000000), true );
+builder.CubicBezier( Vector2(-11.542870,-32.773640), Vector2(-67.114480,-142.309960), Vector2(-130.714290,-139.285720), true );
+builder.CubicBezier( Vector2(-65.131870,3.097090), Vector2(-72.633770,85.179230), Vector2(-74.285710,137.142860), true );
+builder.Close();
 
-	fig8.EndBuilding();
+
+	builder.EndBuilding();
 }
 
 function Start()
@@ -153,14 +143,14 @@ function Start()
 		lineRenderer.material = new Material (Shader.Find("Particles/Alpha Blended"));
 		lineRenderer.SetColors(c1, c2);
 		lineRenderer.SetWidth(lineWidth,lineWidth);
-		fig8.ToLineRenderer( GetComponent(LineRenderer) );
+		builder.ToLineRenderer( GetComponent(LineRenderer) );
 	}
 
 	var meshc = GetComponent(MeshFilter);
 	if( meshc != null )
 	{
 		var m = meshc.mesh;
-		var ctrls = fig8.GetPoints();
+		var ctrls = builder.GetPoints();
 		var n = ctrls.length;
 		m.vertices = new Vector3[ 2*n ];
 		m.uv = new Vector2[ 2*n ];
@@ -187,6 +177,6 @@ function Update()
 		Debug.DrawLine( Vector2(0,0), b, Color.green, 0.1 );
 		debugCurrMeasure = GetCurrentTrackMeasure(gs);
 
-		Debug.DrawLine( Utils.ToVector3(fig8.GetPoints()[leftPointId],0), Utils.ToVector3(fig8.GetPoints()[rightPointId],0), Color.red, 0 );
+		Debug.DrawLine( Utils.ToVector3(builder.GetPoints()[leftPointId],0), Utils.ToVector3(builder.GetPoints()[rightPointId],0), Color.red, 0 );
 	}
 }
