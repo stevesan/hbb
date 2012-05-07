@@ -819,9 +819,9 @@ function UpdateRecording( mt : float, inputMt:float )
 		{
 			var note:Note = beatNotes[noteId];
 			// register the key-up. But, if the hold-time is within tolerance, pretend it was instantly let up
-			if( mt - note.measureTime <= GetTolSecs() )
-				beatNotes[noteId].OnUp( note.measureTime );
-			else
+			//if( mt - note.measureTime <= GetTolSecs() )
+				//beatNotes[noteId].OnUp( note.measureTime );
+			//else
 				beatNotes[noteId].OnUp( mt );
 		}
 		else
