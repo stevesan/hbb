@@ -64,7 +64,7 @@ function OnGUI()
 		var rect = Rect( 100, 100, 600, 300 );
 		GUI.Box( rect, '');
 		GUILayout.BeginArea( rect );
-		GUILayout.Label( GameState.inst.GetSongTitle() + ' HIGH SCORES', textStyle );
+		GUILayout.Label( GameState.inst.GetSongTitle() + ' HIGH SCORES\n', textStyle );
 			GUILayout.BeginHorizontal();
 				GUILayout.Label( highscoreNames, textStyle );
 				GUILayout.Label( highscoreValues, textStyle );
@@ -88,7 +88,7 @@ function DisplayAlltimeScores( song:String, currPlayer:String, currValue:int )
 	// Loaded, now display them
 
 	highscoreNames = 'ALL TIME:\n';
-	highscoreValues = '';
+	highscoreValues = '\n';
 
 	var raw = www.text;
 	var parts = raw.Split(['|'[0]]);
@@ -125,7 +125,7 @@ function DisplayDailyScores( song:String, currPlayer:String, currValue:int )
 	// Loaded, now display them
 
 	dailyHighscoreNames = 'TODAY:\n';
-	dailyHighscoreValues = '';
+	dailyHighscoreValues = '\n';
 
 	var raw = www.text;
 	var parts = raw.Split(['|'[0]]);
