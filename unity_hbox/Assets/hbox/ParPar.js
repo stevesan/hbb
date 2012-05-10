@@ -3,6 +3,12 @@
 var urlBase = 'http://localhost:8080';
 var SecretMD5Salt:TextAsset = null;
 
+private var highscoreNames = '';
+private var highscoreValues = '';
+private var dailyHighscoreNames = '';
+private var dailyHighscoreValues = '';
+
+
 function GetURLResponse( url:String ) : String
 {
 }
@@ -39,11 +45,9 @@ function OnSurvivalOver( gs:GameState )
 		Debug.Log( www.text );
 	}
 
-	DisplayScores(song, player, value);
+	DisplayAlltimeScores(song, player, value);
+	DisplayDailyScores(song, player, value);
 }
-
-private var highscoreNames = '';
-private var highscoreValues = '';
 
 function OnGUI()
 {
@@ -57,19 +61,21 @@ function OnGUI()
 		textStyle.fontSize = 18;
 		textStyle.normal.textColor = Color.white;
 
-		var rect = Rect( 225, 100, 350, 300 );
+		var rect = Rect( 100, 100, 600, 300 );
 		GUI.Box( rect, '');
 		GUILayout.BeginArea( rect );
-		GUILayout.Label( GameState.inst.GetSongTitle()+'\nHIGH SCOREZ\n', textStyle );
+		GUILayout.Label( GameState.inst.GetSongTitle() + ' HIGH SCORES', textStyle );
 			GUILayout.BeginHorizontal();
 				GUILayout.Label( highscoreNames, textStyle );
 				GUILayout.Label( highscoreValues, textStyle );
+				GUILayout.Label( dailyHighscoreNames, textStyle );
+				GUILayout.Label( dailyHighscoreValues, textStyle );
 			GUILayout.EndHorizontal();
 		GUILayout.EndArea();
 	}
 }
 
-function DisplayScores( song:String, currPlayer:String, currValue:int )
+function DisplayAlltimeScores( song:String, currPlayer:String, currValue:int )
 {
 	highscoreNames = 'Loading high scores..';
 	highscoreValues = '';
@@ -81,7 +87,7 @@ function DisplayScores( song:String, currPlayer:String, currValue:int )
 
 	// Loaded, now display them
 
-	highscoreNames = '';
+	highscoreNames = 'ALL TIME:\n';
 	highscoreValues = '';
 
 	var raw = www.text;
@@ -101,6 +107,43 @@ function DisplayScores( song:String, currPlayer:String, currValue:int )
 			}
 			else
 				highscoreValues += pair[1] + '\n';
+		}
+	}
+}
+
+// copy paste coding... the yield does complicate some things
+function DisplayDailyScores( song:String, currPlayer:String, currValue:int )
+{
+	dailyHighscoreNames = 'Loading daily high scores..';
+	dailyHighscoreValues = '';
+
+	var url = urlBase + '/GetScores?song=' + WWW.EscapeURL(song) + '&limit=10' + '&justtoday=1';
+	Debug.Log(url);
+	var www = new WWW( url );
+	yield www;
+
+	// Loaded, now display them
+
+	dailyHighscoreNames = 'TODAY:\n';
+	dailyHighscoreValues = '';
+
+	var raw = www.text;
+	var parts = raw.Split(['|'[0]]);
+
+	var found = false;
+	for( var i = 0; i < parts.length; i++ )
+	{
+		if( parts[i] != '' )
+		{
+			var pair = parts[i].Split([','[0]]);
+			dailyHighscoreNames += (i+1)+'. ' + pair[0] + '\n';
+			if( !found && pair[0] == currPlayer && parseInt(pair[1]) == currValue )
+			{
+				dailyHighscoreValues += pair[1] + ' <-- YOU!\n';
+				found = true;
+			}
+			else
+				dailyHighscoreValues += pair[1] + '\n';
 		}
 	}
 }
