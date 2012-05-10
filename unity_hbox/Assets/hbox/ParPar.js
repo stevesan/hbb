@@ -1,6 +1,7 @@
 #pragma strict
 
 var urlBase = 'http://localhost:8080';
+var SecretMD5Salt = 'ma salt';
 
 function GetURLResponse( url:String ) : String
 {
@@ -8,22 +9,35 @@ function GetURLResponse( url:String ) : String
 
 function OnSurvivalOver( gs:GameState )
 {
+	highscoreNames = 'Submitting score..';
+	highscoreValues = '';
+
 	var song = "song" + (gs.activeSong+1);
 	var player = GameState.inst.playerName;
 	var value = gs.survivalScore;
 	
-	Debug.Log('ParPar: submitting score: '+value+ ' to '+song );
-	highscoreNames = 'Loading..';
-	highscoreValues = '';
+	//----------------------------------------
+	//  Submit the score
+	//----------------------------------------
+	if( value > 0 )
+	{
 
-	var url = urlBase
-		+'/SaveScore?song='+WWW.EscapeURL(song)
-		+'&player='+WWW.EscapeURL(player)
-		+'&value='+value;
-	Debug.Log(url);
-	var www = new WWW( url );
-	yield www;
-	Debug.Log( www.text );
+		Debug.Log('ParPar: submitting score: '+value+ ' to '+song );
+
+		// compute MD5 sum
+		var md5input = song+player+value+SecretMD5Salt;
+		var digest = Utils.Md5Sum( md5input );
+
+		var url = urlBase
+			+'/SaveScore?song='+WWW.EscapeURL(song)
+			+'&player='+WWW.EscapeURL(player)
+			+'&value='+value
+			+'&hexdigest='+WWW.EscapeURL(digest);
+		Debug.Log(url);
+		var www = new WWW( url );
+		yield www;
+		Debug.Log( www.text );
+	}
 
 	DisplayScores(song, player, value);
 }
@@ -57,10 +71,10 @@ function OnGUI()
 
 function DisplayScores( song:String, currPlayer:String, currValue:int )
 {
-	highscoreNames = 'Loading..';
+	highscoreNames = 'Loading high scores..';
 	highscoreValues = '';
 
-	var url = urlBase + '/GetScores?song=' + WWW.EscapeURL(song) + '&limit=10' + '&days=-1';
+	var url = urlBase + '/GetScores?song=' + WWW.EscapeURL(song) + '&limit=10' + '&justtoday=0';
 	Debug.Log(url);
 	var www = new WWW( url );
 	yield www;
