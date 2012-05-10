@@ -1,7 +1,7 @@
 #pragma strict
 
 var urlBase = 'http://localhost:8080';
-var SecretMD5Salt = 'ma salt';
+var SecretMD5Salt:TextAsset = null;
 
 function GetURLResponse( url:String ) : String
 {
@@ -19,13 +19,13 @@ function OnSurvivalOver( gs:GameState )
 	//----------------------------------------
 	//  Submit the score
 	//----------------------------------------
-	if( value > 0 )
+	if( value > 0 && SecretMD5Salt != null )
 	{
 
 		Debug.Log('ParPar: submitting score: '+value+ ' to '+song );
 
 		// compute MD5 sum
-		var md5input = song+player+value+SecretMD5Salt;
+		var md5input = song+player+value+SecretMD5Salt.text;
 		var digest = Utils.Md5Sum( md5input );
 
 		var url = urlBase
