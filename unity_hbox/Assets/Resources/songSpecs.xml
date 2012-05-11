@@ -7,6 +7,7 @@
 		samplesVolume = "0.8"
 		releaseSecs = "0.3"
 		broncoAI = '80bpmSwing'
+		broncoLives = '2'
 		timeTolSecs = '0.2'
 		>
 		<!-- melodies -->
@@ -47,6 +48,7 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '115bpm'
+		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
 		<!-- melodies -->
@@ -78,6 +80,7 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.2"
 		broncoAI = '135bpm'
+		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
 		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
@@ -111,6 +114,7 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '160bpm'
+		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
 
@@ -146,6 +150,7 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '190bpmClusterStrut'
+		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
 		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
@@ -178,6 +183,7 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '190bpmTheDonkey2'
+		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
 		<sample res="songs/THE_DONKEY2_190_BPM/MELODY/theDonkey2_190_melody_A" />

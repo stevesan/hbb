@@ -44,37 +44,15 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Plugins\Playtomic\PFObject.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\PFPointer.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\PFQuery.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Data.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Encode.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_GameVars.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_GeoIP.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_JSON.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Leaderboards.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Link.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Log.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_LogRequest.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Parse.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_PlayerLevel.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_PlayerLevels.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_PlayerScore.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Request.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Responder.cs" />
-     <Compile Include="Assets\Plugins\Playtomic\Playtomic_Response.cs" />
      <Compile Include="Assets\Standard Assets\Scripts\General Scripts\ActivateTrigger.cs" />
      <Compile Include="Assets\Standard Assets\Scripts\Utility Scripts\CombineChildren.cs" />
      <Compile Include="Assets\Standard Assets\Scripts\Utility Scripts\MeshCombineUtility.cs" />
      <None Include="Assets\Resources\layouts\gameplay\layout.txt" />
-     <None Include="Assets\Plugins\Playtomic\LICENSE.txt" />
      <None Include="Assets\Resources\broncoAIs.xml" />
      <None Include="Assets\hbox\trackpoints.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
      <None Include="Assets\Standard Assets\Skyboxes\ skybox info.txt" />
      <None Include="Assets\hbox\md5salt.txt" />
-     <None Include="Assets\Plugins\Playtomic\README.txt" />
      <None Include="Assets\Resources\songSpecs.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

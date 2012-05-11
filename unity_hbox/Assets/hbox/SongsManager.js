@@ -14,6 +14,7 @@ class SongPlayer
 	var samplesVolume:float;
 	var releaseSecs:float;
 	var broncoAI:String;
+	var broncoLives:int;
 	var timeTolSecs:float;
 
 	var layerFadeDuration:float = 2.0;
@@ -115,6 +116,7 @@ class SongPlayer
 			samplesVolume = parseFloat( node.GetAttribute('samplesVolume') );
 			releaseSecs = parseFloat( node.GetAttribute('releaseSecs') );
 			broncoAI = node.GetAttribute('broncoAI');
+			broncoLives = parseInt( node.GetAttribute('broncoLives') );
 			timeTolSecs = parseFloat( node.GetAttribute('timeTolSecs') );
 
 			var subtree = node.ReadSubtree();

@@ -582,6 +582,7 @@ function OnMessedUp()
 		{
 			defendMessedUp = true;
 
+			// immediately register score change if in survival mode
 			if(survivalMode)
 				playerLosses[ GetInputtingPlayer() ]++;
 		}
@@ -1011,11 +1012,23 @@ function UpdateMenuMode()
 			+ 'SPACE BAR TO CONTINUE';
 			*/
 
-		tuteText.text = 'Morgan Freeman says...\n\n'
-+ 'When it\'s your turn, play a difficult beat for your opponent to repeat.\n'
-+ 'But not too difficult - you have to repeat the beat, too!\n'
-+ '\n'
-+ 'SPACE BAR TO CONTINUE';
+		if( survivalMode )
+		{
+			tuteText.text = 'Morgan Freeman says...\n\n'
+				+ 'The computer, P1, will lay down some fresh beats.\n'
+				+ 'Play them correctly using the JKL keys!\n'
+				+ 'Try to survive as long as you can! Ride it like ya mean it!\n'
+				+ '\n'
+				+ 'SPACE BAR TO CONTINUE';
+		}
+		else
+		{
+			tuteText.text = 'Morgan Freeman says...\n\n'
+				+ 'When it\'s your turn, play a difficult beat for your opponent to repeat.\n'
+				+ 'But not too difficult - you have to repeat the beat, too!\n'
+				+ '\n'
+				+ 'SPACE BAR TO CONTINUE';
+		}
 
 		if( Input.GetButtonDown('Start') )
 		{
@@ -1058,14 +1071,15 @@ function StartGameRitual1()
   if( survivalMode )
   {
     playerLosses[0] = 0;
-    // instant death!
-    playerLosses[1] = 4;
 		survivalScore = 0;
+
+		// how many changes are allowed?
+    playerLosses[1] = GetMaxLosses() - GetSongPlayer().broncoLives;
   }
 	else
 	{
-		for( var p = 0; p < playerLosses.length; p++ )
-			playerLosses[p] = 0;
+		playerLosses[0] = 0;
+		playerLosses[1] = 0;
 	}
 
 	if( horseAI != null )

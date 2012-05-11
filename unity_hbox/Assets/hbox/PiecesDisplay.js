@@ -54,11 +54,7 @@ function OnScoreChanged( gs:GameState ) : void
 
 function OnBattleReset()
 {
-	// by default, turn all to the "off" position
-	var gs = GameState.inst;
-	for( p = 0; p < 2; p++ )
-		for( l = 0; l < gs.GetMaxLosses(); l++ )
-			Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
+	OnScoreChanged( GameState.inst );
 }
 
 function OnSuccess( player:int )
@@ -84,7 +80,7 @@ function OnMessedUp()
 {
 	var gs = GameState.inst;
 	var p = gs.GetInputtingPlayer();
-	if( p == gs.GetAttacker() )
+	if( p == gs.GetAttacker() || gs.survivalMode )
 	{
 		// pop the horse piece that's gonna be added
 		// the score should be updated already
@@ -161,14 +157,32 @@ function Update () {
 			}
 		}
 
+		// always show..
 		for( p = 0; p < 2; p++ )
 			for( l = 0; l < gs.GetMaxLosses(); l++ )
 				playerPieces[p,l].renderer.enabled = true;
 	}
 	else
 	{
-		for( p = 0; p < 2; p++ )
-			for( l = 0; l < gs.GetMaxLosses(); l++ )
-				playerPieces[p,l].renderer.enabled = false;
+		// hide left player's, the CPU
+		p = 0;
+		for( l = 0; l < gs.GetMaxLosses(); l++ )
+			playerPieces[p,l].renderer.enabled = false;
+
+		// handle right player's, the human
+		p = 1;
+		for( l = 0; l < gs.GetMaxLosses(); l++ )
+			playerPieces[p,l].renderer.enabled = true;
+
+		// flash if defending
+		if( gs.state == RCState.DEFEND || gs.state == RCState.POST_ATTACK )
+			UpdateFlashing( gs, p );
+		else
+		{
+			// turn it off, so it doesn't get left flashing
+			l = gs.playerLosses[p];
+			if( l < pieceOffTextures.length )
+				Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
+		}
 	}
 }
