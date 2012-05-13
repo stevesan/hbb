@@ -67,6 +67,7 @@
      <Compile Include="Assets\hbox\Utils\FadeAnim.js" />
      <Compile Include="Assets\hbox\Utils\FlyAnim.js" />
      <Compile Include="Assets\hbox\Utils\ProGeo.js" />
+     <Compile Include="Assets\hbox\Utils\Pulse.js" />
      <Compile Include="Assets\hbox\Utils\ScrollUV.js" />
      <Compile Include="Assets\hbox\Utils\Simplex.js" />
      <Compile Include="Assets\hbox\Utils\Svg.js" />

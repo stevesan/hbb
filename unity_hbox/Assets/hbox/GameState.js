@@ -36,11 +36,7 @@ var tuteText : TextMesh;
 
 var notePrefabs : Note[];
 var tracks : Figure8[];
-
-var keyScaleTime : float = 0.1;
-private var keyScaleTimer : float[,] = new float[2, 3];
-
-var keys : Transform[];
+var keyDownHandlers : GameObject[];
 
 var eventListeners : GameObject[];
 
@@ -484,9 +480,6 @@ function GetKeysDown(mt:float) : Array
 			{
 				// register a down
 				keys.Push( aiInputs[i].key );
-				// play animation
-				// TODO - would be nice to put this elsewhere
-				keyScaleTimer[ GetInputtingPlayer(), aiInputs[i].key ] = keyScaleTime;
 			}
 		}
 		}
@@ -499,10 +492,6 @@ function GetKeysDown(mt:float) : Array
 			if( Input.GetButtonDown( inNames[key] ) )
 			{
 				keys.Push( key );
-
-				// play animation
-				// TODO - would be nice to put this elsewhere
-				keyScaleTimer[ GetInputtingPlayer(), key ] = keyScaleTime;
 			}
 		}
 	}
@@ -641,6 +630,8 @@ function UpdateTesting( mt : float, inputMt:float )
 		GetSongPlayer().OnKeyDown(key);
 		// SHAKE
 		cameraShake.DoShake();
+		// trigger pulse
+		keyDownHandlers[ GetInputtingPlayer() ].SendMessage('OnKeyDown', key);
 
 		// hit an existing note?
 		var noteType = NoteType.Hit;
@@ -809,6 +800,9 @@ function UpdateRecording( mt : float, inputMt:float )
 		beatNotes.Push( noteObj.GetComponent(Note) );
 		GetSongPlayer().OnKeyDown(key);
 		cameraShake.DoShake();
+
+		// trigger pulse
+		keyDownHandlers[ GetInputtingPlayer() ].SendMessage('OnKeyDown', key);
 	}
 
 	for( key in GetKeysUp(inputMt) )
@@ -841,23 +835,6 @@ function EndRecording()
 		{
 			GetSongPlayer().OnKeyUp( note.key );
 			note.OnUp( GetSecsPerMeasure() );
-		}
-	}
-}
-
-function UpdateKeyPopping() {
-	for( var p = 0; p < 2; p++ )
-	{
-		for( var key = 0; key < 3; key++ )
-		{
-			keyScaleTimer[p,key] -= Time.deltaTime;
-			if (keyScaleTimer[p,key] > 0.0) {
-				var alpha = keyScaleTimer[p,key] / keyScaleTime;
-				var s = (1-alpha)*4.0 + alpha*1.0;
-				keys[p*3+key].transform.localScale = Vector3(s, s, s);
-			} else {
-				keys[p*3+key].transform.localScale = Vector3(1.0, 1.0, 1.0);
-			}
 		}
 	}
 }
@@ -1110,8 +1087,6 @@ function StartGameRitual2()
 
 function Update()
 {
-  UpdateKeyPopping();
-
 	var musicTime : float = Time.time - musicStartTime;
 
 	var justEnteredMeasure = false;

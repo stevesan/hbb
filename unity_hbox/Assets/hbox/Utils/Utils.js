@@ -486,3 +486,9 @@ static function Md5Sum( strToEncrypt:String )
 
 	return hashString.PadLeft(32, "0"[0]);
 }
+
+static function Str2Vector2( s:String ) : Vector2
+{
+  var parts = s.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
+  return Vector2( parseFloat(parts[0]), parseFloat(parts[1]) );
+}

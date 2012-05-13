@@ -1,5 +1,6 @@
 //----------------------------------------
 //  One note. Not really meant to be used in the editor, except to set up the prefab
+//	This draws the note procedurally as stroked-geometry
 //----------------------------------------
 #pragma strict
 

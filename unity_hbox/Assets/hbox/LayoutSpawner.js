@@ -16,6 +16,10 @@ class ElementObjMapping
   var obj : GameObject;
 }
 
+// This is how you control/script layout elements.
+// The game object's rendering will be overridden with the named layout element,
+// ie. mesh and texture,
+// but everything else, such as other components, will be preserved.
 var elementObjMappings : ElementObjMapping[];
 
 function FindElementObjMapping( elem:String )
@@ -28,12 +32,6 @@ function FindElementObjMapping( elem:String )
   return null;
 }
 
-function ParseVector2( s:String ) : Vector2
-{
-  var parts = s.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
-  return Vector2( parseFloat(parts[0]), parseFloat(parts[1]) );
-}
-
 //----------------------------------------
 //  Takes a 2D scale and turns it into a 3D scale appropriate for after the 90/180/0 rotation
 //----------------------------------------
@@ -42,16 +40,12 @@ function ToRotatedScale( s:Vector2 ) : Vector3
   return Vector3( s.x, s.y, 1.0 );
 }
 
-function CreateNegZPlane( mesh:Mesh )
-{
-}
-
 function Awake()
 {
 	var reader = new StringReader( layoutFile.text );
 
   // first read full dimensions
-  var lsSize = ParseVector2( reader.ReadLine() );
+  var lsSize = Utils.Str2Vector2( reader.ReadLine() );
   Debug.Log('full layout lsSize = ' +lsSize);
 
   var wsByLs = outHeight / lsSize.y;
@@ -65,10 +59,10 @@ function Awake()
 		if( elem == null ) break;
 
 		var res = resourceBase+'/'+elem;
-    var lsTopLeft = ParseVector2( reader.ReadLine() );
+    var lsTopLeft = Utils.Str2Vector2( reader.ReadLine() );
     lsTopLeft.y = lsSize.y-lsTopLeft.y-1; // image-coordinates have Y flipped
-    var lsElemSize = ParseVector2( reader.ReadLine() );
-    var lsTexSize = ParseVector2( reader.ReadLine() );
+    var lsElemSize = Utils.Str2Vector2( reader.ReadLine() );
+    var lsTexSize = Utils.Str2Vector2( reader.ReadLine() );
     var lsBotLeft = Vector2( lsTopLeft.x, lsTopLeft.y-lsElemSize.y );
 
     var obj = FindElementObjMapping( elem );

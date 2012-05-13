@@ -9,7 +9,7 @@ var successAnims : FadeAnim[];
 var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
 
-var avatars : Renderer[];
+var turnIndicators : Renderer[];
 var auras : Renderer[];
 
 function Start()
@@ -92,24 +92,24 @@ function Update () {
 	if( gs.state == RCState.VICTORY )
 	{
 		if( gs.p1loseCard.enabled )
-			avatars[0].renderer.enabled = false;
+			turnIndicators[0].renderer.enabled = false;
 		if( gs.p2loseCard.enabled )
-			avatars[1].renderer.enabled = false;
+			turnIndicators[1].renderer.enabled = false;
 
-		avatars[0].GetComponent(PulseWithBeat).StopAfterBeat();
-		avatars[1].GetComponent(PulseWithBeat).StopAfterBeat();
+		turnIndicators[0].GetComponent(PulseWithBeat).StopAfterBeat();
+		turnIndicators[1].GetComponent(PulseWithBeat).StopAfterBeat();
 	}
 	else
 	{
-		avatars[0].renderer.enabled = true;
-		avatars[1].renderer.enabled = true;
+		turnIndicators[0].renderer.enabled = true;
+		turnIndicators[1].renderer.enabled = true;
 
-		for( var i = 0; i < avatars.length; i++ )
+		for( var i = 0; i < turnIndicators.length; i++ )
 		{
 			if( i == gs.GetInputtingPlayer() )
-				avatars[i].GetComponent(PulseWithBeat).PlayIdem();
+				turnIndicators[i].GetComponent(PulseWithBeat).PlayIdem();
 			else
-				avatars[i].GetComponent(PulseWithBeat).StopAfterBeat();
+				turnIndicators[i].GetComponent(PulseWithBeat).StopAfterBeat();
 		}
 	}
 	

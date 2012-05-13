@@ -1,7 +1,13 @@
 TODOs:
 
-- MD5 for high scores
-- daily high scores
+- GUI pipeline:
+	LayoutSpawner has..
+		GetFirstHit( (x,y) ) - iterates through elements
+		uses current transform
+	GameState just simply queries that if there's a mouse click
+
+	so, no need to create a game object for each button element
+
 - the "shake" avatar effect
 - "dance" animation script for avatars. bounce back and forth?
 

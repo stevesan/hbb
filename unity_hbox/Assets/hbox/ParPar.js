@@ -17,6 +17,9 @@ function OnSurvivalOver( gs:GameState )
 {
 	highscoreNames = 'Submitting score..';
 	highscoreValues = '';
+	// make sure to clear both immediately..
+	dailyHighscoreNames = '';
+	dailyHighscoreValues = '';
 
 	var song = "song" + (gs.activeSong+1);
 	var player = GameState.inst.playerName;
