@@ -145,25 +145,6 @@ function Start()
 		lineRenderer.SetWidth(lineWidth,lineWidth);
 		builder.ToLineRenderer( GetComponent(LineRenderer) );
 	}
-
-	var meshc = GetComponent(MeshFilter);
-	if( meshc != null )
-	{
-		var m = meshc.mesh;
-		var ctrls = builder.GetPoints();
-		var n = ctrls.length;
-		m.vertices = new Vector3[ 2*n ];
-		m.uv = new Vector2[ 2*n ];
-		m.normals = new Vector3[ 2*n ];
-		m.triangles = new int[ 3*(2*(n-1)) ];
-		var ctrlTexVs = new float[ n ];
-		for( var i = 0; i < n; i++ )
-			ctrlTexVs[i] = (i+0.0)/(i-1.0);
-		ProGeo.Stroke2D(
-				ctrls, ctrlTexVs, 0, n-1,
-				strokeWidth,
-				m, 0, 0 );
-	}
 }
 
 function Update()

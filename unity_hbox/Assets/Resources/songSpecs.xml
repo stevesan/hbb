@@ -6,7 +6,7 @@
 		volume = "1"
 		samplesVolume = "0.8"
 		releaseSecs = "0.3"
-		broncoAI = '80bpmSwing'
+		broncoAI = '80bpm'
 		broncoLives = '2'
 		timeTolSecs = '0.2'
 		>

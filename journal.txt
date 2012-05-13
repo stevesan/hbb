@@ -8,10 +8,13 @@ TODOs:
 
 	so, no need to create a game object for each button element
 
-- the "shake" avatar effect
-- "dance" animation script for avatars. bounce back and forth?
+- OPT:
+	potential speed fixes:
+	don't just degen-hide unused triangles..how to hide?
+	don't update topology everytime - just update vert pos?
+		ie. do a simple check to see if the num ctrl pts previous is same as it is now.
 
-- OPT: consider avoiding the "copy" step in Stroke2D.. ie. just always maintain my own arrays, and assign the mesh members to them when I update. could be faseter?
+	keeping my own buffer was definitely faster!
 
 - script to modify META files automatically for textures:
 	textureFormat: -1 to -3 (disable compression)

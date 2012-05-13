@@ -4,6 +4,22 @@
 //  Various procedural geometry tools
 //----------------------------------------
 
+class MeshBuffer
+{
+	var vertices:Vector3[] = null;
+	var uv:Vector2[] = null;
+	var normals:Vector3[] = null;
+	var triangles:int[];
+
+	function Allocate( numVerts:int, numTris:int )
+	{
+		vertices = new Vector3[ numVerts ];
+		uv = new Vector2[ numVerts ];
+		normals = new Vector3[ numVerts ];
+		triangles = new int[ 3*numTris ];
+	}
+}
+
 //----------------------------------------
 //  Works in the XY plane, and basically uses XY position as UVs
 //	TODO - have two radii - left and right radius
@@ -12,7 +28,7 @@ static function Stroke2D(
 		ctrlPts:Vector2[],
 		ctrlPtTexVs:float[],
 		firstCtrl:int, lastCtrl:int,	// use first/lastCtrl to select a sub-array of ctrlPts.
-		width:float, mesh:Mesh,
+		width:float, mesh:MeshBuffer,
 		firstVert:int, firstTri:int	// use firstVert/Tri to tell Stroke2D where to output in the mesh. firstTri should be the index/3
 		)
 {
@@ -26,21 +42,14 @@ static function Stroke2D(
 	var radius : float = width/2.0;
 	var ntris = 2*(nctrls-1);
 
-	// According to the Unity docs, you actually need to get, modify, then assign them back. Can't just modify directly!! 
-	// TODO - I should just keep my own arrays around all the time, so instead of copying AND assigning, I just assign at the end
-	var vertices = mesh.vertices;
-	var uv = mesh.uv;
-	var triangles = mesh.triangles;
-	var normals = mesh.normals;
-
 	// make sure buffers are large enough
-	if( (firstVert + 2*nctrls) > vertices.length )
+	if( (firstVert + 2*nctrls) > mesh.vertices.length )
 	{
 		Debug.LogError('not enough vertices allocated in mesh for '+nctrls+' control points!');
 		return;
 	}
 
-	if( 3*(firstTri + ntris) > triangles.length )
+	if( 3*(firstTri + ntris) > mesh.triangles.length )
 	{
 		Debug.LogError('not enough triangle space allocated in mesh for '+nctrls+' control points!');
 		return;
@@ -50,11 +59,11 @@ static function Stroke2D(
 	var b = ctrlPts[firstCtrl+1];
 	var e0 = b-a;
 	var n = Utils.PerpCCW( e0 ).normalized;
-	vertices[firstVert+0] = a + n*radius;
-	vertices[firstVert+1] = a - n*radius;
+	mesh.vertices[firstVert+0] = a + n*radius;
+	mesh.vertices[firstVert+1] = a - n*radius;
 	var v = ctrlPtTexVs[ firstCtrl ];
-	uv[ firstVert+0 ] = Vector2( 0, v );
-	uv[ firstVert+1 ] = Vector2( 1, v );
+	mesh.uv[ firstVert+0 ] = Vector2( 0, v );
+	mesh.uv[ firstVert+1 ] = Vector2( 1, v );
 
 	for( var i = firstCtrl+1; i < lastCtrl; i++ )
 	{
@@ -77,12 +86,12 @@ static function Stroke2D(
 		var alpha = radius * Mathf.Tan( dtheta/2.0 );
 
 		n = Utils.PerpCCW( e0 ).normalized;
-		vertices[ firstVert+2*i+0 ] = p1+radius*n - alpha*e0n;
-		vertices[ firstVert+2*i+1 ] = p1-radius*n + alpha*e0n;
+		mesh.vertices[ firstVert+2*i+0 ] = p1+radius*n - alpha*e0n;
+		mesh.vertices[ firstVert+2*i+1 ] = p1-radius*n + alpha*e0n;
 
 		v = ctrlPtTexVs[ i ];
-		uv[ firstVert+2*i+0 ] = Vector2( 0, v );
-		uv[ firstVert+2*i+1 ] = Vector2( 1, v );
+		mesh.uv[ firstVert+2*i+0 ] = Vector2( 0, v );
+		mesh.uv[ firstVert+2*i+1 ] = Vector2( 1, v );
 	}
 
 	// last one
@@ -90,37 +99,26 @@ static function Stroke2D(
 	b = ctrlPts[ lastCtrl ];
 	e0 = b-a;
 	n = Utils.PerpCCW( e0 ).normalized;
-	vertices[ firstVert+2*nctrls-2 ] = b + n*radius;
-	vertices[ firstVert+2*nctrls-1 ] = b - n*radius;
+	mesh.vertices[ firstVert+2*nctrls-2 ] = b + n*radius;
+	mesh.vertices[ firstVert+2*nctrls-1 ] = b - n*radius;
 	v = ctrlPtTexVs[ lastCtrl ];
-	uv[ firstVert+2*nctrls-2 ] = Vector2( 0, v );
-	uv[ firstVert+2*nctrls-1 ] = Vector2( 1, v );
+	mesh.uv[ firstVert+2*nctrls-2 ] = Vector2( 0, v );
+	mesh.uv[ firstVert+2*nctrls-1 ] = Vector2( 1, v );
 
 	//----------------------------------------
 	//  Triangles
 	//----------------------------------------
 	for( i = 0; i < (nctrls-1); i++ )
 	{
-		triangles[ 3*firstTri + 6*i + 0 ] = 2 * i + 0;
-		triangles[ 3*firstTri + 6*i + 1 ] = 2 * i + 2;
-		triangles[ 3*firstTri + 6*i + 2 ] = 2 * i + 1;
+		mesh.triangles[ 3*firstTri + 6*i + 0 ] = 2 * i + 0;
+		mesh.triangles[ 3*firstTri + 6*i + 1 ] = 2 * i + 2;
+		mesh.triangles[ 3*firstTri + 6*i + 2 ] = 2 * i + 1;
 
-		triangles[ 3*firstTri + 6*i + 3 ] = 2 * i + 1;
-		triangles[ 3*firstTri + 6*i + 4 ] = 2 * i + 2;
-		triangles[ 3*firstTri + 6*i + 5 ] = 2 * i + 3;
+		mesh.triangles[ 3*firstTri + 6*i + 3 ] = 2 * i + 1;
+		mesh.triangles[ 3*firstTri + 6*i + 4 ] = 2 * i + 2;
+		mesh.triangles[ 3*firstTri + 6*i + 5 ] = 2 * i + 3;
 	}
 
-	// set all normals to -Z
-	for( i = 0; i < mesh.normals.length; i++ )
-		mesh.normals[i] = Vector3( 0, 0, 1 );
-
-	//----------------------------------------
-	//  Assign back
-	//----------------------------------------
-	mesh.vertices = vertices;
-	mesh.uv = uv;
-	mesh.normals = normals;
-	mesh.triangles = triangles;
 }
 
 //----------------------------------------

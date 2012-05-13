@@ -10,6 +10,7 @@ var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
 
 var turnIndicators : Renderer[];
+var avatars : Renderer[];
 var auras : Renderer[];
 
 function Start()
@@ -92,17 +93,17 @@ function Update () {
 	if( gs.state == RCState.VICTORY )
 	{
 		if( gs.p1loseCard.enabled )
-			turnIndicators[0].renderer.enabled = false;
+			avatars[0].renderer.enabled = false;
 		if( gs.p2loseCard.enabled )
-			turnIndicators[1].renderer.enabled = false;
+			avatars[1].renderer.enabled = false;
 
 		turnIndicators[0].GetComponent(PulseWithBeat).StopAfterBeat();
 		turnIndicators[1].GetComponent(PulseWithBeat).StopAfterBeat();
 	}
 	else
 	{
-		turnIndicators[0].renderer.enabled = true;
-		turnIndicators[1].renderer.enabled = true;
+		avatars[0].renderer.enabled = true;
+		avatars[1].renderer.enabled = true;
 
 		for( var i = 0; i < turnIndicators.length; i++ )
 		{

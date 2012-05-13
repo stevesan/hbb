@@ -40,6 +40,8 @@ private var trailCtrls = new Vector2[trailMidsPerMeas+2];
 // tell the stroke-geo tool what V tex coords to use
 private var trailCtrlTexVs = new float[ trailMidsPerMeas+2 ];
 
+var meshBuf:MeshBuffer = new MeshBuffer();
+
 function GetDuration() : float { return endMeasureTime-measureTime; }
 
 function Start () {
@@ -52,10 +54,13 @@ function Start () {
 
 	// allocate for maximum number of possible 
 	var numCtrls = trailCtrls.length;
-	mesh.vertices = new Vector3[ 2*numCtrls ];
-	mesh.uv = new Vector2[ 2*numCtrls ];
-	mesh.normals = new Vector3[ 2*numCtrls ];
-	mesh.triangles = new int[ 3*2*(numCtrls-1) ];
+	meshBuf.Allocate( 2*numCtrls, 2*(numCtrls-1) );
+
+	// set all normals to -Z
+	for( var i = 0; i < meshBuf.normals.length; i++ )
+		meshBuf.normals[i] = Vector3( 0, 0, 1 );
+	UpdateMeshFromBuffer();
+	mesh.normals = meshBuf.normals;
 }
 
 function OnDestroy()
@@ -129,6 +134,15 @@ function UpdateRenderedCard()
 {
 }
 
+function UpdateMeshFromBuffer()
+{
+	var mesh = trail.GetComponent(MeshFilter).mesh;
+	mesh.vertices = meshBuf.vertices;
+	mesh.uv = meshBuf.uv;
+	mesh.triangles = meshBuf.triangles;
+	// no need to update normals
+}
+
 function UpdateTrail()
 {
 	if( trail != null && track != null)
@@ -185,18 +199,19 @@ function UpdateTrail()
 			numMids = 0;
 		}
 
+		// regenerate geometry
 
-		// degenerate all triangles by default
-		var mesh = trail.GetComponent(MeshFilter).mesh;
-		var tris = mesh.triangles;
-		for( i = 0; i < tris.length; i++ )
-			tris[i] = 0;
-		mesh.triangles = tris;
+		// degenerate triangles by default
+		for( i = 0; i < meshBuf.triangles.length; i++ )
+			meshBuf.triangles[i] = 0;
 
 		// generate new geom
 		ProGeo.Stroke2D( trailCtrls, trailCtrlTexVs, 0, numMids+1,
 				trailWidth,
-				mesh, 0, 0 );
+				meshBuf, 0, 0 );
+
+		// update mesh..which, for whatever reason, we can't update directly
+		UpdateMeshFromBuffer();
 
 		// select correct material
 		if( type == NoteType.Normal )
@@ -207,7 +222,6 @@ function UpdateTrail()
 			trail.renderer.material = missTrailMat;
 
 		// draw at correct Z position
-		trail.renderer.enabled = true;
 		trail.transform.position.z = transform.position.z + trailOffsetZ;
 	}
 }
