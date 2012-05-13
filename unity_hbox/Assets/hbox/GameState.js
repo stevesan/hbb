@@ -34,7 +34,7 @@ var cameraShake : Shake = null;
 var menuText : TextMesh;
 var tuteText : TextMesh;
 
-var notePrefab : Note;
+var notePrefabs : Note[];
 var tracks : Figure8[];
 
 var keyScaleTime : float = 0.1;
@@ -662,7 +662,7 @@ function UpdateTesting( mt : float, inputMt:float )
 		}
 
 		// create the note
-		var noteObj:GameObject = Instantiate( notePrefab.gameObject, Vector3(0,0,0), notePrefab.transform.rotation );
+		var noteObj:GameObject = Instantiate( notePrefabs[key].gameObject, Vector3(0,0,0), notePrefabs[key].transform.rotation );
 		noteObj.GetComponent(Note).zPos -= 0.1;
 		noteObj.GetComponent(Note).OnDown(
 				noteMt, key, false, tracks[key] );
@@ -804,7 +804,7 @@ function UpdateRecording( mt : float, inputMt:float )
 {
 	for( var key in GetKeysDown(inputMt) )
 	{
-		var noteObj:GameObject = Instantiate( notePrefab.gameObject, Vector3(0,0,0), notePrefab.transform.rotation );
+		var noteObj:GameObject = Instantiate( notePrefabs[key].gameObject, Vector3(0,0,0), notePrefabs[key].transform.rotation );
 		noteObj.GetComponent(Note).OnDown( mt, key, false, tracks[key] );
 		beatNotes.Push( noteObj.GetComponent(Note) );
 		GetSongPlayer().OnKeyDown(key);
