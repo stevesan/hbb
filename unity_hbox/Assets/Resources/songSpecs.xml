@@ -7,7 +7,7 @@
 		samplesVolume = "0.8"
 		releaseSecs = "0.3"
 		broncoAI = '80bpm'
-		broncoLives = '2'
+		broncoLives = '4'
 		timeTolSecs = '0.2'
 		>
 		<!-- melodies -->
@@ -48,8 +48,8 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '115bpm'
-		broncoLives = '1'
-		timeTolSecs = '0.1'
+		broncoLives = '4'
+		timeTolSecs = '0.2'
 		>
 		<!-- melodies -->
 		<sample res="songs/115 BPM/MELODIES/Bb_WHOLE NOTE" />
@@ -80,8 +80,8 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.2"
 		broncoAI = '135bpm'
-		broncoLives = '1'
-		timeTolSecs = '0.1'
+		broncoLives = '3'
+		timeTolSecs = '0.15'
 		>
 		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
 		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
@@ -114,8 +114,8 @@
 		samplesVolume = "1.0"
 		releaseSecs = "0.5"
 		broncoAI = '160bpm'
-		broncoLives = '1'
-		timeTolSecs = '0.1'
+		broncoLives = '2'
+		timeTolSecs = '0.15'
 		>
 
 		<!-- melody -->
