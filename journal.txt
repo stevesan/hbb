@@ -8,6 +8,9 @@ TODOs:
 
 	so, no need to create a game object for each button element
 
+- parpar:
+	better interface..like to delete all of my own scores..
+
 - OPT:
 	potential speed fixes:
 	don't just degen-hide unused triangles..how to hide?

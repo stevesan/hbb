@@ -14,8 +14,8 @@ private var segLengths : float[];
 private var regionLengths : float[];	// there are only 2 regions: left, down and up to right, and the other way
 
 // HACK: hard coding Y-offsets for the left/right points..
-private var leftPoint = Vector2( 198.370, (450-220.50)+602.36 );
-private var rightPoint = Vector2( 600.71, (450-220.50)+602.36 );
+private var leftPoint = Vector2( 198.98, (450-223.11)+602.36 );
+private var rightPoint = Vector2( 601.02, (450-223.11)+602.36 );
 private var rightPointId:int;
 private var leftPointId:int;
 

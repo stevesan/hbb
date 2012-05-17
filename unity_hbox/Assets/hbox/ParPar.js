@@ -8,11 +8,6 @@ private var highscoreValues = '';
 private var dailyHighscoreNames = '';
 private var dailyHighscoreValues = '';
 
-
-function GetURLResponse( url:String ) : String
-{
-}
-
 function OnSurvivalOver( gs:GameState )
 {
 	highscoreNames = 'Submitting score..';
@@ -94,22 +89,24 @@ function DisplayAlltimeScores( song:String, currPlayer:String, currValue:int )
 	highscoreValues = '\n';
 
 	var raw = www.text;
-	var parts = raw.Split(['|'[0]]);
+	var parts = raw.Split(['\n'[0]]);
 
 	var found = false;
-	for( var i = 0; i < parts.length; i++ )
+	for( var i = 0; i < parts.length; i += 2 )
 	{
-		if( parts[i] != '' )
+		if( parts[i] != '' && (i+1) < parts.length )
 		{
 			var pair = parts[i].Split([','[0]]);
-			highscoreNames += (i+1)+'. ' + pair[0] + '\n';
-			if( !found && pair[0] == currPlayer && parseInt(pair[1]) == currValue )
+			var name = parts[i];
+			var value = parts[i+1];
+			highscoreNames += (i/2+1)+'. ' + name + '\n';
+			if( !found && name == currPlayer && parseInt(value) == currValue )
 			{
-				highscoreValues += pair[1] + ' <-- YOU!\n';
+				highscoreValues += value + ' <-- YOU!\n';
 				found = true;
 			}
 			else
-				highscoreValues += pair[1] + '\n';
+				highscoreValues += value + '\n';
 		}
 	}
 }
@@ -131,22 +128,25 @@ function DisplayDailyScores( song:String, currPlayer:String, currValue:int )
 	dailyHighscoreValues = '\n';
 
 	var raw = www.text;
-	var parts = raw.Split(['|'[0]]);
+
+	var parts = raw.Split(['\n'[0]]);
 
 	var found = false;
-	for( var i = 0; i < parts.length; i++ )
+	for( var i = 0; i < parts.length; i += 2 )
 	{
-		if( parts[i] != '' )
+		if( parts[i] != '' && (i+1) < parts.length )
 		{
 			var pair = parts[i].Split([','[0]]);
-			dailyHighscoreNames += (i+1)+'. ' + pair[0] + '\n';
-			if( !found && pair[0] == currPlayer && parseInt(pair[1]) == currValue )
+			var name = parts[i];
+			var value = parts[i+1];
+			dailyHighscoreNames += (i/2+1)+'. ' + name + '\n';
+			if( !found && name == currPlayer && parseInt(value) == currValue )
 			{
-				dailyHighscoreValues += pair[1] + ' <-- YOU!\n';
+				dailyHighscoreValues += value + ' <-- YOU!\n';
 				found = true;
 			}
 			else
-				dailyHighscoreValues += pair[1] + '\n';
+				dailyHighscoreValues += value + '\n';
 		}
 	}
 }
