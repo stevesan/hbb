@@ -58,7 +58,12 @@ function Update () {
 
 	mainText.text = '';
 
-	var survivedText = 'SCORE: ' + gs.survivalScore + ' / ' + gs.GetAI().GetNextMilestone();
+	var broncoText = 'SCORE: ' + gs.survivalScore;
+	broncoText += '\n STARS: ' + gs.numStars;
+	if( (gs.numStars+1) < gs.stars2score.length )
+		broncoText += ' NEXT: ' + gs.stars2score[ gs.numStars+1 ];
+	else
+		broncoText += ' NEXT: NO MORE!';
 	prompts[ 0 ].text = '';
 	prompts[ 1 ].text = '';
 
@@ -87,7 +92,7 @@ function Update () {
 			UpdateCountdown( gs, "Play in", gs.GetDefender() );
 
 		if( gs.state != RCState.MENU && gs.survivalMode )
-			mainText.text = survivedText;
+			mainText.text = broncoText;
 	}
 
 	if( gs.state == RCState.VICTORY )

@@ -7,8 +7,11 @@ var resourceBase : String;
 var layerPrefab : GameObject;
 var zDelta : float = -0.1;
 var outHeight : float = 44.0; // how tall the final rendered layout should be in world space
+var objNamePrefix = 'layout_';
+var startShown = true;
 
 private var createdElemObjs = new Array();
+private var allElemObjs = new Array();
 
 class ElementObjMapping
 {
@@ -22,6 +25,17 @@ class ElementObjMapping
 // but everything else, such as other components, will be preserved.
 var elementObjMappings : ElementObjMapping[];
 
+function Hide()
+{
+	for( var i = 0; i < allElemObjs.length; i++ )
+		allElemObjs[i].GetComponent(Renderer).enabled = false;
+}
+function Show()
+{
+	for( var i = 0; i < allElemObjs.length; i++ )
+		allElemObjs[i].GetComponent(Renderer).enabled = true;
+}
+
 function FindElementObjMapping( elem:String )
 {
   for( var i = 0; i < elementObjMappings.length; i++ )
@@ -32,14 +46,44 @@ function FindElementObjMapping( elem:String )
   return null;
 }
 
-//----------------------------------------
-//  Takes a 2D scale and turns it into a 3D scale appropriate for after the 90/180/0 rotation
-//----------------------------------------
-function ToRotatedScale( s:Vector2 ) : Vector3
+function IsElementClicked( obj:GameObject, pt:Vector2 ) : boolean
 {
-  return Vector3( s.x, s.y, 1.0 );
+	var pos = obj.transform.position;
+	var mf = obj.GetComponent(MeshFilter);
+	var mesh = mf.mesh;
+	var left = mesh.vertices[0].x + pos.x;
+	var bott = mesh.vertices[0].y + pos.y;
+	var topp = mesh.vertices[2].y + pos.y;
+	var right = mesh.vertices[2].x + pos.x;
+
+	return ( pt.x >= left && pt.x <= right && pt.y <= topp && pt.y >= bott );
 }
 
+// The element name should be given with OUT the prefix. Ie. as stated in the export layer sets file
+function IsElementClicked( elemName:String, pos:Vector2 ) : boolean
+{
+	// find the element with the name
+	for( var i = 0; i < allElemObjs.length; i++ )
+	{
+		var obj = allElemObjs[i];
+		if( obj.name == objNamePrefix+elemName && IsElementClicked(obj, pos ) )
+			return true;
+	}
+}
+
+function GetClickedElement( pt:Vector2 ) : GameObject
+{
+	for( var i = 0; i < allElemObjs.length; i++ )
+	{
+		if( IsElementClicked( allElemObjs[i], pt ) )
+			return allElemObjs[i];
+	}
+	return null;
+}
+
+//----------------------------------------
+//  
+//----------------------------------------
 function Awake()
 {
 	var reader = new StringReader( layoutFile.text );
@@ -81,6 +125,7 @@ function Awake()
           layerPrefab, spawnPos,
           Quaternion.identity );
       createdElemObjs.Push( obj );
+			obj.name = elem;
     }
     else
     {
@@ -88,7 +133,9 @@ function Awake()
       obj.transform.rotation = Quaternion.identity;
     }
 
+		allElemObjs.Push( obj );
     obj.transform.localScale = Vector3(1,1,1);
+		obj.name = objNamePrefix + elem;
 
     var tex = Resources.Load( res, Texture2D );
 
@@ -108,4 +155,7 @@ function Awake()
 
 		zPos += zDelta;
 	}
+
+	if( !startShown ) Hide();
+	else Show();
 }

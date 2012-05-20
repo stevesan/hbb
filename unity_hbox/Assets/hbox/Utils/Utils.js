@@ -492,3 +492,13 @@ static function Str2Vector2( s:String ) : Vector2
   var parts = s.Split([' '], System.StringSplitOptions.RemoveEmptyEntries);
   return Vector2( parseFloat(parts[0]), parseFloat(parts[1]) );
 }
+
+static function GetMouseXYWorldPos( hostcam:Camera ) : Vector2
+{
+	var ray = hostcam.ScreenPointToRay( Input.mousePosition );
+	// solve for when the ray hits z=0 plane
+	var alpha = -ray.origin.z / ray.direction.z;
+	var mouseWpos = ray.origin + alpha*ray.direction;
+	return ToVector2( mouseWpos );
+}
+

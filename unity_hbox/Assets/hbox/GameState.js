@@ -40,6 +40,13 @@ var keyDownHandlers : GameObject[];
 
 var eventListeners : GameObject[];
 
+var modeMenu : LayoutSpawner;
+var startMenu : LayoutSpawner;
+var mainCam : Camera;
+
+var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
+var numStars = 0;
+
 //----------------------------------------
 // Misc music
 //----------------------------------------
@@ -261,12 +268,14 @@ function OnGUI()
 		Debug.Log(playerName);
 		PlayerPrefs.SetString('playerName', playerName);
 		menuState = MenuState.MODE;
+		modeMenu.Show();
 		titleMusic.Stop();
 	}
 	else if( Event.current.type == EventType.KeyDown
 			&& Event.current.keyCode == KeyCode.Escape )
 	{
 		menuState = MenuState.MAIN;
+		startMenu.Show();
 	}
 	else
 	{
@@ -388,6 +397,9 @@ function OnBeatChange( beatsPassed : int )
 
 function OnSurvivalOver()
 {
+	// save num stars achieved
+	PlayerPrefs.SetInt( GetNumStarsPrefsKey(), numStars );
+
 	for( var obj in eventListeners ) {
 		if( obj != null )
 			obj.SendMessage( "OnSurvivalOver", GetComponent(GameState),
@@ -586,6 +598,15 @@ function OnMessedUp()
 	}
 }
 
+function OnSurvivalScoreIncreased()
+{
+	if( numStars+1 < stars2score.length )
+	{
+		if( survivalScore >= stars2score[ numStars+1 ] )
+			numStars++;
+	}
+}
+
 function OnSuccess()
 {
 	if( GetInputtingPlayer()==GetAttacker() && defendMessedUp )
@@ -601,6 +622,7 @@ function OnSuccess()
 
 	if( survivalMode && GetInputtingPlayer()==1 && !perNoteScore ) {
 		survivalScore++;
+		OnSurvivalScoreIncreased();
 		horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 	}
 
@@ -697,6 +719,7 @@ function UpdateTesting( mt : float, inputMt:float )
 					if( survivalMode && perNoteScore )
 					{
 						survivalScore++;
+						OnSurvivalScoreIncreased();
 						horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 					}
 				}
@@ -753,6 +776,7 @@ function UpdateTesting( mt : float, inputMt:float )
 						if( survivalMode && perNoteScore )
 						{
 							survivalScore++;
+							OnSurvivalScoreIncreased();
 							horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 						}
 
@@ -839,6 +863,15 @@ function EndRecording()
 	}
 }
 
+function IsLayoutElementClicked( layout:LayoutSpawner, elemName:String )
+{
+	if( Input.GetButtonDown( 'menuClick' ) )
+	{
+		var pos = Utils.GetMouseXYWorldPos( mainCam );
+		Debug.Log('click at '+pos );
+		return layout.IsElementClicked( elemName, pos );
+	}
+}
 
 enum MenuState { MAIN, ENTER_NAME, CREDITS, MODE, SONGS, TUTE }
 var menuState : MenuState = MenuState.MAIN;
@@ -851,19 +884,19 @@ function UpdateMenuMode()
 	{
 		if( !titleMusic.isPlaying ) titleMusic.Play();
 
-		menuText.text = 'B E A T    J U I C E    R A D I O\n\n'
-			+ 'SPACE BAR :: start game \n'
-			+ 'J :: credits \n'
-			+ 'ESCAPE :: quit \n';
+		menuText.text = '';
+
 		// handle player input
 		if( Input.GetButtonDown('menuback') )
 		{
 			PlayRandomSample();
 			return 'quit';
 		}
-		else if( Input.GetButtonDown('Start') )
+		else if( Input.GetButtonDown('Start') 
+				|| IsLayoutElementClicked( startMenu, 'startbtn' ) )
 		{
 			menuState = MenuState.ENTER_NAME;
+			startMenu.Hide();
 			PlayRandomSample();
 		}
 		else if( Input.GetButtonDown('Sample0B') )
@@ -871,6 +904,7 @@ function UpdateMenuMode()
 			PlayRandomSample();
 			menuState = MenuState.CREDITS;
 			titleMusic.Stop();
+			startMenu.Hide();
 		}
 	}
 	else if( menuState == MenuState.ENTER_NAME )
@@ -896,40 +930,43 @@ function UpdateMenuMode()
 		{
 			PlayRandomSample();
 			menuState = MenuState.MAIN;
+			startMenu.Show();
 			creditsMusic.Stop();
 		}
 	}
   else if( menuState == MenuState.MODE )
   {
+		menuText.text = '';
+
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
-    menuText.text = 'SELECT MODE: \n\n';
-    menuText.text += 'PRESS 1 :: Beat Bronco (1 player survival)\n';
-    menuText.text += 'PRESS 2 :: Beat Battle (2 player versus)\n';
-    menuText.text += '\n';
-    menuText.text += 'ESC :: back';
-
-    if( Input.GetButtonDown( 'Song1' ) )
+    if( Input.GetButtonDown( 'Song1' ) 
+				|| IsLayoutElementClicked( modeMenu, 'broncobtn' ) )
     {
       PlayRandomSample();
       useAI = true;
       survivalMode = true;
       menuState = MenuState.SONGS;
+			modeMenu.Hide();
     }
-    else if( Input.GetButtonDown( 'Song2' ) )
+    else if( Input.GetButtonDown( 'Song2' )
+			|| IsLayoutElementClicked( modeMenu, 'battlebtn' ) )
     {
       PlayRandomSample();
       useAI = false;
       survivalMode = false;
       menuState = MenuState.SONGS;
+			modeMenu.Hide();
     }
 
-		if( Input.GetButtonDown('menuback') )
+		if( Input.GetButtonDown('menuback')
+			|| IsLayoutElementClicked( modeMenu, 'backbtn' ) )
 		{
 			PlayRandomSample();
 			songSelectMusic.Stop();
 			menuState = MenuState.ENTER_NAME;
 			titleMusic.Play();
+			modeMenu.Hide();
 		}
   }
 	else if( menuState == MenuState.SONGS )
@@ -962,6 +999,7 @@ function UpdateMenuMode()
 		{
 			PlayRandomSample();
 			menuState = MenuState.MODE;
+			modeMenu.Show();
 		}
 	}
 	else if( menuState == MenuState.TUTE )
@@ -1037,6 +1075,12 @@ function OnEnterMeasure()
 		state = RCState.ATTACK;
 }
 
+function GetNumStarsPrefsKey():String
+{
+	var starsKey = 'song'+activeSong+'.numStars';
+	return starsKey;
+}
+
 function StartGameRitual1()
 {
   state = RCState.START;
@@ -1052,6 +1096,11 @@ function StartGameRitual1()
 
 		// how many changes are allowed?
     playerLosses[1] = GetMaxLosses() - GetSongPlayer().broncoLives;
+
+		// update stars
+		numStars = 0;
+		if( PlayerPrefs.HasKey(GetNumStarsPrefsKey()) )
+			numStars = PlayerPrefs.GetInt(GetNumStarsPrefsKey());
   }
 	else
 	{

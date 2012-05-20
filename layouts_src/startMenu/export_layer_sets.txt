@@ -1,0 +1,6 @@
+startbtn
+/startMenu/startlabel
+/startMenu/startbtn
+
+tapebg
+/startMenu/tape
