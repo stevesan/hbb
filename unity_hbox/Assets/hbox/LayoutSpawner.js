@@ -30,6 +30,7 @@ function Hide()
 	for( var i = 0; i < allElemObjs.length; i++ )
 		allElemObjs[i].GetComponent(Renderer).enabled = false;
 }
+
 function Show()
 {
 	for( var i = 0; i < allElemObjs.length; i++ )
@@ -44,6 +45,40 @@ function FindElementObjMapping( elem:String )
       return elementObjMappings[i].obj;
   }
   return null;
+}
+
+// Name should NOT include prefix - just as it shows up in the layout.txt file
+function FindElement( elemName:String ) : GameObject
+{
+	for( var i = 0; i < allElemObjs.length; i++ )
+	{
+		var obj = allElemObjs[i];
+		if( obj.name == objNamePrefix+elemName )
+			return obj;
+	}
+	return null;
+}
+
+function GetElementSize( obj:GameObject ) : Vector2
+{
+	var pos = obj.transform.position;
+	var mf = obj.GetComponent(MeshFilter);
+	var mesh = mf.mesh;
+	var left = mesh.vertices[0].x;
+	var bott = mesh.vertices[0].y;
+	var topp = mesh.vertices[2].y;
+	var right = mesh.vertices[2].x;
+	return Vector2( right-left, topp-bott );
+}
+
+function GetElementTopLeft( obj:GameObject ) : Vector2
+{
+	var pos = obj.transform.position;
+	var mf = obj.GetComponent(MeshFilter);
+	var mesh = mf.mesh;
+	var left = mesh.vertices[0].x + pos.x;
+	var topp = mesh.vertices[2].y + pos.y;
+	return Vector2( left, topp );
 }
 
 function IsElementClicked( obj:GameObject, pt:Vector2 ) : boolean
@@ -63,12 +98,11 @@ function IsElementClicked( obj:GameObject, pt:Vector2 ) : boolean
 function IsElementClicked( elemName:String, pos:Vector2 ) : boolean
 {
 	// find the element with the name
-	for( var i = 0; i < allElemObjs.length; i++ )
-	{
-		var obj = allElemObjs[i];
-		if( obj.name == objNamePrefix+elemName && IsElementClicked(obj, pos ) )
-			return true;
-	}
+	var obj = FindElement( elemName );
+	if( obj == null )
+		return false;
+	else
+		return IsElementClicked( obj, pos );
 }
 
 function GetClickedElement( pt:Vector2 ) : GameObject
@@ -158,4 +192,10 @@ function Awake()
 
 	if( !startShown ) Hide();
 	else Show();
+}
+
+function OnDestroy()
+{
+	for( var i = 0; i < createdElemObjs.length; i++ )
+		Destroy( createdElemObjs[i] as GameObject );
 }

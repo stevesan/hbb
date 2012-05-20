@@ -59,11 +59,11 @@ function Update () {
 	mainText.text = '';
 
 	var broncoText = 'SCORE: ' + gs.survivalScore;
-	broncoText += '\n STARS: ' + gs.numStars;
 	if( (gs.numStars+1) < gs.stars2score.length )
-		broncoText += ' NEXT: ' + gs.stars2score[ gs.numStars+1 ];
+		broncoText += ' - NEXT STAR: ' + gs.stars2score[ gs.numStars+1 ];
 	else
-		broncoText += ' NEXT: NO MORE!';
+		broncoText += ' - GOT ALL STARS!';
+	broncoText += '\n STARS: ' + gs.numStars;
 	prompts[ 0 ].text = '';
 	prompts[ 1 ].text = '';
 

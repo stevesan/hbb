@@ -40,12 +40,17 @@ var keyDownHandlers : GameObject[];
 
 var eventListeners : GameObject[];
 
-var modeMenu : LayoutSpawner;
-var startMenu : LayoutSpawner;
 var mainCam : Camera;
 
 var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var numStars = 0;
+
+//----------------------------------------
+//  Menu hooks
+//----------------------------------------
+var modeMenu : LayoutSpawner;
+var startMenu : LayoutSpawner;
+var songsMenu : SongsMenu;
 
 //----------------------------------------
 // Misc music
@@ -102,6 +107,18 @@ function GetMeasureTime() { return Time.time-measureStartTime; }
 
 function GetSongTitle() : String {
 	return songs.players[ activeSong ].title;
+}
+
+function GetNumSongs() : int { return songs.players.Count; }
+
+function PollLayoutClicked( layout:LayoutSpawner, elemName:String )
+{
+	if( Input.GetButtonDown( 'menuClick' ) )
+	{
+		var pos = Utils.GetMouseXYWorldPos( mainCam );
+		Debug.Log('click at '+pos );
+		return layout.IsElementClicked( elemName, pos );
+	}
 }
 
 //----------------------------------------
@@ -398,7 +415,7 @@ function OnBeatChange( beatsPassed : int )
 function OnSurvivalOver()
 {
 	// save num stars achieved
-	PlayerPrefs.SetInt( GetNumStarsPrefsKey(), numStars );
+	PlayerPrefs.SetInt( GetNumStarsKey(), numStars );
 
 	for( var obj in eventListeners ) {
 		if( obj != null )
@@ -863,16 +880,6 @@ function EndRecording()
 	}
 }
 
-function IsLayoutElementClicked( layout:LayoutSpawner, elemName:String )
-{
-	if( Input.GetButtonDown( 'menuClick' ) )
-	{
-		var pos = Utils.GetMouseXYWorldPos( mainCam );
-		Debug.Log('click at '+pos );
-		return layout.IsElementClicked( elemName, pos );
-	}
-}
-
 enum MenuState { MAIN, ENTER_NAME, CREDITS, MODE, SONGS, TUTE }
 var menuState : MenuState = MenuState.MAIN;
 
@@ -893,7 +900,7 @@ function UpdateMenuMode()
 			return 'quit';
 		}
 		else if( Input.GetButtonDown('Start') 
-				|| IsLayoutElementClicked( startMenu, 'startbtn' ) )
+				|| PollLayoutClicked( startMenu, 'startbtn' ) )
 		{
 			menuState = MenuState.ENTER_NAME;
 			startMenu.Hide();
@@ -941,7 +948,7 @@ function UpdateMenuMode()
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
     if( Input.GetButtonDown( 'Song1' ) 
-				|| IsLayoutElementClicked( modeMenu, 'broncobtn' ) )
+				|| PollLayoutClicked( modeMenu, 'broncobtn' ) )
     {
       PlayRandomSample();
       useAI = true;
@@ -950,7 +957,7 @@ function UpdateMenuMode()
 			modeMenu.Hide();
     }
     else if( Input.GetButtonDown( 'Song2' )
-			|| IsLayoutElementClicked( modeMenu, 'battlebtn' ) )
+			|| PollLayoutClicked( modeMenu, 'battlebtn' ) )
     {
       PlayRandomSample();
       useAI = false;
@@ -960,7 +967,7 @@ function UpdateMenuMode()
     }
 
 		if( Input.GetButtonDown('menuback')
-			|| IsLayoutElementClicked( modeMenu, 'backbtn' ) )
+			|| PollLayoutClicked( modeMenu, 'backbtn' ) )
 		{
 			PlayRandomSample();
 			songSelectMusic.Stop();
@@ -971,8 +978,11 @@ function UpdateMenuMode()
   }
 	else if( menuState == MenuState.SONGS )
 	{
+		songsMenu.Show(GetComponent(GameState));
+
 		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
 
+/*
 		var text = 'SELECT SONG: \n\n';
 		for( var s = 0; s < songs.players.Count; s++ )
 		{
@@ -980,25 +990,32 @@ function UpdateMenuMode()
 		}
 		text = text + '\nESCAPE :: back';
 		menuText.text = text;
+		*/
+		menuText.text = '';
 
 		// check for keys
 		for( s = 0; s < songs.players.Count; s++ )
 		{
 			var inputCode = 'Song'+(s+1);
-			if( Input.GetButtonDown( inputCode ) )
+			if( Input.GetButtonDown( inputCode ) 
+					// we have it set up so that the element names are 'Song%d'
+					|| PollLayoutClicked( songsMenu.layout, inputCode ) )
 			{
 				PlayRandomSample();
 				activeSong = s;
 				songSelectMusic.Stop();
 				menuState = MenuState.TUTE;
+				songsMenu.Hide();
 				break;
 			}
 		}
 
-		if( Input.GetButtonDown('menuback') )
+		if( Input.GetButtonDown('menuback') 
+			|| PollLayoutClicked( songsMenu.layout, 'backbtn' ) )
 		{
 			PlayRandomSample();
 			menuState = MenuState.MODE;
+			songsMenu.Hide();
 			modeMenu.Show();
 		}
 	}
@@ -1075,11 +1092,23 @@ function OnEnterMeasure()
 		state = RCState.ATTACK;
 }
 
-function GetNumStarsPrefsKey():String
+function GetNumStarsKey(songNum:int):String
 {
-	var starsKey = 'song'+activeSong+'.numStars';
+	var starsKey = 'song'+songNum+'.numStars';
 	return starsKey;
 }
+
+function GetNumStarsKey():String
+{
+	return GetNumStarsKey( activeSong );
+}
+
+function GetNumStars( songNum:int ) : int
+{
+	var key = GetNumStarsKey( songNum );
+	return PlayerPrefs.GetInt( key );
+}
+
 
 function StartGameRitual1()
 {
@@ -1099,8 +1128,8 @@ function StartGameRitual1()
 
 		// update stars
 		numStars = 0;
-		if( PlayerPrefs.HasKey(GetNumStarsPrefsKey()) )
-			numStars = PlayerPrefs.GetInt(GetNumStarsPrefsKey());
+		if( PlayerPrefs.HasKey(GetNumStarsKey()) )
+			numStars = PlayerPrefs.GetInt(GetNumStarsKey());
   }
 	else
 	{

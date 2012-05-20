@@ -50,6 +50,7 @@
      <Compile Include="Assets\Standard Assets\Scripts\Camera Scripts\SmoothLookAt.js" />
      <Compile Include="Assets\Standard Assets\Scripts\General Scripts\DragRigidbody.js" />
      <None Include="Assets\Resources\layouts\gameplay\layout.txt" />
+     <None Include="Assets\Resources\layouts\songsMenu\layout.txt" />
      <None Include="Assets\Resources\broncoAIs.xml" />
      <None Include="Assets\hbox\trackpoints.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />

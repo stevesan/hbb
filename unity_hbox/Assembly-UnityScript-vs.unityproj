@@ -61,6 +61,7 @@
      <Compile Include="Assets\hbox\Shake.js" />
      <Compile Include="Assets\hbox\SongInfo.js" />
      <Compile Include="Assets\hbox\SongsManager.js" />
+     <Compile Include="Assets\hbox\SongsMenu.js" />
      <Compile Include="Assets\hbox\TrackLaserScript.js" />
      <Compile Include="Assets\hbox\Utils\CameraShake.js" />
      <Compile Include="Assets\hbox\Utils\ChangingTexture.js" />
@@ -74,6 +75,7 @@
      <Compile Include="Assets\hbox\Utils\UVAnim.js" />
      <Compile Include="Assets\hbox\Utils\Utils.js" />
      <None Include="Assets\Resources\layouts\gameplay\layout.txt" />
+     <None Include="Assets\Resources\layouts\songsMenu\layout.txt" />
      <None Include="Assets\Resources\broncoAIs.xml" />
      <None Include="Assets\hbox\trackpoints.txt" />
      <None Include="Assets\Standard Assets\Particles\Sources\Shaders\Particle Alpha Blend (Queue +100).shader" />
