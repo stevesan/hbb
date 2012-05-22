@@ -29,6 +29,7 @@ var survivalMode = false;
 var survivalScore:int;
 var perNoteScore = false;
 var debugKeysDown = false;
+var debugClearPlayerPrefs = false;	// this only does it in the editor
 
 var cameraShake : Shake = null;
 var menuText : TextMesh;
@@ -44,6 +45,7 @@ var mainCam : Camera;
 
 var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var numStars = 0;
+private var prevStars = 0;
 
 //----------------------------------------
 //  Menu hooks
@@ -261,6 +263,13 @@ function Awake() {
 	p1loseCard.enabled = false;
 	p2loseCard.enabled = false;
 
+	if( debugClearPlayerPrefs )
+	{
+		#if UNITY_EDITOR
+		Debug.Log('WARNING: Clearing player prefs');
+		PlayerPrefs.DeleteAll();
+		#endif
+	}
 }
 
 var playerNameWin = null;
@@ -620,16 +629,11 @@ function OnMessedUp()
 
 function OnSurvivalScoreIncreased()
 {
+	// increase star count, but do NOT play the sound here - it can be distracting
 	if( numStars+1 < stars2score.length )
 	{
-		var prevStars = numStars;
 		if( survivalScore >= stars2score[ numStars+1 ] )
 			numStars++;
-
-		if( numStars != prevStars ) {
-			// got new stars - play the sound
-			getStarSounds[ numStars-1 ].Play();
-		}
 	}
 }
 
@@ -1251,6 +1255,9 @@ function Update()
 			UpdateBeatPlayback(mt);
 		}
 
+		//----------------------------------------
+		//  
+		//----------------------------------------
 		if( IsInPostTolerance() )
 			// if they add any notes, assume they're on the last beat
 			UpdateRecording( GetSecsPerMeasure(), GetSecsPerMeasure()+mt );
@@ -1262,15 +1269,27 @@ function Update()
 			// make the notes all blue immediately
 			ResetTesting();
 		}
+
+		//----------------------------------------
+		//  
+		//----------------------------------------
 		if( JustEnteredPreTol() )
 		{
+
 			// AI defending?
 			if( IsAiInputting() )
 				aiInputs = horseAI.RepeatBeat(this);
 		}
+
 		if( IsInPreTolerance() )
 			// no need to pass in the "real" mt for the input - AIs will never do that
 			UpdateTesting( 0.0, 0.0 );
+		else {
+			// kinda wasteful..whatever
+			if( survivalMode ) {
+				prevStars = numStars;
+			}
+		}
 	}
 	else if( state == RCState.DEFEND )
 	{
@@ -1297,6 +1316,7 @@ function Update()
 
 			if( survivalMode )
 			{
+				// check for lose condition
 				// reset round
 				ResetRound();
 
@@ -1306,9 +1326,13 @@ function Update()
 					// victory!
 					state = RCState.VICTORY;
 					GetSongPlayer().Stop();
+					OnSurvivalOver();
+				}
 
-					if( survivalMode )
-						OnSurvivalOver();
+				// see if we should play the star sound
+				if( numStars != prevStars ) {
+					// got new stars - play the sound
+					getStarSounds[ numStars-1 ].Play();
 				}
 			}
 		}
