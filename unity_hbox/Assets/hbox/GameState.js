@@ -53,14 +53,17 @@ var startMenu : LayoutSpawner;
 var songsMenu : SongsMenu;
 
 //----------------------------------------
-// Misc music
+// Misc music/sounds
 //----------------------------------------
 var creditsMusic : AudioSource = null;
 var titleMusic : AudioSource = null;
 var songSelectMusic : AudioSource = null;
 var victoryMusic : AudioSource = null;
 
-var audioTest : AudioClip = null;
+var beatBattleAnno : AudioSource = null;
+var beatBroncoAnno : AudioSource = null;
+
+var getStarSounds : AudioSource[];
 
 //----------------------------------------
 var p1loseCard : Renderer = null;
@@ -619,8 +622,14 @@ function OnSurvivalScoreIncreased()
 {
 	if( numStars+1 < stars2score.length )
 	{
+		var prevStars = numStars;
 		if( survivalScore >= stars2score[ numStars+1 ] )
 			numStars++;
+
+		if( numStars != prevStars ) {
+			// got new stars - play the sound
+			getStarSounds[ numStars-1 ].Play();
+		}
 	}
 }
 
@@ -953,6 +962,7 @@ function UpdateMenuMode()
       PlayRandomSample();
       useAI = true;
       survivalMode = true;
+			beatBroncoAnno.Play();
       menuState = MenuState.SONGS;
 			modeMenu.Hide();
     }
@@ -962,6 +972,7 @@ function UpdateMenuMode()
       PlayRandomSample();
       useAI = false;
       survivalMode = false;
+			beatBattleAnno.Play();
       menuState = MenuState.SONGS;
 			modeMenu.Hide();
     }
@@ -1410,7 +1421,10 @@ function Update()
 			PlayRandomSample();
 			cameraShake.MoveToMenu();
 			musicStartTime = 0.0;
-			victoryMusic.Stop();
+			victoryMusic.Stop();	// just in case
+
+			if( survivalMode )
+				OnSurvivalOver();
 		}
 	}
 

@@ -148,14 +148,14 @@
 		numMeasures = "16"
 		volume = "1.0"
 		samplesVolume = "1.0"
-		releaseSecs = "0.5"
+		releaseSecs = "0.3"
 		broncoAI = '190bpmClusterStrut'
 		broncoLives = '1'
 		timeTolSecs = '0.1'
 		>
-		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
-		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Eb" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_G" />
 		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_Bb" />
+		<sample res="songs/190 BPM/MELODIES/Cluster_Strut_190_melody_D" />
 
 		<!-- drums -->
 		<layer res="songs/190 BPM/DRUMS/Cluster_Strut_190_drums" />
