@@ -162,6 +162,10 @@ function UpdateTrail()
 
 		if( deltaMt > 0.0 )
 		{
+			// we don't want the trail to go all the way..leave some room for the tail cap
+			// compute distance/measure time
+
+
 			// figure out the number of segments to tesselate into
 			var measureFrac:float = deltaMt / gs.GetSecsPerMeasure();
 			numMids = Mathf.Ceil( trailMidsPerMeas * measureFrac );
@@ -181,6 +185,7 @@ function UpdateTrail()
 			}
 
 			// add the caps
+			// use trailWidth/2.0
 			var headDelta = trailWidth/2.0 * (trailCtrls[1]-trailCtrls[2]).normalized;
 			trailCtrls[0] = trailCtrls[1] + headDelta;
 			trailCtrlTexVs[0] = 0;

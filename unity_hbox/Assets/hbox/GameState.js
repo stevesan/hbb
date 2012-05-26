@@ -45,6 +45,7 @@ var mainCam : Camera;
 
 var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var numStars = 0;
+var startingStars = 0;
 private var prevStars = 0;
 
 //----------------------------------------
@@ -53,6 +54,7 @@ private var prevStars = 0;
 var modeMenu : LayoutSpawner;
 var startMenu : LayoutSpawner;
 var songsMenu : SongsMenu;
+var broncoMenu : BroncoSetupMenu;
 
 //----------------------------------------
 // Misc music/sounds
@@ -427,7 +429,9 @@ function OnBeatChange( beatsPassed : int )
 function OnSurvivalOver()
 {
 	// save num stars achieved
-	PlayerPrefs.SetInt( GetNumStarsKey(), numStars );
+	if( GetNumStars(activeSong) < numStars )
+		PlayerPrefs.SetInt( GetNumStarsKey(), numStars );
+	startingStars = numStars;
 
 	for( var obj in eventListeners ) {
 		if( obj != null )
@@ -893,7 +897,7 @@ function EndRecording()
 	}
 }
 
-enum MenuState { MAIN, ENTER_NAME, CREDITS, MODE, SONGS, TUTE }
+enum MenuState { MAIN, ENTER_NAME, CREDITS, MODE, SONGS, BRONCO_SETUP, TUTE }
 var menuState : MenuState = MenuState.MAIN;
 
 function UpdateMenuMode()
@@ -1018,9 +1022,15 @@ function UpdateMenuMode()
 			{
 				PlayRandomSample();
 				activeSong = s;
-				songSelectMusic.Stop();
-				menuState = MenuState.TUTE;
 				songsMenu.Hide();
+
+				if( survivalMode ) {
+					menuState = MenuState.BRONCO_SETUP;
+				}
+				else {
+					songSelectMusic.Stop();
+					menuState = MenuState.TUTE;
+				}
 				break;
 			}
 		}
@@ -1032,6 +1042,44 @@ function UpdateMenuMode()
 			menuState = MenuState.MODE;
 			songsMenu.Hide();
 			modeMenu.Show();
+		}
+	}
+	else if( menuState == MenuState.BRONCO_SETUP ) {
+		if( !songSelectMusic.isPlaying )
+			songSelectMusic.Play();
+
+		broncoMenu.Show(GetComponent(GameState));
+
+		//----------------------------------------
+		//  Check for difficulty click
+		//----------------------------------------
+		var nstars = GetNumStars( activeSong );
+		for( var level = 0; level < songs.players.Count; level++ )
+		{
+			// don't let players start on a level they haven't gotten yet
+			if( level > nstars ) continue;
+
+			var keyPressed = Input.GetButtonDown('Song'+(level+1));
+			var btnClicked = PollLayoutClicked( broncoMenu.layout, 'level'+level );
+			if( keyPressed || btnClicked )
+			{
+				PlayRandomSample();
+				broncoMenu.Hide();
+				songSelectMusic.Stop();
+				menuState = MenuState.TUTE;
+
+				// make sure we start with the checkpointed score
+				startingStars = level;
+				break;
+			}
+		}
+
+		if( Input.GetButtonDown('menuback') 
+			|| PollLayoutClicked( broncoMenu.layout, 'backbtn' ) )
+		{
+			PlayRandomSample();
+			menuState = MenuState.SONGS;
+			broncoMenu.Hide();
 		}
 	}
 	else if( menuState == MenuState.TUTE )
@@ -1079,8 +1127,11 @@ function UpdateMenuMode()
 
 		if( Input.GetButtonDown('Start') )
 		{
-			// make sure we return to the songs menu
-			menuState = MenuState.SONGS;
+			// make sure we return to the songs menu when game is over
+			if( survivalMode )
+				menuState = MenuState.BRONCO_SETUP;
+			else
+				menuState = MenuState.SONGS;
 			return 'start';
 		}
 	}
@@ -1136,15 +1187,18 @@ function StartGameRitual1()
   if( survivalMode )
   {
     playerLosses[0] = 0;
-		survivalScore = 0;
 
 		// how many changes are allowed?
     playerLosses[1] = GetMaxLosses() - GetSongPlayer().broncoLives;
 
 		// update stars
-		numStars = 0;
-		if( PlayerPrefs.HasKey(GetNumStarsKey()) )
-			numStars = PlayerPrefs.GetInt(GetNumStarsKey());
+		numStars = startingStars;
+		survivalScore = stars2score[ numStars ];
+
+		// make sure we start with the checkpointed AI
+		if( horseAI != null )
+			horseAI.Reset( GetSongPlayer().broncoAI );
+		horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
   }
 	else
 	{
@@ -1152,8 +1206,6 @@ function StartGameRitual1()
 		playerLosses[1] = 0;
 	}
 
-	if( horseAI != null )
-		horseAI.Reset( GetSongPlayer().broncoAI );
 
 	for( var obj in eventListeners )
 	{

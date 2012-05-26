@@ -173,19 +173,24 @@ function Awake()
 
     var tex = Resources.Load( res, Texture2D );
 
-    var m = obj.GetComponent(MeshFilter).mesh;
-    m.vertices = [
-    Vector3( -lsElemSize.x/2.0*wsByLs, -lsElemSize.y/2.0*wsByLs, 0 ),
-    Vector3( lsElemSize.x/2.0*wsByLs, -lsElemSize.y/2.0*wsByLs, 0 ),
-    Vector3( lsElemSize.x/2.0*wsByLs, lsElemSize.y/2.0*wsByLs, 0 ),
-    Vector3( -lsElemSize.x/2.0*wsByLs, lsElemSize.y/2.0*wsByLs, 0 ) ];
-    m.triangles = [ 0, 2, 1, 0, 3, 2 ];
-    m.RecalculateNormals();
-    var u = lsElemSize.x / lsTexSize.x;
-    var v = lsElemSize.y / lsTexSize.y;
-    m.uv = [ Vector2(0,1-v), Vector2(u,1-v), Vector2(u,1), Vector2(0,1) ];
+		// If there is a mesh filter, then we actually want to create the element
+		// Otherwise, assume it's meant for some other purpose (like a text place holder)
+		if( obj.GetComponent(MeshFilter) != null )
+		{
+			var m = obj.GetComponent(MeshFilter).mesh;
+			m.vertices = [
+				Vector3( -lsElemSize.x/2.0*wsByLs, -lsElemSize.y/2.0*wsByLs, 0 ),
+				Vector3( lsElemSize.x/2.0*wsByLs, -lsElemSize.y/2.0*wsByLs, 0 ),
+				Vector3( lsElemSize.x/2.0*wsByLs, lsElemSize.y/2.0*wsByLs, 0 ),
+				Vector3( -lsElemSize.x/2.0*wsByLs, lsElemSize.y/2.0*wsByLs, 0 ) ];
+			m.triangles = [ 0, 2, 1, 0, 3, 2 ];
+			m.RecalculateNormals();
+			var u = lsElemSize.x / lsTexSize.x;
+			var v = lsElemSize.y / lsTexSize.y;
+			m.uv = [ Vector2(0,1-v), Vector2(u,1-v), Vector2(u,1), Vector2(0,1) ];
 
-		Utils.SetTexture( obj, tex );
+			Utils.SetTexture( obj, tex );
+		}
 
 		zPos += zDelta;
 	}

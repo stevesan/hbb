@@ -3,6 +3,8 @@
 //  Handles the 'pieces of horse' displays
 //----------------------------------------
 
+var showForSurvivalMode = false;
+
 var playerPiecePrefabs : GameObject[];
 var pieceOffTextures : Texture2D[];
 var pieceOnTextures : Texture2D[];
@@ -162,7 +164,7 @@ function Update () {
 			for( l = 0; l < gs.GetMaxLosses(); l++ )
 				playerPieces[p,l].renderer.enabled = true;
 	}
-	else
+	else if( showForSurvivalMode )
 	{
 		// hide left player's, the CPU
 		p = 0;
@@ -184,5 +186,11 @@ function Update () {
 			if( l < pieceOffTextures.length )
 				Utils.SetTexture( playerPieces[p, l], pieceOffTextures[l] );
 		}
+	}
+	else
+	{
+		for( p = 0; p < 2; p++ )
+			for( l = 0; l < gs.GetMaxLosses(); l++ )
+				playerPieces[p,l].renderer.enabled = false;
 	}
 }

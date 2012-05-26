@@ -1,0 +1,56 @@
+locked
+/locked
+/locked/LOCKED
+/locked/btn
+
+level4
+/diffselect/L4
+/diffselect/L4/Layer 10
+/diffselect/L4/Layer 9
+/diffselect/L4/Layer 8
+/diffselect/L4/Layer 7
+/diffselect/L4/5 ::
+
+level3
+/diffselect/L3
+/diffselect/L3/Layer 6
+/diffselect/L3/Layer 5
+/diffselect/L3/Layer 4
+/diffselect/L3/Layer 16
+/diffselect/L3/4 ::
+
+level2
+/diffselect/L2
+/diffselect/L2/Layer 3
+/diffselect/L2/Layer 2
+/diffselect/L2/Layer 15
+/diffselect/L2/Layer 14
+/diffselect/L2/3 ::
+
+level1
+/diffselect/L1
+/diffselect/L1/Layer 1
+/diffselect/L1/Layer 11
+/diffselect/L1/Layer 12
+/diffselect/L1/Layer 13
+/diffselect/L1/2 ::
+
+level0
+/diffselect/L0
+/diffselect/L0/Layer 17
+/diffselect/L0/1 ::
+/diffselect/L0/Layer 11 copy
+/diffselect/L0/Layer 12 copy
+/diffselect/L0/Layer 13 copy
+
+songTitle
+/Song Title
+
+highscores
+/highscores
+
+choosediff
+/choosediff
+
+backbtn
+/backbtn
