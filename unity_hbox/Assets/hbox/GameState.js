@@ -1061,6 +1061,11 @@ function UpdateMenuMode()
 
 			var keyPressed = Input.GetButtonDown('Song'+(level+1));
 			var btnClicked = PollLayoutClicked( broncoMenu.layout, 'level'+level );
+
+			// pressing space triggers the highest star number
+			if( level == nstars && Input.GetButtonDown( 'Start' ) )
+				keyPressed = true;
+
 			if( keyPressed || btnClicked )
 			{
 				PlayRandomSample();
