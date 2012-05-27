@@ -66,10 +66,6 @@
 	</AI>
 
 	<AI name = "80bpm" >
-	<!-- TEMP TEMP -->
-		<phase chords = "0.0" noteValuePdf = "0,2,0,0,0,0,0,0" maxScore = '999'
-		numQuants = "32" dexterity = "0" sustain = "0.0" rhythm = "1" />
-
 		<phase chords = "0.0" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '15'
 		numQuants = "32" dexterity = "0.7" sustain = "0.4" rhythm = "1" />
 		<phase chords = "0.3" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '25'

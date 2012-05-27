@@ -78,7 +78,7 @@ function OnSuccess( player:int )
 	}
 }
 
-function OnMessedUp()
+function OnMistake()
 {
 	var gs = GameState.inst;
 	var p = gs.GetInputtingPlayer();

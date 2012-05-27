@@ -33,7 +33,7 @@ function Start()
 	prompts[1].text ='';
 }
 
-function OnMessedUp()
+function OnMistake()
 {
 	messupSound.Play();
 }

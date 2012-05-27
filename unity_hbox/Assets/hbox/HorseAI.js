@@ -261,12 +261,12 @@ function Awake()
 	}
 }
 
-function RandomPitchExcluding( numKeys:int, exclude:int ) : int
+function RandomUnusedKey( keyUsed:boolean[] ) : int
 {
-	var k = Random.Range( 0, numKeys-1 );
-	if( k >= exclude )
-		k++;
-
+	var k = Random.Range( 0, keyUsed.length-1 );
+	while( keyUsed[k] ) {
+		k = (k+1)%keyUsed.length;
+	}
 	return k;
 }
 
@@ -290,9 +290,9 @@ function HalvePreviousSustains( notes:Array, key:int, endMt:float )
 		var note = (notes[i] as NoteSpec);
 		if( note.key == key &&
 				Mathf.Abs(endMt-(note.measureTime+note.duration)) < 1e-4 )
-				{
-					note.duration /= 2.0;
-				}
+		{
+			note.duration /= 2.0;
+		}
 	}
 }
 
@@ -307,10 +307,6 @@ function HalvePreviousSustains( notes:Array, endMt:float )
 		if( Mathf.Abs(endMt-(note.measureTime+note.duration)) < 1e-4 )
 		{
 			note.duration /= 2.0;
-			// but if it's pretty small, that it might go under the frame rate and thus get interpretted as a longer note, make it stacatto
-			// HACK: hard coding the 0.1..
-			if( note.duration < 0.1 )
-				note.duration = 0.0;
 		}
 	}
 }
@@ -323,9 +319,9 @@ function CreateBeat(gs:GameState) : Array
 	var numKeys = gs.GetSongPlayer().GetNumSamples();
 
 	var mt = 0.0;
-	var prevNoteSustained = false;
+	var prevSustained = false;
 	var prevSpacing:float;
-	var prevNoteChord = false;
+	var prevKeyUsed:boolean[] = [ false, false, false ];
 
 	while( mt <= gs.GetSecsPerMeasure()+1e-4 )
 	{
@@ -334,6 +330,7 @@ function CreateBeat(gs:GameState) : Array
 
 		var note = new NoteSpec();
 
+		var keyUsed:boolean[] = [ false, false, false ];
 		note.measureTime = mt;
 
 		//----------------------------------------
@@ -342,26 +339,30 @@ function CreateBeat(gs:GameState) : Array
 		if( prevNote == null ) {
 			note.key = Random.Range( 0, numKeys );
 		}
-		else if( Random.value <= GetPhase().dexterity || prevNoteSustained )
+		else if( Random.value <= GetPhase().dexterity || prevSustained )
 		{
 			// if previous note was sustained, do not stay on it - very awkward
 			// switch pitch
-			note.key = RandomPitchExcluding( numKeys, prevNote.key );
+			note.key = RandomUnusedKey( prevKeyUsed );
 		}
 		else
 		{
 			// use previous note's key
 			note.key = prevNote.key;
 		}
+		keyUsed[note.key] = true;
 
 		//----------------------------------------
 		//  Rhythm
 		//----------------------------------------
+		var sustained = false;
+
 		if( prevNote != null && Random.value > GetPhase().rhythm )
 		{
 			// no creativity this note, use the previous note's duration and spacing
 			note.duration = prevNote.duration;
 			mt += prevSpacing;
+			sustained = prevSustained;
 		}
 		else
 		{
@@ -369,14 +370,14 @@ function CreateBeat(gs:GameState) : Array
 			{
 				// sustain it
 				note.duration = GetPhase().RandomMusicalLength( gs.GetSecsPerMeasure() );
-				prevNoteSustained = true;
+				sustained = true;
 
 				// make the next note come right after the sustained time
 				mt += note.duration;
 			}
 			else
 			{
-				prevNoteSustained = false;
+				sustained = false;
 				// non-sustained note
 				// make it last a little bit, to simulate what the player's inputs are like
 				note.duration = 0;
@@ -390,31 +391,36 @@ function CreateBeat(gs:GameState) : Array
 		beat.Push( note );
 
 		//----------------------------------------
-		//  Handle "note collisions"
-		//	If a note was sustained but was not a chord, it was handled above by always switching pitch.
-		//	If it was a chord but not sustained, that's OK - the timing is still feasible.
-		//	But if it's both, cut the chord in half
+		//  Chords
+		//	Add another note?
 		//----------------------------------------
-		if( prevNoteSustained && prevNoteChord )
-		{
-			// Assume that there are some "note collisions", and just fix them
-			HalvePreviousSustains( beat, note.measureTime );
-		}
-
-		// chord?
 		if( Random.value <= GetPhase().chords )
 		{
-			var other = new NoteSpec();
-			other.measureTime = note.measureTime;
-			other.key = RandomPitchExcluding( numKeys, note.key );
-			other.duration = note.duration;
-			beat.Push( other );
-			prevNoteChord = true;
-		}
-		else {
-			prevNoteChord = false;
+			var second = new NoteSpec();
+			second.measureTime = note.measureTime;
+			second.key = RandomUnusedKey( keyUsed );
+			second.duration = note.duration;
+			beat.Push( second );
+			keyUsed[ second.key ] = true;
 		}
 
+		//----------------------------------------
+		//  Handle "note collisions"
+		//	If we have any notes in common and the previous note was sustained,
+		//	cut-short all previous notes.
+		//----------------------------------------
+		if( prevSustained ) {
+			for( var key = 0; key < numKeys; key++ ) {
+				if( keyUsed[key] && prevKeyUsed[key] ) {
+					HalvePreviousSustains( beat, note.measureTime );
+					break;
+				}
+			}
+		}
+
+		// update vars
+		prevSustained = sustained;
+		prevKeyUsed = keyUsed;
 	}
 
 

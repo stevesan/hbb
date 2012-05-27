@@ -204,8 +204,13 @@ function EndTesting()
 			// past tolerance - messed up!
 			note.type = NoteType.Miss;
 			note.OnMiss();
-			OnMessedUp();
+			Debug.Log('MISTAKE: note passed, not hit, very end');
+			OnMistake();
 		}
+	}
+
+	for( var key = 0; key < GetSongPlayer().GetNumSamples(); key++ ) {
+		key2downNote[key] = null;
 	}
 }
 
@@ -230,8 +235,10 @@ function ResetTesting()
 	successTriggered = false;
 
 	// make sure we release all keys..
-	for( var key = 0; key < GetSongPlayer().GetNumSamples(); key++ )
+	for( var key = 0; key < GetSongPlayer().GetNumSamples(); key++ ) {
 		GetSongPlayer().OnKeyUp(key);
+		key2downNote[key] = null;
+	}
 }
 
 //----------------------------------------
@@ -333,55 +340,13 @@ function GetBeatsPerMeasure()
 	return GetSongPlayer().bpMeas;
 }
 
-//----------------------------------------
-//  Finds the note with the given key with the greatest measure time
-//----------------------------------------
-function FindLatestNote( beat:Array, key:int ) : int
-{
-	var latestId:int = -1;
-
-	for( var i = 0; i < beat.length; i++ )
-	{
-		if( beat[i].key == key )
-		{
-			if( latestId == -1 || beat[i].measureTime > beat[latestId].measureTime )
-			{
-				latestId = i;
-			}
-		}
-	}
-
-	return latestId;
-}
-
-//----------------------------------------
-//  For the given note info, find the note in the beat that matches it
-//----------------------------------------
-function FindUppedNote( beat : Array,
-		measureTime : float,
-		endMeasureTime:float,
-		key : int,
-		tol : float ) : int
+function FindUnpressedNote( beat : Array, measureTime : float, key : int, tol : float ) : int
 {
 	for( var i = 0; i < beat.length; i++ )
 	{
 		var note = beat[i];
-		if( note.key == key 
+		if( !note.downHit
 				&& Mathf.Abs( note.measureTime - measureTime ) < tol
-				// OK, we will consider a note to be "hit" as long as the end time is AT LEAST the real end time
-				// hell we'll even give them the tolerance!
-				&& note.endMeasureTime-tol <= endMeasureTime )
-			return i;
-	}
-	return -1;
-}
-
-function FindNote( beat : Array, measureTime : float, key : int, tol : float ) : int
-{
-	for( var i = 0; i < beat.length; i++ )
-	{
-		var note = beat[i];
-		if( Mathf.Abs( note.measureTime - measureTime ) < tol
 				&& note.key == key )
 			return i;
 	}
@@ -588,7 +553,7 @@ function GetBeatNotes() : Array
 	return beatNotes;
 }
 
-function OnMessedUp()
+function OnMistake()
 {
 	if( !messedUpTriggered )
 	{
@@ -628,7 +593,7 @@ function OnMessedUp()
 		for( var obj in eventListeners )
 		{
 			if( obj != null )
-				obj.SendMessage( "OnMessedUp", SendMessageOptions.DontRequireReceiver );
+				obj.SendMessage( "OnMistake", SendMessageOptions.DontRequireReceiver );
 		}
 	}
 }
@@ -669,6 +634,9 @@ function OnSuccess()
 	}
 }
 
+private var key2downNote : Note[] = [ null as Note, null as Note, null as Note ];
+private var key2matchedNote : Note[] = [ null as Note, null as Note, null as Note ];
+
 //----------------------------------------
 //  mt is the measure time that should be assigned to created notes.
 //	inputMt is used for playing back player inputs, or polling AI inputs
@@ -684,6 +652,9 @@ function UpdateTesting( mt : float, inputMt:float )
 	//----------------------------------------
 	for( var key in GetKeysDown(inputMt) )
 	{
+		if( key2downNote[ key ] != null )
+			Debug.LogError('key up did not register BEFORE key down..');
+
 		// play it no matter waht..
 		GetSongPlayer().OnKeyDown(key);
 		// trigger pulse
@@ -693,19 +664,23 @@ function UpdateTesting( mt : float, inputMt:float )
 		var noteType = NoteType.Hit;
 		var noteMt = mt;
 
-		var hitNote = FindNote( GetBeatNotes(), mt, key, GetTolSecs() );
-		if( hitNote != -1 && GetBeatNotes()[hitNote].downHit == false )
+		var hitNoteId = FindUnpressedNote( GetBeatNotes(), mt, key, GetTolSecs() );
+		if( hitNoteId != -1 && GetBeatNotes()[hitNoteId].downHit == false )
 		{
 			// yes! register the hit
 			noteType = NoteType.Hit;
-			noteMt = GetBeatNotes()[hitNote].measureTime;
-			GetBeatNotes()[hitNote].downHit = true;
+			// make it visually line up with the original note, so change the time here
+			noteMt = GetBeatNotes()[hitNoteId].measureTime;
+			GetBeatNotes()[hitNoteId].downHit = true;
+			// remember that this is the note we matched to, for releasing
+			key2matchedNote[key] = GetBeatNotes()[hitNoteId];
 		}
 		else
 		{
 			// Didn't find any within range - messed up!
 			noteType = NoteType.Miss;
-			OnMessedUp();
+			Debug.Log('MISTAKE: on down, none found');
+			OnMistake();
 		}
 
 		// create the note
@@ -715,6 +690,10 @@ function UpdateTesting( mt : float, inputMt:float )
 				noteMt, key, false, tracks[key] );
 		responseNotes.Push( noteObj.GetComponent(Note) );
 		// offset the Z so the response notes show up above the beat notes
+
+		// remember that this is the active note. We can't rely on the measure time alone, cuz that gets fudged a bit
+		key2downNote[key] = noteObj.GetComponent(Note);
+		//Debug.Log('pressed note mt = '+noteObj.GetComponent(Note).measureTime);
 
 		if( noteType == NoteType.Hit )
 			noteObj.GetComponent(Note).OnHit();
@@ -729,40 +708,44 @@ function UpdateTesting( mt : float, inputMt:float )
 	{
 		GetSongPlayer().OnKeyUp(key);
 
-		var noteId = FindLatestNote( responseNotes, key );
-		if( noteId != -1 )
+		var respNote:Note = key2downNote[key];
+		if( respNote != null )
 		{
-			var note:Note = responseNotes[noteId];
-			note.OnUp( mt );
+			respNote.OnUp( mt );
+			key2downNote[key] = null;	// no longer active
+			//Debug.Log('released repeat respNote mt = '+mt);
 
-			hitNote = FindUppedNote( beatNotes,
-					note.measureTime, note.endMeasureTime,
-					key, GetTolSecs() );
-			
-			if( hitNote == -1 )
-			{
-				note.type = NoteType.Miss;
-				note.OnMiss();
-				OnMessedUp();
-			}
-			else
-			{
-				// was the target note already hit?
-				if( !beatNotes[hitNote].upHit )
-				{
-					// the note wasn't already hit (ie. by the auto-up logic below), so we got it
-					// got the note fully. yay
-					GetBeatNotes()[hitNote].upHit = true;
-					if( survivalMode && perNoteScore )
-					{
-						survivalScore++;
-						OnSurvivalScoreIncreased();
-						horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
-					}
+			var matchedNote = key2matchedNote[key];
+			if( matchedNote != null ) {
+				// we hit a note - did we release in at the right time?
+				if( matchedNote.key != respNote.key )
+					Debug.LogError('hit respNote key is not same as test note..???');
+
+				//----------------------------------------
+				//  Check if we released too early
+				//----------------------------------------
+				if( matchedNote.endMeasureTime-GetTolSecs() > mt ) {
+					Debug.Log('MISTAKE: released too early');
+					respNote.type = NoteType.Miss;
+					respNote.OnMiss();
+					OnMistake();
 				}
+				else {
+					if( !matchedNote.upHit ) {
+						// we got it before the auto-release!
+						matchedNote.upHit = true;
+						GetSongPlayer().OnKeyUp( respNote.key );
 
-				// always use the actual note end time..
-				note.endMeasureTime = beatNotes[hitNote].endMeasureTime;
+						if( survivalMode && perNoteScore ) {
+							survivalScore++;
+							OnSurvivalScoreIncreased();
+							horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
+						}
+					}
+
+					// always use the actual note end time..
+					respNote.endMeasureTime = matchedNote.endMeasureTime;
+				}
 			}
 		}
 		else
@@ -775,41 +758,40 @@ function UpdateTesting( mt : float, inputMt:float )
 	var notesRemain = false;
 	for( var i = 0; i < beatNotes.length; i++ )
 	{
-		note = beatNotes[i];
+		var testNote = beatNotes[i] as Note;
 
-		if( !note.downHit )
+		if( !testNote.downHit )
 		{
 			// wasn't hit - opportunity past?
-			if( (note.measureTime+GetTolSecs()) < mt )
+			if( (testNote.measureTime+GetTolSecs()) < mt )
 			{
 				// yep..didn't get it
-				if( note.type != NoteType.Miss )
+				if( testNote.type != NoteType.Miss )
 				{
 					// freshly missed one
-					note.OnMiss();
-					OnMessedUp();
+					testNote.OnMiss();
+					Debug.Log('MISTAKE: note passed, not hit');
+					OnMistake();
 				}
 			}
 			else
 				// not hit, but still has chance
 				notesRemain = true;
 		}
-		else
-		{
+		else {
 			// the down was hit, but what about the up?
-
-			if( !note.upHit )
+			if( !testNote.upHit )
 			{
 				// a bit complex here: If the end time is up, we want to just count this as a hit anyway.
 				// Don't use the tolerance, otherwise you get the weird effect of the trail getting long then getting cut short again
 				// Note that we use the real time here...so during the post tolerance, we will register the hit
-				if( (note.endMeasureTime) < inputMt )
+				if( (testNote.endMeasureTime) < inputMt )
 				{
 					// end time has passed
-					if( note.type != NoteType.Miss )
+					if( testNote.type != NoteType.Miss )
 					{
 						// OK just pretend the player released it at the right time
-						note.upHit = true;
+						testNote.upHit = true;
 						if( survivalMode && perNoteScore )
 						{
 							survivalScore++;
@@ -818,19 +800,17 @@ function UpdateTesting( mt : float, inputMt:float )
 						}
 
 						// also, stop playing the sample
-						GetSongPlayer().OnKeyUp( note.key );
+						GetSongPlayer().OnKeyUp( testNote.key );
 
-						// find the response note for this key, and just pretend it's up
-						var testNoteId = FindLatestNote( responseNotes, note.key );
+						// update the bookkeeping for this key
+						respNote = key2downNote[ testNote.key ];
+						if( respNote != null ) {
+							respNote.OnUp(mt);
 
-						if( testNoteId != -1 )
-						{
-							var testNote:Note = responseNotes[testNoteId];
-							testNote.OnUp(mt);
-
-							// force the end measure time to be perfect
-							testNote.endMeasureTime = note.endMeasureTime;
+							// force the end time to be perfect
+							respNote.endMeasureTime = testNote.endMeasureTime;
 						}
+						key2downNote[ testNote.key ] = null;
 					}
 				}
 				else
@@ -856,32 +836,41 @@ function UpdateRecording( mt : float, inputMt:float )
 {
 	for( var key in GetKeysDown(inputMt) )
 	{
+		//Debug.Log('recording, note pressed mt = '+mt+' key = '+key);
+
 		var noteObj:GameObject = Instantiate( notePrefabs[key].gameObject, Vector3(0,0,0), notePrefabs[key].transform.rotation );
 		noteObj.GetComponent(Note).OnDown( mt, key, false, tracks[key] );
 		beatNotes.Push( noteObj.GetComponent(Note) );
 		GetSongPlayer().OnKeyDown(key);
 
+		if( key2downNote[key] != null )
+			Debug.Log('while recording, key was not released before it was down again??');
+		key2downNote[key] = noteObj.GetComponent(Note);
+
 		// trigger pulse
 		keyDownHandlers[ GetInputtingPlayer() ].SendMessage('OnKeyDown', key);
+
 	}
 
 	for( key in GetKeysUp(inputMt) )
 	{
+		//Debug.Log('recording, note released mt = '+mt+' key = '+key);
+
 		GetSongPlayer().OnKeyUp(key);
-		
-		var noteId = FindLatestNote( beatNotes, key );
-		if( noteId != -1 )
-		{
-			var note:Note = beatNotes[noteId];
+
+		var note = key2downNote[key];
+		if( note != null ) {
 			// register the key-up. But, if the hold-time is within tolerance, pretend it was instantly let up
-			//if( mt - note.measureTime <= GetTolSecs() )
-				//beatNotes[noteId].OnUp( note.measureTime );
-			//else
-				beatNotes[noteId].OnUp( mt );
+			if( mt - note.measureTime <= GetTolSecs() )
+				note.OnUp( note.measureTime );
+			else
+				note.OnUp( mt );
+			key2downNote[key] = null;
 		}
 		else
 		{
 			// probably player just held down a key when they weren't active.Just ignore.
+			Debug.Log('unmatched release!');
 		}
 	}
 }
@@ -896,6 +885,10 @@ function EndRecording()
 			GetSongPlayer().OnKeyUp( note.key );
 			note.OnUp( GetSecsPerMeasure() );
 		}
+	}
+
+	for( var key = 0; key < GetSongPlayer().GetNumSamples(); key++ ) {
+		key2downNote[key] = null;
 	}
 }
 
