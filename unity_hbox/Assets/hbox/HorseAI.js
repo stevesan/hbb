@@ -105,7 +105,7 @@ private var AIs = new List.<AISpec>();
 var currAI:int = 0;
 var currPhase:int = 0;
 
-function GetAI() : AIPhaseSpec
+function GetPhase() : AIPhaseSpec
 {
 	if( debugUseTestAIPhase )
 		return testAI;
@@ -115,7 +115,7 @@ function GetAI() : AIPhaseSpec
 
 function OnScoreChange( score:int )
 {
-	while( GetAI().maxScore <= score )
+	while( GetPhase().maxScore <= score )
 	{
 		if( currPhase == AIs[currAI].phases.Count-1 )
 		{
@@ -261,7 +261,7 @@ function Awake()
 	}
 }
 
-function RandomKeyExcluding( numKeys:int, exclude:int ) : int
+function RandomPitchExcluding( numKeys:int, exclude:int ) : int
 {
 	var k = Random.Range( 0, numKeys-1 );
 	if( k >= exclude )
@@ -277,13 +277,13 @@ function GetLevel() : int
 
 function GetNextMilestone() : int
 {
-	return GetAI().maxScore;
+	return GetPhase().maxScore;
 }
 
 //----------------------------------------
 //  Looks for instances of key which end at endMt, and makes them end earlier
 //----------------------------------------
-function HalvePreviousSustain( notes:Array, key:int, endMt:float )
+function HalvePreviousSustains( notes:Array, key:int, endMt:float )
 {
 	for( var i = 0; i < notes.length; i++ )
 	{
@@ -307,6 +307,10 @@ function HalvePreviousSustains( notes:Array, endMt:float )
 		if( Mathf.Abs(endMt-(note.measureTime+note.duration)) < 1e-4 )
 		{
 			note.duration /= 2.0;
+			// but if it's pretty small, that it might go under the frame rate and thus get interpretted as a longer note, make it stacatto
+			// HACK: hard coding the 0.1..
+			if( note.duration < 0.1 )
+				note.duration = 0.0;
 		}
 	}
 }
@@ -321,6 +325,7 @@ function CreateBeat(gs:GameState) : Array
 	var mt = 0.0;
 	var prevNoteSustained = false;
 	var prevSpacing:float;
+	var prevNoteChord = false;
 
 	while( mt <= gs.GetSecsPerMeasure()+1e-4 )
 	{
@@ -331,14 +336,17 @@ function CreateBeat(gs:GameState) : Array
 
 		note.measureTime = mt;
 
-		if( prevNote == null )
+		//----------------------------------------
+		//  Choose pitch (key is kind of misnomer)
+		//----------------------------------------
+		if( prevNote == null ) {
 			note.key = Random.Range( 0, numKeys );
-		else if( Random.value <= GetAI().dexterity )
+		}
+		else if( Random.value <= GetPhase().dexterity || prevNoteSustained )
 		{
 			// if previous note was sustained, do not stay on it - very awkward
-
-			// switch key
-			note.key = RandomKeyExcluding( numKeys, prevNote.key );
+			// switch pitch
+			note.key = RandomPitchExcluding( numKeys, prevNote.key );
 		}
 		else
 		{
@@ -346,7 +354,10 @@ function CreateBeat(gs:GameState) : Array
 			note.key = prevNote.key;
 		}
 
-		if( prevNote != null && Random.value > GetAI().rhythm )
+		//----------------------------------------
+		//  Rhythm
+		//----------------------------------------
+		if( prevNote != null && Random.value > GetPhase().rhythm )
 		{
 			// no creativity this note, use the previous note's duration and spacing
 			note.duration = prevNote.duration;
@@ -354,10 +365,10 @@ function CreateBeat(gs:GameState) : Array
 		}
 		else
 		{
-			if( Random.value < GetAI().sustain )
+			if( Random.value < GetPhase().sustain )
 			{
 				// sustain it
-				note.duration = GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
+				note.duration = GetPhase().RandomMusicalLength( gs.GetSecsPerMeasure() );
 				prevNoteSustained = true;
 
 				// make the next note come right after the sustained time
@@ -371,25 +382,39 @@ function CreateBeat(gs:GameState) : Array
 				note.duration = 0;
 
 				// next note comes after some random time
-				mt += GetAI().RandomMusicalLength( gs.GetSecsPerMeasure() );
+				mt += GetPhase().RandomMusicalLength( gs.GetSecsPerMeasure() );
 			}
 			prevSpacing = mt - note.measureTime;
 		}
 
-		HalvePreviousSustain( beat, note.key, note.measureTime );
 		beat.Push( note );
 
+		//----------------------------------------
+		//  Handle "note collisions"
+		//	If a note was sustained but was not a chord, it was handled above by always switching pitch.
+		//	If it was a chord but not sustained, that's OK - the timing is still feasible.
+		//	But if it's both, cut the chord in half
+		//----------------------------------------
+		if( prevNoteSustained && prevNoteChord )
+		{
+			// Assume that there are some "note collisions", and just fix them
+			HalvePreviousSustains( beat, note.measureTime );
+		}
+
 		// chord?
-		if( Random.value <= GetAI().chords )
+		if( Random.value <= GetPhase().chords )
 		{
 			var other = new NoteSpec();
 			other.measureTime = note.measureTime;
-			other.key = RandomKeyExcluding( numKeys, note.key );
+			other.key = RandomPitchExcluding( numKeys, note.key );
 			other.duration = note.duration;
-
-			HalvePreviousSustains( beat, other.measureTime );
 			beat.Push( other );
+			prevNoteChord = true;
 		}
+		else {
+			prevNoteChord = false;
+		}
+
 	}
 
 
@@ -398,7 +423,7 @@ function CreateBeat(gs:GameState) : Array
 
 function Time2Quant( mt:float, secsPerMeas:float ) : int
 {
-	return Mathf.RoundToInt( (mt/secsPerMeas) * GetAI().numQuants );
+	return Mathf.RoundToInt( (mt/secsPerMeas) * GetPhase().numQuants );
 }
 
 function AddChordToNoteSpecs( chord:Chord, notespecs:Array ) 

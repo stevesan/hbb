@@ -594,6 +594,8 @@ function OnMessedUp()
 	{
 		messedUpTriggered = true;
 
+		cameraShake.DoShake();
+
 		if( GetInputtingPlayer() == GetAttacker() )
 		{
 			//----------------------------------------
@@ -684,8 +686,6 @@ function UpdateTesting( mt : float, inputMt:float )
 	{
 		// play it no matter waht..
 		GetSongPlayer().OnKeyDown(key);
-		// SHAKE
-		cameraShake.DoShake();
 		// trigger pulse
 		keyDownHandlers[ GetInputtingPlayer() ].SendMessage('OnKeyDown', key);
 
@@ -722,6 +722,9 @@ function UpdateTesting( mt : float, inputMt:float )
 			noteObj.GetComponent(Note).OnMiss();
 	}
 
+	//----------------------------------------
+	//  Handle key releases
+	//----------------------------------------
 	for( key in GetKeysUp(inputMt) )
 	{
 		GetSongPlayer().OnKeyUp(key);
@@ -857,7 +860,6 @@ function UpdateRecording( mt : float, inputMt:float )
 		noteObj.GetComponent(Note).OnDown( mt, key, false, tracks[key] );
 		beatNotes.Push( noteObj.GetComponent(Note) );
 		GetSongPlayer().OnKeyDown(key);
-		cameraShake.DoShake();
 
 		// trigger pulse
 		keyDownHandlers[ GetInputtingPlayer() ].SendMessage('OnKeyDown', key);
@@ -999,17 +1001,9 @@ function UpdateMenuMode()
 	{
 		songsMenu.Show(GetComponent(GameState));
 
-		if( !songSelectMusic.isPlaying ) songSelectMusic.Play();
+		if( !songSelectMusic.isPlaying )
+			songSelectMusic.Play();
 
-/*
-		var text = 'SELECT SONG: \n\n';
-		for( var s = 0; s < songs.players.Count; s++ )
-		{
-			text = text + 'PRESS ' +(s+1) + ' :: ' + songs.players[s].title + '\n';
-		}
-		text = text + '\nESCAPE :: back';
-		menuText.text = text;
-		*/
 		menuText.text = '';
 
 		// check for keys
@@ -1477,7 +1471,6 @@ function Update()
       // Restart
 			GetSongPlayer().Stop();
 			PlayRandomSample();
-			//cameraShake.MoveToMenu();
 			musicStartTime = 0.0;
 			victoryMusic.Stop();
       StartGameRitual1();

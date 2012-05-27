@@ -1,17 +1,17 @@
 <AIs>
 	<AI name = "steveTester">
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '5' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '10' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '15' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '20' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '25' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '30' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '35' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '40' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '45' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '50' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '55' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
-		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '60' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '5' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '10' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '15' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '20' numQuants = "16" dexterity = "1" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '25' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '30' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '35' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '40' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '45' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '50' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '55' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
+		<phase chords = "0.0" noteValuePdf = "0,0,0,1,0" maxScore = '60' numQuants = "16" dexterity = "0" sustain = "0" rhythm = "0" />
 	</AI>
 	<AI name = "hal9000" >
 		<!-- Each value of noteValuePdf is the relative probability that a note
@@ -66,6 +66,10 @@
 	</AI>
 
 	<AI name = "80bpm" >
+	<!-- TEMP TEMP -->
+		<phase chords = "0.0" noteValuePdf = "0,2,0,0,0,0,0,0" maxScore = '999'
+		numQuants = "32" dexterity = "0" sustain = "0.0" rhythm = "1" />
+
 		<phase chords = "0.0" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '15'
 		numQuants = "32" dexterity = "0.7" sustain = "0.4" rhythm = "1" />
 		<phase chords = "0.3" noteValuePdf = "0,0,0,2,0,0,0,1" maxScore = '25'
