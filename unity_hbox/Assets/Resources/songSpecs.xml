@@ -78,14 +78,14 @@
 		numMeasures = "16"
 		volume = "1"
 		samplesVolume = "1.0"
-		releaseSecs = "0.2"
+		releaseSecs = "0.3"
 		broncoAI = '135bpm'
 		broncoLives = '1'
 		timeTolSecs = '0.15'
 		>
-		<sample res="songs/135 BPM/MELODY/135 MELODY_G" />
-		<sample res="songs/135 BPM/MELODY/135 MELODY_Bb" />
-		<sample res="songs/135 BPM/MELODY/135 MELODY_C" />
+		<sample res="songs/135 BPM/MELODY/Hot_To_Trot_135_melody_G" />
+		<sample res="songs/135 BPM/MELODY/Hot_To_Trot_135_melody_C" />
+		<sample res="songs/135 BPM/MELODY/Hot_To_Trot_135_melody_Eb" />
 
 		<!-- drum layers -->
 		<layer res="songs/135 BPM/DRUMS/Hot_to_Trot_135_prev_120_drums_01" />
