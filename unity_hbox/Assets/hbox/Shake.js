@@ -2,12 +2,12 @@
 var menuOffset = Vector3(0,10,0);
 var maxRange = Vector3 (1.0, 1.0, 1.0);
 var shakeTime = 0.1;
-var moveTime = 1.0;
+var moveDuration = 1.0;
 
 //private var noise = new Perlin();
 private var origPosition : Vector3;
-private var shakeTimer : float;
-private var moveTimer : float;
+private var shakeTimer : float = 0.0;
+private var moveRemain : float = 0.0;
 
 function Start()
 {
@@ -21,25 +21,24 @@ function DoShake()
 
 function MoveToStartScreen()
 {
-	moveTimer = moveTime;
+	moveRemain = moveDuration;
 }
 
 function MoveToMenu()
 {
-	moveTimer = moveTime;
+	moveRemain = moveDuration;
 }
 
 function Update () {
 	var gs : GameState = GameState.inst;
 
 	shakeTimer -= Time.deltaTime;
-	moveTimer -= Time.deltaTime;
+	moveRemain -= Time.deltaTime;
 
 	if( gs.state == RCState.MENU )
 	{
-		if( moveTimer > 0.0 )
-		{
-			var alpha = 1 - moveTimer/moveTime;
+		if( moveRemain > 0.0 ) {
+			var alpha = Tween.Bounce( moveDuration-moveRemain, moveDuration );
 			transform.position = Vector3.Lerp( origPosition, origPosition+menuOffset, alpha );
 		}
 		else
@@ -47,9 +46,8 @@ function Update () {
 	}
 	else
 	{
-		if( moveTimer > 0.0 )
-		{
-			alpha = 1 - moveTimer/moveTime;
+		if( moveRemain > 0.0 ) {
+			alpha = Tween.Bounce( moveDuration-moveRemain, moveDuration );
 			transform.position = Vector3.Lerp( origPosition+menuOffset, origPosition, alpha );
 		}
 		else

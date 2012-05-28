@@ -36,6 +36,7 @@ var menuText : TextMesh;
 var tuteText : TextMesh;
 
 var notePrefabs : Note[];
+var explosionsPool : ObjectPool;
 var tracks : Figure8[];
 var keyDownHandlers : GameObject[];
 
@@ -252,7 +253,6 @@ function ResetRound()
 	// done for this round, clear the notes immediately
 	Utils.DestroyObjsViaComponent(beatNotes);
 	beatNotes.Clear();
-
 }
 
 function ResetBeatPlayback()
@@ -608,6 +608,17 @@ function OnSurvivalScoreIncreased()
 	}
 }
 
+function MakeNoteExplosions()
+{
+	// spawn explosions before destroy beats..
+	for( var i = 0; i < beatNotes.length; i++ ) {
+		var fx = explosionsPool.GetNext().GetComponent(ParticleSystem);
+		fx.transform.position = beatNotes[i].transform.position;
+		fx.Clear();
+		fx.Play();
+	}
+}
+
 function OnSuccess()
 {
 	if( GetInputtingPlayer()==GetAttacker() && defendMessedUp )
@@ -626,6 +637,8 @@ function OnSuccess()
 		OnSurvivalScoreIncreased();
 		horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 	}
+
+	MakeNoteExplosions();
 
 	for( var obj in eventListeners )
 	{
