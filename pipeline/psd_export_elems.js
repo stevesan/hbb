@@ -28,33 +28,19 @@ var text_y_fudge = -6;
 LAKE_ERIE_X = -97;
 LAKE_ERIE_Y = 302;
 
-// Hehe...
-var layer2piece = new Array();
-layer2piece["oswego01"] = "Oswego River";
-layer2piece["niagara01"] = "Niagara River";
-layer2piece["mohawk01"] = "Mohawk River";
-layer2piece["stlawrence01"] = "St. Lawrence River";
-layer2piece["hudson01"] = "Hudson River";
-layer2piece["genesse01"] = "Genesee River";
-layer2piece["eriecanal01"] = "Erie Canal";
-layer2piece["erie01"] = "Lake Erie";
-layer2piece["ontario01"] = "Lake Ontario";
-layer2piece["finger01"] = "Finger Lakes";
-layer2piece["champlain01"] = "Lake Champlain";
-layer2piece["george01"] = "Lake George";
-layer2piece["oneida01"] = "Oneida Lake";
-layer2piece["adirondack01"] = "Adirondacks";
-layer2piece["catskills01"] = "Catskill Mountains";
-layer2piece["appalachian01"] = "Appalachian Mountains";
-layer2piece["city_rochester"] = "Rochester";
-layer2piece["city_amherst"] = "Buffalo";
-layer2piece["city_syracuse"] = "Syracuse";
-layer2piece["city_longisland"] = "Long Island";
-layer2piece["city_nyc"] = "New York City";
-layer2piece["city_elmira"] = "Elmira";
-layer2piece["city_ithaca"] = "Ithaca";
-layer2piece["city_binghamton"] = "Binghamton";
-layer2piece["city_albany"] = "Albany";
+function savePng( doc, filepath )
+{
+	var f = File( filepath );
+	f.open('w');
+	writePng( f, doc );
+	f.close();
+}
+
+function writePng( file, doc )
+{ 
+	pngSaveOptions = new PNGSaveOptions(); 
+	doc.saveAs( file, pngSaveOptions, true, Extension.LOWERCASE ); 
+} 
 
 // Return true if the given layer name indicates a layer that needs to be explicitly accessible via a hook variable in the ActionScript.
 // For example, dynamic text that the game needs to access to change.
@@ -333,44 +319,12 @@ function main()
 			for( var i = 0; i < layer_sets.length; i++ )
 			{
 				show_layer_set( layer_sets[i].layer_paths, top_id_nodes, '' );
-				saveFile( workCopy, layer_sets[i].name, exportInfo );
+				savePng( workCopy, exportInfo.destination + '/' + layer_sets[i].name + '.png');
+				//saveFile( workCopy, layer_sets[i].name, exportInfo );
 			}
-
-			// Export
-			/*
-			var export_state = new Object();
-			export_state.relative_file_basepaths = new Array();	// file paths relative to the destination folder, without extensions
-			export_state.res_code = "";
-			export_state.build_code = "";
-			export_state.hook_vars = "";
-			export_state.next_id = 0;
-
-			export_layers( top_id_nodes, vis_tree, exportInfo, workCopy, '', 'root_container', export_state, false );
-			//write_uibuilder_as( export_state, exportInfo.destination + '/UIBuilder_code.html', '<br>' );
-			write_layers_text( export_state, exportInfo.destination + '/layers.txt' );
-			*/
 
 			// done, close and don't save duplicate
 			workCopy.close( SaveOptions.DONOTSAVECHANGES );
-
-			var d = objectToDescriptor(exportInfo, strMessage, preProcessExportInfo);
-			app.putCustomOptions("4d633fbb-ed90-480d-8e03-cccb16131a34", d);
-
-			var dd = objectToDescriptor(exportInfo, strMessage, preProcessExportInfo);
-			app.playbackParameters = dd;
-
-			if ( rememberMaximize != undefined )
-			{
-				app.preferences.maximizeCompatibility = rememberMaximize;
-			}
-
-			if ( DialogModes.ALL == app.playbackDisplayDialogs )
-			{
-				alert(strTitle + strAlertWasSuccessful);
-			}
-
-			app.playbackDisplayDialogs = DialogModes.ALL;
-
 		}
 	}
 	catch (e)
@@ -1301,172 +1255,6 @@ function str2varname( s )
 	return fname;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-// Function: export_layers
-// Usage: find all the children in this document to save
-// Input: duplicate document, original document, export info,
-//        reference to document, starting file name
-// Return: <none>, documents are saved accordingly
-///////////////////////////////////////////////////////////////////////////////
-function export_layers( id_nodes, vis_nodes, exportInfo, workDocRef, path_prefix, parent_var, export_state, in_pieces_con )
-{
-	var bounds_inited = false;
-
-	// need to build in reverse order for Flex display..
-	for( var layer_num = (id_nodes.length-1); layer_num >= 0; layer_num-- )
-	{
-		if( !vis_nodes[layer_num].visible ) continue;
-
-		var node = id_nodes[layer_num];
-		var layer = activate_layer( node.id );
-
-		layer.visible = true;
-
-		// unique varnames in the building code
-		var container_var = 'con_' + export_state.next_id;
-		var classname = 'res_' + export_state.next_id;
-		var gfx_var = 'gfx_' + export_state.next_id;
-		export_state.next_id++;
-
-		// sometimes Brian names groups with ph_..
-		var is_text = is_text_hook( layer.name ) && node.is_leaf;
-		var is_pieces_con = is_pieces_group( layer.name );
-
-		// use layer bounds by default
-		var minx = parseInt( layer.bounds[0] );
-		var miny = parseInt( layer.bounds[1] );
-		var maxx = parseInt( layer.bounds[2] );
-		var maxy = parseInt( layer.bounds[3] );
-
-		// setup a container for this layer/group
-
-		if( is_hooked_layer( layer.name ) )
-		{
-			container_var = str2varname( layer.name );
-			export_state.hook_vars += 'public var ' + container_var + ' : UIComponent = new UIComponent();' + endl;
-		}
-		else if( is_pieces_con )
-		{
-			export_state.hook_vars += 'public var pieces_con : UIComponent = new UIComponent();' + endl;
-			container_var = "pieces_con";
-		}
-		else if( is_text )
-		{
-			container_var = layer.name;
-			export_state.hook_vars += 'public var ' + container_var + ' : mx.controls.Text = new mx.controls.Text();' + endl;
-
-			// position text explicitly
-			export_state.build_code += container_var + '.x = ' + minx +';' + endl;
-			export_state.build_code += container_var + '.y = ' + (miny+text_y_fudge) +';' + endl;
-
-			// make sure a good amount of text is visible
-			export_state.build_code += container_var + '.width = 800;' + endl;
-			export_state.build_code += container_var + '.height = 600;' + endl;
-
-			if( layer.kind == LayerKind.TEXT )
-			{
-				// see page 180 of CS4 JS ref
-				var font = layer.textItem.font;
-				var hexColor = layer.textItem.color.rgb.hexValue;
-				var size = parseInt(layer.textItem.size);
-				export_state.build_code += container_var + '.setStyle( "fontFamily", "'+font+'");' + endl;
-				export_state.build_code += container_var + '.setStyle( "fontSize", "'+size+'");' + endl;
-				export_state.build_code += container_var + '.setStyle( "color", "#'+hexColor+'");' + endl;
-				export_state.build_code += container_var + '.selectable = false;' + endl;
-			}
-		}
-		else if( !in_pieces_con )
-		{
-			export_state.build_code += 'var '+container_var+' : UIComponent = new UIComponent();' + endl;
-		}
-
-		// All layers except pieces should just appear
-		// The game code will take care of the pieces
-		if( !in_pieces_con )
-		{
-			if( layer.opacity < 100.0 )
-				export_state.build_code += container_var + '.alpha = ' + (layer.opacity/100.0) + ';' + endl;
-			export_state.build_code += parent_var+'.addChild( '+container_var+' );' + endl;
-		}
-
-		if( !is_text )
-		{
-			if( node.is_leaf )
-			{
-				// create filename
-				var filename = str2filename( zeroSuppress( layer_num, 4 ) + '-' + layer.name );
-				var outpath = path_prefix + filename;
-
-				// save with only this layer visible
-				if( !in_pieces_con ) // TEMP
-					saveFile( workDocRef, outpath, exportInfo );
-
-				// code to embed and add the display object 
-				export_state.res_code += '[Embed( source = "'+exportInfo.destination+'/'+outpath+'.png" )] public static var '+classname+' : Class;'+endl;
-				export_state.relative_file_basepaths.push( outpath );
-
-				if( !in_pieces_con )
-				{
-					export_state.build_code += 'var '+gfx_var+' : DisplayObject =  new '+classname+'();'+endl;
-					export_state.build_code += container_var + '.addChild( '+gfx_var+' );'+endl;
-
-					// sizing and positioning
-					export_state.build_code += container_var + '.x = ' + minx + ';';
-					export_state.build_code += container_var + '.y = ' + miny + ';';
-					export_state.build_code += container_var + '.width = ' + (maxx-minx) + ';';
-					export_state.build_code += container_var + '.height = ' + (maxy-miny) + ';';
-					export_state.build_code += gfx_var+'.x = -1 * ' + minx + ';';
-					export_state.build_code += gfx_var+'.y = -1 * ' + miny + ';';
-
-					// special stuff
-					if( is_hooked_layer(layer.name) )
-					{
-						rect_var = str2varname( layer.name + '_rect' );
-						export_state.hook_vars += 'public var '+rect_var+' : Rectangle = new Rectangle(' + minx + ',' + miny + ',' + (maxx-minx) + ',' + (maxy-miny) + ');' + endl;
-					}
-				}
-				else
-				{
-					// HACK
-					if( layer.name == "erie01" )
-					{
-						minx = LAKE_ERIE_X;
-						miny = LAKE_ERIE_Y;
-					}
-
-					export_state.build_code += 'pieces.push( new Piece( new Point('+minx+','+miny+'), '+classname+', "' + layer2piece[layer.name] + '", "'+export_state.parent_layer+'" ));' + endl;
-				}
-			}
-			else
-			{
-				var new_path_prefix = path_prefix;
-				new_path_prefix += zeroSuppress( layer_num, 4 ) + '-' + str2filename( layer.name ) + '/';
-
-				// create folder
-				var folder = new Folder( exportInfo.destination + '/' + new_path_prefix );
-				folder.create();
-
-				var my_parent_layername = export_state.parent_layer;
-				export_state.parent_layer = layer.name;
-
-				export_layers(
-						node.kids,
-						vis_nodes[layer_num].kids,
-						exportInfo,
-						workDocRef,
-						new_path_prefix,
-						container_var,
-						export_state, (is_pieces_con || in_pieces_con) );
-
-				export_state.parent_layer = my_parent_layername;
-			}
-		}
-
-		// hide again
-		activate_layer( node.id ).visible = false;
-	}
-}
 
 
 ///////////////////////////////////////////////////////////////////////////////
