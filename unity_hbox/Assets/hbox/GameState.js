@@ -45,6 +45,7 @@ var eventListeners : GameObject[];
 var mainCam : Camera;
 
 var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
+var starsToUnlockNext = 2;
 var numStars = 0;
 var startingStars = 0;
 private var prevStars = 0;
@@ -1020,16 +1021,23 @@ function UpdateMenuMode()
 					// we have it set up so that the element names are 'Song%d'
 					|| PollLayoutClicked( songsMenu.layout, inputCode ) )
 			{
-				PlayRandomSample();
-				activeSong = s;
-				songsMenu.Hide();
+				if( !survivalMode || GetIsSongUnlocked( s ) ) {
+					PlayRandomSample();
+					activeSong = s;
+					songsMenu.Hide();
 
-				if( survivalMode ) {
-					menuState = MenuState.BRONCO_SETUP;
+					if( survivalMode ) {
+						menuState = MenuState.BRONCO_SETUP;
+					}
+					else {
+						songSelectMusic.Stop();
+						menuState = MenuState.TUTE;
+					}
 				}
-				else {
-					songSelectMusic.Stop();
-					menuState = MenuState.TUTE;
+				else
+				{
+					// play error sound
+					PlayRandomSample();
 				}
 				break;
 			}
@@ -1178,6 +1186,12 @@ function GetNumStars( songNum:int ) : int
 {
 	var key = GetNumStarsKey( songNum );
 	return PlayerPrefs.GetInt( key );
+}
+
+function GetIsSongUnlocked( songNum:int ) : boolean
+{
+	if( songNum == 0 ) return true;
+	return GetNumStars( songNum-1 ) >= starsToUnlockNext;
 }
 
 

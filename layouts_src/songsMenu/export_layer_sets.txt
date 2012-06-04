@@ -1,3 +1,7 @@
+locked
+/LOCKED
+/lockbg
+
 Song1
 /song1
 
@@ -17,6 +21,7 @@ Song6
 /song6
 
 bg
+/help
 /behind
 
 backbtn

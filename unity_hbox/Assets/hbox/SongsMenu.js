@@ -1,5 +1,7 @@
 #pragma strict
 
+import System.Collections.Generic; // for List
+
 //----------------------------------------
 //  Very specific code to handle the songs menu, ie. dealing with stars, etc.
 //----------------------------------------
@@ -8,16 +10,57 @@
 var layout : LayoutSpawner;
 
 private var starInsts = new Array();
-private var shown = false;
+private var lockInsts = new List.<GameObject>();
+private var isShowing = false;
+
+//----------------------------------------
+//  Creates copies of the locked element and positions them over songs
+//----------------------------------------
+function InitLockElements( gs:GameState )
+{
+	if( lockInsts.Count > 0 )
+		// already done 
+		return;
+
+	var lockPrefab = layout.FindElement('locked');
+
+	if( lockPrefab == null )
+	{
+		Debug.LogError('Could not find locked layout element');
+		return;
+	}
+
+	var lockSize = layout.GetElementSize( lockPrefab );
+
+	for( var i = 1; i < gs.GetNumSongs(); i++ )
+	{
+		// find the location of the song button
+		var songElm = layout.FindElement( 'Song'+(i+1) );
+		if( songElm == null )
+			Debug.LogError('could not find song'+(i+1) );
+		var topLeft = layout.GetElementTopLeft( songElm );
+		var pos = Vector3( topLeft.x + lockSize.x/2, topLeft.y - lockSize.y/2,
+			lockPrefab.transform.position.z);
+		var inst = Instantiate( lockPrefab, pos, lockPrefab.transform.rotation );
+		lockInsts.Add( inst );
+	}
+}
 
 function Start () {
 }
 
 function Show( gs:GameState )
 {
-	if( shown) return;
-	shown = true;
+	if( isShowing) return;
+	isShowing = true;
+
+	InitLockElements( gs );
+
 	layout.Show();
+
+	// hide the prefab
+	var lockPrefab = layout.FindElement('locked');
+	lockPrefab.GetComponent(Renderer).enabled = false;
 
 	var starOnPrefab = layout.FindElement('staron');
 	var starOffPrefab = layout.FindElement('staroff');
@@ -73,15 +116,28 @@ function Show( gs:GameState )
 			return;
 		}
 	}
+
+	// toggle lock elements
+	for( song = 1; song < gs.GetNumSongs(); song++ )
+	{
+		if( gs.survivalMode && !gs.GetIsSongUnlocked(song) ) {
+			lockInsts[song-1].GetComponent(Renderer).enabled = true;
+		}
+		else
+			lockInsts[song-1].GetComponent(Renderer).enabled = false;
+	}
 }
 
 function Hide()
 {
 	layout.Hide();
-	shown = false;
+	isShowing = false;
 
 	for( var i = 0; i < starInsts.length; i++ )
 		Destroy( starInsts[i] as GameObject );
+
+	for( i = 0; i < lockInsts.Count; i++ )
+		lockInsts[i].GetComponent(Renderer).enabled = false;
 }
 
 function Update () {
