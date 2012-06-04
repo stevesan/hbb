@@ -63,6 +63,12 @@ function Start () {
 	mesh.normals = meshBuf.normals;
 }
 
+function Hide()
+{
+	if( trail != null )
+		trail.GetComponent(Renderer).enabled = false;
+}
+
 function OnDestroy()
 {
 	if( trail != null )

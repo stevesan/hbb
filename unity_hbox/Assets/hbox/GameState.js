@@ -49,6 +49,7 @@ var starsToUnlockNext = 2;
 var numStars = 0;
 var startingStars = 0;
 private var prevStars = 0;
+var getStarSounds : AudioSource[];
 
 //----------------------------------------
 //  Menu hooks
@@ -68,8 +69,6 @@ var victoryMusic : AudioSource = null;
 
 var beatBattleAnno : AudioSource = null;
 var beatBroncoAnno : AudioSource = null;
-
-var getStarSounds : AudioSource[];
 
 //----------------------------------------
 var p1loseCard : Renderer = null;
@@ -216,22 +215,29 @@ function EndTesting()
 	}
 }
 
+function HideResponseNotes() {
+	for( note in responseNotes ) {
+		note.Hide();
+	}
+}
+
 function ResetTesting()
 {
+	// reset note state
 	var beat = GetBeatNotes();
-  var notesToRemove = new Array();
   var i;
 	for(i = 0; i < beat.length; i++ )
 	{
 		beat[i].downHit = false;
 		beat[i].upHit = false;
 		beat[i].type = NoteType.Normal;
-
-		// assert( !beat[i].isError )
 	}
 
-	Utils.DestroyObjsViaComponent( responseNotes );
-	responseNotes.Clear();
+	// clear response notes
+	if( responseNotes.length > 0 ) {
+		Utils.DestroyObjsViaComponent( responseNotes );
+		responseNotes.Clear();
+	}
 
 	messedUpTriggered = false;
 	successTriggered = false;
@@ -245,6 +251,7 @@ function ResetTesting()
 
 //----------------------------------------
 //  One round is a back-and-forth, ie. attack, defend, repeat
+//	Should be idempotent
 //----------------------------------------
 function ResetRound()
 {
@@ -252,8 +259,10 @@ function ResetRound()
 	repeatMessedUp = false;
 
 	// done for this round, clear the notes immediately
-	Utils.DestroyObjsViaComponent(beatNotes);
-	beatNotes.Clear();
+	if( beatNotes.length > 0 ) {
+		Utils.DestroyObjsViaComponent(beatNotes);
+		beatNotes.Clear();
+	}
 }
 
 function ResetBeatPlayback()
@@ -394,6 +403,15 @@ function OnBeatChange( beatsPassed : int )
 
 function OnSurvivalOver()
 {
+	// this means we lost, so success was never triggered.
+	// but if they got a new star, before the failed, play the sound
+	// play star sound?
+	if( numStars != prevStars ) {
+		// got new stars - play the sound
+		getStarSounds[ numStars-1 ].Play();
+		prevStars = numStars;
+	}
+
 	// save num stars achieved
 	if( GetNumStars(activeSong) < numStars )
 		PlayerPrefs.SetInt( GetNumStarsKey(), numStars );
@@ -639,13 +657,30 @@ function OnSuccess()
 		horseAI.SendMessage( "OnScoreChange", survivalScore, SendMessageOptions.DontRequireReceiver );
 	}
 
-	MakeNoteExplosions();
+	// play star sound?
+	if( numStars != prevStars ) {
+		// got new stars - play the sound
+		getStarSounds[ numStars-1 ].Play();
+		prevStars = numStars;
+	}
 
 	for( var obj in eventListeners )
 	{
 		if( obj != null )
 			obj.SendMessage( "OnSuccess", GetInputtingPlayer(), SendMessageOptions.DontRequireReceiver );
 	}
+
+	// do this after we send the message..
+	MakeNoteExplosions();
+
+/*
+	if( survivalMode || GetInputtingPlayer()==GetAttacker() ) {
+		// make main beat go away 
+		ResetRound();
+	}
+	// immediately reset response notes so they go away with the explosions
+	HideResponseNotes();
+	*/
 }
 
 private var key2downNote : Note[] = [ null as Note, null as Note, null as Note ];
@@ -1399,12 +1434,6 @@ function Update()
 					GetSongPlayer().Stop();
 					OnSurvivalOver();
 				}
-
-				// see if we should play the star sound
-				if( numStars != prevStars ) {
-					// got new stars - play the sound
-					getStarSounds[ numStars-1 ].Play();
-				}
 			}
 		}
 
@@ -1518,6 +1547,7 @@ function Update()
 			victoryMusic.Stop();	// just in case
 
 			if( survivalMode )
+				// make sure we save the stars, etc.
 				OnSurvivalOver();
 		}
 	}
