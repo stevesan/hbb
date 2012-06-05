@@ -8,6 +8,7 @@ var	prompts : TextMesh[];
 var successAnims : FadeAnim[];
 var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
+var successSound : AudioSource = null;
 
 var turnIndicators : Renderer[];
 var avatars : Renderer[];
@@ -40,6 +41,7 @@ function OnMistake()
 
 function OnSuccess( player:int )
 {
+	successSound.Play();
 	successAnims[ player ].Play();
 }
 
