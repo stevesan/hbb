@@ -40,11 +40,12 @@ private var trailCtrls = new Vector2[trailMidsPerMeas+2];
 // tell the stroke-geo tool what V tex coords to use
 private var trailCtrlTexVs = new float[ trailMidsPerMeas+2 ];
 
+// use a buffer to store mesh data, which gets assigned to the mesh component
 var meshBuf:MeshBuffer = new MeshBuffer();
 
 function GetDuration() : float { return endMeasureTime-measureTime; }
 
-function Start () {
+function Awake() {
 
 	// create a trail child mesh
 	trail = new GameObject();
@@ -66,7 +67,7 @@ function Start () {
 function Hide()
 {
 	if( trail != null )
-		trail.GetComponent(Renderer).enabled = false;
+		trail.renderer.enabled = false;
 }
 
 function OnDestroy()
@@ -132,6 +133,7 @@ function OnMiss()
 
 function OnHit()
 {
+	Debug.Log('note was hit');
 	type = NoteType.Hit;
 	//hitAnim.Play();
 }

@@ -44,6 +44,7 @@ var eventListeners : GameObject[];
 
 var mainCam : Camera;
 
+var debugStars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var starsToUnlockNext = 2;
 var numStars = 0;
@@ -215,8 +216,8 @@ function EndTesting()
 	}
 }
 
-function HideResponseNotes() {
-	for( note in responseNotes ) {
+function HideNotes(notes:Array) {
+	for( note in notes ) {
 		note.Hide();
 	}
 }
@@ -289,6 +290,11 @@ function Awake() {
 		PlayerPrefs.DeleteAll();
 		#endif
 	}
+
+	#if UNITY_EDITOR
+	// use the debug values
+	stars2score = debugStars2score;
+	#endif
 }
 
 var playerNameWin = null;
@@ -409,13 +415,13 @@ function OnSurvivalOver()
 	if( numStars != prevStars ) {
 		// got new stars - play the sound
 		getStarSounds[ numStars-1 ].Play();
-		prevStars = numStars;
 	}
 
 	// save num stars achieved
 	if( GetNumStars(activeSong) < numStars )
 		PlayerPrefs.SetInt( GetNumStarsKey(), numStars );
 	startingStars = numStars;
+	prevStars = numStars;
 
 	for( var obj in eventListeners ) {
 		if( obj != null )
@@ -664,23 +670,23 @@ function OnSuccess()
 		prevStars = numStars;
 	}
 
+	// do this after we send the message..
+	MakeNoteExplosions();
+
+	if( survivalMode || GetInputtingPlayer()==GetAttacker() ) {
+		// make main beat go away 
+		Debug.Log('hiding beat '+beatNotes.length);
+		HideNotes( beatNotes );
+	}
+	// immediately reset response notes so they go away with the explosions
+		Debug.Log('hiding response '+responseNotes.length);
+	HideNotes( responseNotes );
+
 	for( var obj in eventListeners )
 	{
 		if( obj != null )
 			obj.SendMessage( "OnSuccess", GetInputtingPlayer(), SendMessageOptions.DontRequireReceiver );
 	}
-
-	// do this after we send the message..
-	MakeNoteExplosions();
-
-/*
-	if( survivalMode || GetInputtingPlayer()==GetAttacker() ) {
-		// make main beat go away 
-		ResetRound();
-	}
-	// immediately reset response notes so they go away with the explosions
-	HideResponseNotes();
-	*/
 }
 
 private var key2downNote : Note[] = [ null as Note, null as Note, null as Note ];
@@ -733,6 +739,7 @@ function UpdateTesting( mt : float, inputMt:float )
 		}
 
 		// create the note
+		Debug.Log('creating response note');
 		var noteObj:GameObject = Instantiate( notePrefabs[key].gameObject, Vector3(0,0,0), notePrefabs[key].transform.rotation );
 		noteObj.GetComponent(Note).zPos -= 0.1;
 		noteObj.GetComponent(Note).OnDown(
@@ -1001,6 +1008,10 @@ function UpdateMenuMode()
 			startMenu.Show();
 			creditsMusic.Stop();
 		}
+		else if( Input.GetButtonDown('Sample1B') ) {
+			Debug.Log('WARNING: Clearing player prefs');
+			PlayerPrefs.DeleteAll();
+		}
 	}
   else if( menuState == MenuState.MODE )
   {
@@ -1247,6 +1258,7 @@ function StartGameRitual1()
 
 		// update stars
 		numStars = startingStars;
+		prevStars = numStars;
 		survivalScore = stars2score[ numStars ];
 
 		// make sure we start with the checkpointed AI
