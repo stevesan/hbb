@@ -27,6 +27,7 @@ var aiInputs : Array = null;
 var debugTestAI = false;
 var survivalMode = false;
 var survivalScore:int;
+var survivalScoreIncreased = false;	// the player can start at any star, giving a non-zero score. This is set to true if the player actually got more points by playing.
 var perNoteScore = false;
 var debugKeysDown = false;
 var debugClearPlayerPrefs = false;	// this only does it in the editor
@@ -631,6 +632,8 @@ function OnSurvivalScoreIncreased()
 		if( survivalScore >= stars2score[ numStars+1 ] )
 			numStars++;
 	}
+	
+	survivalScoreIncreased = true;
 }
 
 function MakeNoteExplosions()
@@ -1261,6 +1264,7 @@ function StartGameRitual1()
 		numStars = startingStars;
 		prevStars = numStars;
 		survivalScore = stars2score[ numStars ];
+		survivalScoreIncreased = false;
 
 		// make sure we start with the checkpointed AI
 		if( horseAI != null )

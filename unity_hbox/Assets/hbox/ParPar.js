@@ -57,11 +57,11 @@ function OnSurvivalOver( gs:GameState )
 	var song = "song" + (gs.activeSong+1);
 	var player = GameState.inst.playerName;
 	var value = gs.survivalScore;
-	
+
 	//----------------------------------------
 	//  Submit the score
 	//----------------------------------------
-	if( value > 0 && SecretMD5Salt != null )
+	if( gs.survivalScoreIncreased && SecretMD5Salt != null )
 	{
 
 		Debug.Log('ParPar: submitting score: '+value+ ' to '+song );
@@ -81,6 +81,10 @@ function OnSurvivalOver( gs:GameState )
 		Debug.Log( www.text );
 	}
 
+// mainly so we don't show the "YOU" arrow
+	if( !gs.survivalScoreIncreased )
+		value = -1;
+	
 	RefreshAllTimeScores(song, player, value);
 	RefreshDailyScores(song, player, value);
 }
