@@ -672,6 +672,7 @@ function OnSuccess()
 
 	// do this after we send the message..
 	MakeNoteExplosions();
+	cameraShake.DoShake();
 
 	if( survivalMode || GetInputtingPlayer()==GetAttacker() ) {
 		// make main beat go away 

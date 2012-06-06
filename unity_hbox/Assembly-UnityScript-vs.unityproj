@@ -86,8 +86,10 @@
      <None Include="Assets\Resources\layouts\broncoSetup\layout.txt" />
      <None Include="Assets\Resources\layouts\startmenu\layout.txt" />
      <None Include="Assets\Standard Assets\Skyboxes\ skybox info.txt" />
+     <None Include="Assets\hbox\shaders\BlendAdd.shader" />
      <None Include="Assets\hbox\md5salt.txt" />
      <None Include="Assets\Resources\layouts\modemenu\layout.txt" />
+     <None Include="Assets\hbox\shaders\BlendSub.shader" />
      <None Include="Assets\Resources\songSpecs.xml" />
  <Reference Include="Library\ScriptAssemblies\Assembly-UnityScript-firstpass">
  <HintPath>Library\ScriptAssemblies\Assembly-UnityScript-firstpass.dll</HintPath>
