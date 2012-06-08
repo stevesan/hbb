@@ -408,6 +408,13 @@ function OnBeatChange( beatsPassed : int )
 	}
 }
 
+function NotifyStarsChanged() {
+	for( var obj in eventListeners ) {
+		if( obj != null )
+			obj.SendMessage( "OnStarsChanged", SendMessageOptions.DontRequireReceiver );
+	}
+}
+
 function OnSurvivalOver()
 {
 	// this means we lost, so success was never triggered.
@@ -416,6 +423,7 @@ function OnSurvivalOver()
 	if( numStars != prevStars ) {
 		// got new stars - play the sound
 		getStarSounds[ numStars-1 ].Play();
+		NotifyStarsChanged();
 	}
 
 	// save num stars achieved
@@ -671,6 +679,7 @@ function OnSuccess()
 		// got new stars - play the sound
 		getStarSounds[ numStars-1 ].Play();
 		prevStars = numStars;
+		NotifyStarsChanged();
 	}
 
 	// do this after we send the message..
@@ -1175,15 +1184,15 @@ function UpdateMenuMode()
 			tuteText.text = 'Morgan Freeman says...\n\n'
 				+ 'The computer, P1, will lay down some fresh beats.\n'
 				+ 'Play them correctly using the JKL keys!\n'
-				+ 'Try to survive as long as you can! Ride it like ya mean it!\n'
+				+ 'Try to survive as long as you can!\n'
 				+ '\n'
 				+ 'SPACE BAR TO CONTINUE';
 		}
 		else
 		{
 			tuteText.text = 'Morgan Freeman says...\n\n'
-				+ 'When it\'s your turn, play a difficult beat for your opponent to repeat.\n'
-				+ 'But not too difficult - you have to repeat the beat, too!\n'
+				+ 'When it\'s your turn, play a difficult beat\nfor your opponent to repeat.\n'
+				+ 'But not too difficult - you have to repeat it, too!\n'
 				+ '\n'
 				+ 'SPACE BAR TO CONTINUE';
 		}

@@ -58,6 +58,7 @@
      <None Include="Assets\hbox\shaders\BlendAdd.shader" />
      <None Include="Assets\hbox\md5salt.txt" />
      <None Include="Assets\Resources\layouts\modemenu\layout.txt" />
+     <None Include="Assets\hbox\shaders\FragTest.shader" />
      <None Include="Assets\hbox\shaders\BlendSub.shader" />
      <None Include="Assets\Resources\songSpecs.xml" />
   </ItemGroup>
