@@ -1,6 +1,14 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\hbox\BroncoSetupMenu.js">
+    <Files>
+      <File FileName="Assets\hbox\GameState.js" Line="1" Column="1" />
+      <File FileName="Assets\hbox\SongInfo.js" Line="25" Column="14" />
+      <File FileName="Assets\hbox\GameView.js" Line="1" Column="1" />
+      <File FileName="Assets\hbox\BroncoSetupMenu.js" Line="1" Column="14" />
+      <File FileName="Assets\hbox\LayoutSpawner.js" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint enabled="false" file="/Users/stevesan84/hbox_git/unity_hbox/Assets/hbox/Note.js" line="173" />
