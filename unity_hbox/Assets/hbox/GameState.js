@@ -1248,8 +1248,13 @@ function GetNumStarsKey():String
 
 function GetNumStars( songNum:int ) : int
 {
+
+#if UNITY_EDITOR
+	return 4;
+#else
 	var key = GetNumStarsKey( songNum );
 	return PlayerPrefs.GetInt( key );
+#endif
 }
 
 function GetIsSongUnlocked( songNum:int ) : boolean
