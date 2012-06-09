@@ -278,8 +278,10 @@ function ResetBeatPlayback()
 
 function Awake() {
 	inst = GetComponent(GameState);
-	playerName = PlayerPrefs.GetString('playerName');
-	Debug.Log('player name = '+playerName);
+
+	// Let Kongregate take care of the playerName string
+	//playerName = PlayerPrefs.GetString('playerName');
+	//Debug.Log('player name = '+playerName);
 
 	p1loseCard.enabled = false;
 	p2loseCard.enabled = false;
@@ -298,7 +300,6 @@ function Awake() {
 	#endif
 }
 
-var playerNameWin = null;
 function OnGUI()
 {
 	if( state != RCState.MENU || menuState != MenuState.ENTER_NAME )
@@ -983,8 +984,10 @@ function UpdateMenuMode()
 		else if( Input.GetButtonDown('Start') 
 				|| PollLayoutClicked( startMenu, 'startbtn' ) )
 		{
-			menuState = MenuState.ENTER_NAME;
+			menuState = MenuState.MODE;
 			startMenu.Hide();
+			modeMenu.Show();
+			titleMusic.Stop();
 			PlayRandomSample();
 		}
 		else if( Input.GetButtonDown('Sample0B') )
@@ -1058,9 +1061,11 @@ function UpdateMenuMode()
 		{
 			PlayRandomSample();
 			songSelectMusic.Stop();
-			menuState = MenuState.ENTER_NAME;
-			titleMusic.Play();
 			modeMenu.Hide();
+
+			titleMusic.Play();
+			menuState = MenuState.MAIN;
+			startMenu.Show();
 		}
   }
 	else if( menuState == MenuState.SONGS )
