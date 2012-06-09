@@ -41,6 +41,9 @@ auraCat
 auraLuc
 /bg2/cloud
 
-stars
-/bg2/stars
+star1
+/bg2/star1
+
+star2
+/bg2/star2
 

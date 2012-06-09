@@ -31,6 +31,7 @@ var survivalScoreIncreased = false;	// the player can start at any star, giving 
 var perNoteScore = false;
 var debugKeysDown = false;
 var debugClearPlayerPrefs = false;	// this only does it in the editor
+var debugUnlockAll = true;
 
 var cameraShake : Shake = null;
 var menuText : TextMesh;
@@ -1250,11 +1251,12 @@ function GetNumStars( songNum:int ) : int
 {
 
 #if UNITY_EDITOR
-	return 4;
-#else
+	if( debugUnlockAll ) {
+		return 4;
+	}
+#endif
 	var key = GetNumStarsKey( songNum );
 	return PlayerPrefs.GetInt( key );
-#endif
 }
 
 function GetIsSongUnlocked( songNum:int ) : boolean

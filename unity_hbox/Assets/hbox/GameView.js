@@ -9,6 +9,7 @@ var successAnims : FadeAnim[];
 var scoreDisplays : GameObject[];
 var messupSound : AudioSource = null;
 var successSound : AudioSource = null;
+var broncoText:TextMesh;
 
 var turnIndicators : Renderer[];
 var avatars : Renderer[];
@@ -60,12 +61,6 @@ function Update () {
 
 	mainText.text = '';
 
-	var broncoText = 'SCORE: ' + gs.survivalScore;
-	if( (gs.numStars+1) < gs.stars2score.length )
-		broncoText += ' - NEXT STAR: ' + gs.stars2score[ gs.numStars+1 ];
-	else
-		broncoText += ' - GOT ALL STARS!';
-	broncoText += '\n STARS: ' + gs.numStars;
 	prompts[ 0 ].text = '';
 	prompts[ 1 ].text = '';
 
@@ -84,19 +79,29 @@ function Update () {
 			UpdateCountdown( gs, "Repeat in", gs.GetDefender() );
 		else if( gs.state == RCState.POST_DEFEND )
 		{
-			if( gs.survivalMode )
-				UpdateCountdown( gs, "Play in", gs.GetAttacker() );
+			if( gs.survivalMode ) {
+				// don't show countdown for AI
+				//UpdateCountdown( gs, "Play in", gs.GetAttacker() );
+				}
 			else
 				UpdateCountdown( gs, "Repeat in", gs.GetAttacker() );
 		}
-		else if( gs.state == RCState.POST_REPEAT )
+		else if( gs.state == RCState.POST_REPEAT && !gs.survivalMode )
 			// we prompt the defender here, who will soon become the attacker
 			UpdateCountdown( gs, "Play in", gs.GetDefender() );
-
-		if( gs.state != RCState.MENU && gs.survivalMode )
-			mainText.text = broncoText;
 	}
 
+	//----------------------------------------
+	//  The bronco score text
+	//----------------------------------------
+	broncoText.text = '';
+	if( gs.survivalMode ) {
+		broncoText.text = 'SCORE:\n'+gs.survivalScore;
+	}
+
+	//----------------------------------------
+	//  Deal with avatar lose cards
+	//----------------------------------------
 	if( gs.state == RCState.VICTORY )
 	{
 		if( gs.p1loseCard.enabled )

@@ -65,6 +65,7 @@
      <Compile Include="Assets\hbox\SongInfo.js" />
      <Compile Include="Assets\hbox\SongsManager.js" />
      <Compile Include="Assets\hbox\SongsMenu.js" />
+     <Compile Include="Assets\hbox\Stars.js" />
      <Compile Include="Assets\hbox\TrackLaserScript.js" />
      <Compile Include="Assets\hbox\Utils\Bounce.js" />
      <Compile Include="Assets\hbox\Utils\CameraShake.js" />
