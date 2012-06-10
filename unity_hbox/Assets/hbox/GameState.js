@@ -51,7 +51,7 @@ var stars2score:int[] = [ 0, 25, 50, 100, 200 ];
 var starsToUnlockNext = 2;
 var numStars = 0;
 var startingStars = 0;
-private var prevStars = 0;
+var prevStars = 0;
 var getStarSounds : AudioSource[];
 
 //----------------------------------------
@@ -72,6 +72,7 @@ var victoryMusic : AudioSource = null;
 
 var beatBattleAnno : AudioSource = null;
 var beatBroncoAnno : AudioSource = null;
+var lockedErrorSound : AudioSource = null;
 
 //----------------------------------------
 var p1loseCard : Renderer = null;
@@ -974,7 +975,12 @@ function UpdateMenuMode()
 	{
 		if( !titleMusic.isPlaying ) titleMusic.Play();
 
-		menuText.text = '';
+		menuText.text = ''
+			+ 'AUDIO :: Mark Anderson \n'
+			+ 'LEAD DESIGN :: Joshua Raab \n'
+			+ 'CODE/DESIGN :: Steven An \n'
+			+ 'ART :: Zak Ayles \n'
+			+ 'Press J for more credits & info!';
 
 		// handle player input
 		if( Input.GetButtonDown('menuback') )
@@ -1009,10 +1015,11 @@ function UpdateMenuMode()
 		if( !creditsMusic.isPlaying ) creditsMusic.Play();
 
 		menuText.text = ''
-			+ 'ART :: Zak Ayles \n'
-			+ 'DESIGN :: Joshua Raab \n'
-			+ 'AUDIO :: Mark Anderson \n'
-			+ 'CODE/DESIGN :: Steven An \n\n'
+			+ 'AUDIO :: Mark Anderson  - markmakingmusic@gmail.com\n'
+			+ 'LEAD DESIGN :: Joshua Raab - joshr2121@gmail.com\n'
+			+ 'CODE/DESIGN :: Steven An - stevenan@gmail.com\n'
+			+ 'ART :: Zak Ayles - zak.ayles@gmail.com\n'
+			+ '\n'
 			+ 'Originally made for the 2012 Global Game Jam (NYU)\n'
       + 'Original Additional Visual Design: Joffre Molina \n'
       + 'Original Additional Code: Robert Dionne \n\n'
@@ -1102,7 +1109,7 @@ function UpdateMenuMode()
 				else
 				{
 					// play error sound
-					PlayRandomSample();
+					lockedErrorSound.Play();
 				}
 				break;
 			}
@@ -1127,13 +1134,17 @@ function UpdateMenuMode()
 		//  Check for difficulty click
 		//----------------------------------------
 		var nstars = GetNumStars( activeSong );
-		for( var level = 0; level < songs.players.Count; level++ )
+		var lockedLevelClicked = false;
+		for( var level = 0; level < stars2score.length; level++ )
 		{
-			// don't let players start on a level they haven't gotten yet
-			if( level > nstars ) continue;
-
-			var keyPressed = Input.GetButtonDown('Song'+(level+1));
+			var keyPressed = Input.GetButtonDown('Song'+level);
 			var btnClicked = PollLayoutClicked( broncoMenu.layout, 'level'+level );
+
+			// don't let players start on a level they haven't gotten yet
+			if( level > nstars ) {
+				lockedLevelClicked = lockedLevelClicked || keyPressed || btnClicked;
+				continue;
+			}
 
 			// pressing space triggers the highest star number
 			if( level == nstars && Input.GetButtonDown( 'Start' ) )
@@ -1150,6 +1161,13 @@ function UpdateMenuMode()
 				startingStars = level;
 				break;
 			}
+		}
+
+		//----------------------------------------
+		//  Play error sound if they try to get to a locked thing
+		//----------------------------------------
+		if( lockedLevelClicked ) {
+			lockedErrorSound.Play();
 		}
 
 		if( Input.GetButtonDown('menuback') 

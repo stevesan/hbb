@@ -4,6 +4,7 @@ var gs:GameState;
 var stars:Renderer[];
 var starTextPrefab:GameObject;
 var textOffset = Vector3(0,0,0);
+var starsExplode:ParticleSystem;
 
 var starOffTexture:Texture2D;
 var starOnTexture:Texture2D;
@@ -26,7 +27,19 @@ function Start () {
 		textObjs.Push(o);
 	}
 	starTextPrefab.GetComponent(Renderer).enabled = false;
+}
 
+function OnStarsChanged() {
+	// trigger explosion on last star
+	var starNum = gs.numStars-1;
+
+	if( starsExplode != null ) {
+		starsExplode.transform.position = stars[starNum].gameObject.transform.position;
+		starsExplode.Clear();
+		starsExplode.Play();
+	}
+
+	stars[starNum].GetComponent(Spin).Play();
 }
 
 function Update () {
@@ -43,7 +56,8 @@ function Update () {
 
 		// choose texture depending on score
 		for( i = 0; i < stars.length; i++ ) {
-			if( i < gs.numStars ) {
+			// always use prevStars, so we don't show the stars until the measure ends
+			if( i < gs.prevStars ) {
 				Utils.SetTexture( stars[i].gameObject, starOnTexture );
 			} else { 
 				Utils.SetTexture( stars[i].gameObject, starOffTexture );

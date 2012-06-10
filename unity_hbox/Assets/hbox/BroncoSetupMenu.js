@@ -37,9 +37,11 @@ function InitLockElements()
 		var starobj = layout.FindElement( 'level'+i );
 		if( starobj == null )
 			Debug.LogError('could not find level'+i );
-		var topLeft = layout.GetElementTopLeft( starobj );
-		var pos = Vector3( topLeft.x + lockSize.x/2, topLeft.y - lockSize.y/2,
-			lockPrefab.transform.position.z);
+		//var topLeft = layout.GetElementTopLeft( starobj );
+		//var pos = Vector3( topLeft.x + lockSize.x/2, topLeft.y - lockSize.y/2,
+			//lockPrefab.transform.position.z);
+		var pos = starobj.transform.position;
+		pos.z -= 0.1;	// make sure we're in front
 		var inst = Instantiate( lockPrefab, pos, lockPrefab.transform.rotation );
 		lockInsts.Push( inst );
 	}

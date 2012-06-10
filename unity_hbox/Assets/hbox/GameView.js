@@ -65,11 +65,11 @@ function Update () {
 	prompts[ 1 ].text = '';
 
 	if( GameState.inst.state == RCState.START )
-		mainText.text = 'PRESS SPACE BAR TO START';
+		mainText.text = 'SPACE BAR TO START';
 	else if( gs.state == RCState.VICTORY )
 	{
 		if( gs.survivalMode )
-			mainText.text = 'FINAL: '+gs.survivalScore + '. SPACE :: Retry';
+			mainText.text = 'SCORE: '+gs.survivalScore + '! SPACE :: Retry';
 		else
 			mainText.text = 'P' +(gs.GetWinningPlayer()+1) + ' won! SPACE :: Retry.';
 	}
@@ -81,12 +81,12 @@ function Update () {
 		{
 			if( gs.survivalMode ) {
 				// don't show countdown for AI
-				//UpdateCountdown( gs, "Play in", gs.GetAttacker() );
+				UpdateCountdown( gs, "Play in", gs.GetAttacker() );
 				}
 			else
 				UpdateCountdown( gs, "Repeat in", gs.GetAttacker() );
 		}
-		else if( gs.state == RCState.POST_REPEAT && !gs.survivalMode )
+		else if( gs.state == RCState.POST_REPEAT )
 			// we prompt the defender here, who will soon become the attacker
 			UpdateCountdown( gs, "Play in", gs.GetDefender() );
 	}
@@ -95,8 +95,10 @@ function Update () {
 	//  The bronco score text
 	//----------------------------------------
 	broncoText.text = '';
-	if( gs.survivalMode ) {
-		broncoText.text = 'SCORE:\n'+gs.survivalScore;
+	if( gs.survivalMode
+			&& gs.state != RCState.START
+			&& gs.state != RCState.VICTORY ) {
+		broncoText.text = 'SCORE: '+gs.survivalScore;
 	}
 
 	//----------------------------------------

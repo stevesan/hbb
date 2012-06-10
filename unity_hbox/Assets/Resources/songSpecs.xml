@@ -1,5 +1,5 @@
 <songs>
-	<song title = "Slow and Steady (WALK)"
+	<song title = "Slow and Steady"
 		bpm = "80"
 		bpMeas = "4"
 		numMeasures = "8"
@@ -40,7 +40,7 @@
 
 	</song>
 
-	<song title = "Chill (TROT)"
+	<song title = "Thrills and Chills"
 		bpm = "115"
 		bpMeas = "4"
 		numMeasures = "8"
@@ -72,7 +72,7 @@
 		<layer res="songs/115 BPM/PADS/Chill_115_keys_01" />
 	</song>
     
-	<song title = "Hot to Trot (CANTER)"
+	<song title = "Hot to Trot"
 		bpm = "135"
 		bpMeas = "4"
 		numMeasures = "16"
@@ -106,7 +106,7 @@
 
 	</song>
 
-	<song title = "West Side Horsey (FAST CANTER)"
+	<song title = "West Side Horsey"
 		bpm = "160"
 		bpMeas = "4"
 		numMeasures = "32"
@@ -142,7 +142,7 @@
 
 	</song>
 
-	<song title = "Cluster Strut (GALLOP)"
+	<song title = "Cluster Strut"
 		bpm = "190"
 		bpMeas = "4"
 		numMeasures = "16"
@@ -175,7 +175,7 @@
 
 	</song>
 
-	<song title = "The Donkey 2 (FASTER-ER CANTER)"
+	<song title = "The Donkey 2"
 		bpm = "190"
 		bpMeas = "4"
 		numMeasures = "32"

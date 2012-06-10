@@ -126,6 +126,10 @@ function Show( gs:GameState )
 		else
 			lockInsts[song-1].GetComponent(Renderer).enabled = false;
 	}
+
+	// hide the bronco tip
+	var broncoTipText = layout.FindElement('help');
+	broncoTipText.GetComponent(Renderer).enabled = gs.survivalMode;
 }
 
 function Hide()
